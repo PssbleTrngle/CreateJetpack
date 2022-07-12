@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.possible_triangle.create_jetpack.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.8",
+  "refmap": "create_jetpack.refmap.json",
+  "mixins": [
+    "BackTankUtilMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
