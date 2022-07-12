@@ -1,45 +1,39 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
+        maven { url = 'https://maven.minecraftforge.net' }
         mavenCentral()
-        maven { url='https://repo.spongepowered.org/repository/maven-public/' }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.31"
-        classpath "org.jetbrains.kotlin:kotlin-serialization:1.4.31"
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        // Make sure this version matches the one included in Kotlin for Forge
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10'
+        // OPTIONAL Gradle plugin for Kotlin Serialization
+        classpath 'org.jetbrains.kotlin:kotlin-serialization:1.6.10'
     }
 }
-
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'kotlin'
+apply plugin: 'kotlinx-serialization'
 
-apply plugin: 'org.spongepowered.mixin'
+apply from: 'https://raw.githubusercontent.com/thedarkcolour/KotlinForForge/site/thedarkcolour/kotlinforforge/gradle/kff-3.1.0.gradle'
 
-mixin {
-    add sourceSets.main, "create_jetpack.refmap.json"
-}
+version = project.mod_version
+group = "possible_triangle.${project.mod_id}"
+archivesBaseName = project.mod_id
 
-version = '1.0.0'
-group = 'possible_triangle.create_jetpack'
-archivesBaseName = mod_id
-
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
     // Change to your preferred mappings
-    mappings channel: 'snapshot', version: '20200920-mixed-1.16.3'
+    mappings channel: project.mappings_channel, version: project.mc_version
     // Add your AccessTransformer
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
         client {
             workingDirectory project.file('run')
-            jvmArgs "-Dmixin.env.disableRefMap=true"
 
-            arg '-mixin.config=create_jetpack.mixins.json'
+            property 'forge.logging.markers', 'SCAN,LOADING,CORE'
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -50,10 +44,9 @@ minecraft {
         }
 
         server {
-            workingDirectory project.file('run')
-            jvmArgs "-Dmixin.env.disableRefMap=true"
+            workingDirectory project.file('run/server')
 
-            arg '-mixin.config=create_jetpack.mixins.json'
+            property 'forge.logging.markers', 'SCAN,LOADING,CORE'
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -65,11 +58,11 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-            jvmArgs "-Dmixin.env.disableRefMap=true"
 
+            property 'forge.logging.markers', 'SCAN,LOADING,CORE'
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources')
+            args '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources')
 
             mods {
                 create_jetpack {
@@ -80,65 +73,57 @@ minecraft {
     }
 }
 
+// Include assets and data from data generators
+sourceSets.main.resources { srcDirs 'src/generated/resources/' }
+
 repositories {
     maven {
-        name = 'Kotlin for Forge'
-        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
     }
     maven {
-        url = 'https://www.cursemaven.com'
+        name = "ModMaven"
+        url = "https://modmaven.k-4u.nl"
+    }
+    maven {
+        // Location of the maven for mixed mappings, Registrate, and Flywheel
+        name 'tterrag maven'
+        url 'https://maven.tterrag.com'
+    }
+    maven {
+        url 'https://www.cursemaven.com'
         content {
             includeGroup "curse.maven"
         }
     }
-    maven {
-        name "Progwml6 maven"
-        url "https://dvs1.progwml6.com/files/maven/"
-    }
-    maven {
-        name = "tterrag maven"
-        url = "https://maven.tterrag.com/"
-    }
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
-
-    fg.deobf(implementation("thedarkcolour:kotlinforforge:${kotlin_for_forge_version}"))
-
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
-
-    implementation fg.deobf("com.jozufozu.flywheel:Flywheel:${flywheel_version}")
-    implementation fg.deobf("curse.maven:create-328085:${create_version}")
-
-    annotationProcessor 'org.spongepowered:mixin:0.8:processor'
+    // Use the latest version of Minecraft Forge
+    minecraft "net.minecraftforge:forge:${project.mc_version}-${project.forge_version}"
+    
+    modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}:${rootProject.jei_version}:api")
+    modLocalRuntime("mezz.jei:jei-${rootProject.minecraft_version}:${rootProject.jei_version}")
+    
+    implementation fg.deobf("curse.maven:create-328085:${project.create_version}")
+    implementation fg.deobf("curse.maven:flywheel-486392:${project.flywheel_version}")
 }
 
 compileKotlin {
-    kotlinOptions {
-        jvmTarget = '1.8'
-        languageVersion = '1.4'
-        apiVersion = '1.4'
-    }
-}
-
-// Include assets and data from data generators
-sourceSets.main.resources {
-    srcDirs 'src/generated/resources/'
+    kotlinOptions.jvmTarget = "17"
 }
 
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "create_jetpack",
-                "Specification-Vendor"    : "create_jetpacksareus",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : "${mod_version}",
-                "Implementation-Vendor"   : "create_jetpacksareus",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs"            : "create_jetpack.mixins.json"
+                'Specification-Title'     : project.mod_id,
+                'Specification-Vendor'    : "examplemodsareus",
+                'Specification-Version'   : "1",
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.mod_version,
+                'Implementation-Vendor'   : "examplemodsareus",
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs"            : "${project.mod_id}.mixins.json",
         ])
     }
 }
