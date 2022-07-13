@@ -2,6 +2,7 @@ buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
         mavenCentral()
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
@@ -9,6 +10,7 @@ buildscript {
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10'
         // OPTIONAL Gradle plugin for Kotlin Serialization
         classpath 'org.jetbrains.kotlin:kotlin-serialization:1.6.10'
+        classpath "org.spongepowered:mixingradle:0.7-SNAPSHOT"
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -16,6 +18,12 @@ apply plugin: 'kotlin'
 apply plugin: 'kotlinx-serialization'
 
 apply from: 'https://raw.githubusercontent.com/thedarkcolour/KotlinForForge/site/thedarkcolour/kotlinforforge/gradle/kff-3.1.0.gradle'
+
+apply plugin: 'org.spongepowered.mixin'
+
+mixin {
+    add sourceSets.main, "${project.mod_id}.refmap.json"
+}
 
 version = project.mod_version
 group = "possible_triangle.${project.mod_id}"
@@ -33,8 +41,12 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
-            property 'forge.logging.markers', 'SCAN,LOADING,CORE'
             property 'forge.logging.console.level', 'debug'
+
+            arg '-mixin.config=create.mixins.json'
+            arg '-mixin.config=flywheel.mixins.json'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             mods {
                 create_jetpack {
@@ -46,8 +58,12 @@ minecraft {
         server {
             workingDirectory project.file('run/server')
 
-            property 'forge.logging.markers', 'SCAN,LOADING,CORE'
             property 'forge.logging.console.level', 'debug'
+
+            arg '-mixin.config=create.mixins.json'
+            arg '-mixin.config=flywheel.mixins.json'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             mods {
                 create_jetpack {
@@ -59,8 +75,12 @@ minecraft {
         data {
             workingDirectory project.file('run')
 
-            property 'forge.logging.markers', 'SCAN,LOADING,CORE'
             property 'forge.logging.console.level', 'debug'
+
+            arg '-mixin.config=create.mixins.json'
+            arg '-mixin.config=flywheel.mixins.json'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             args '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources')
 
@@ -107,6 +127,8 @@ dependencies {
     
     implementation fg.deobf("curse.maven:create-328085:${project.create_version}")
     implementation fg.deobf("curse.maven:flywheel-486392:${project.flywheel_version}")
+
+    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 }
 
 compileKotlin {
