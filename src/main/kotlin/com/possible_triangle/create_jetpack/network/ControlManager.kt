@@ -1,19 +1,19 @@
 package com.possible_triangle.create_jetpack.network
 
+import com.mojang.blaze3d.platform.InputConstants
+import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
-import net.minecraft.client.entity.player.ClientPlayerEntity
-import net.minecraft.client.settings.KeyBinding
-import net.minecraft.client.util.InputMappings
-import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.client.player.LocalPlayer
+import net.minecraft.world.entity.player.Player
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn
+import net.minecraftforge.client.ClientRegistry
 import net.minecraftforge.client.event.InputEvent
 import net.minecraftforge.client.settings.KeyConflictContext
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.event.entity.player.PlayerEvent
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.client.registry.ClientRegistry
 import net.minecraftforge.fml.common.Mod
 
 @Mod.EventBusSubscriber
@@ -29,24 +29,24 @@ object ControlManager {
         TOGGLE_HOVER(true);
 
         @OnlyIn(Dist.CLIENT)
-        val binding: KeyBinding? = if (createKeybind) KeyBinding(
-            "key.jetpack.${name.toLowerCase()}.description",
+        val binding: KeyMapping? = if (createKeybind) KeyMapping(
+            "key.jetpack.${name.lowercase()}.description",
             KeyConflictContext.IN_GAME,
-            InputMappings.Type.KEYSYM,
+            InputConstants.Type.KEYSYM,
             12 + ordinal,
             "jetpack"
         ) else null
 
     }
 
-    private val KEYS = mutableMapOf<PlayerEntity, MutableMap<Key, Boolean>>()
+    private val KEYS = mutableMapOf<Player, MutableMap<Key, Boolean>>()
 
-    private fun setKey(player: PlayerEntity, key: Key, pressed: Boolean) {
+    private fun setKey(player: Player, key: Key, pressed: Boolean) {
         val keys = KEYS.getOrPut(player) { mutableMapOf() }
         keys[key] = pressed
     }
 
-    fun isPressed(player: PlayerEntity, key: Key): Boolean {
+    fun isPressed(player: Player, key: Key): Boolean {
         return KEYS[player]?.get(key) ?: false
     }
 
@@ -57,7 +57,7 @@ object ControlManager {
         }
     }
 
-    internal fun handle(player: PlayerEntity, event: KeyEvent) {
+    internal fun handle(player: Player, event: KeyEvent) {
         setKey(player, event.key, event.pressed)
     }
 
@@ -81,18 +81,18 @@ object ControlManager {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     fun onTick(event: TickEvent.PlayerTickEvent) {
-        if(!event.player.world.isRemote) return
-        val player = event.player as ClientPlayerEntity
+        if(!event.player.level.isClientSide) return
+        val player = event.player as LocalPlayer
 
         Key.values().filter { !it.toggle && it.binding != null }.forEach {
-            sync(KeyEvent(it, it.binding!!.isKeyDown))
+            sync(KeyEvent(it, it.binding!!.isDown))
         }
 
-        sync(KeyEvent(Key.UP, player.movementInput.jump))
-        sync(KeyEvent(Key.LEFT, player.movementInput.leftKeyDown))
-        sync(KeyEvent(Key.RIGHT, player.movementInput.rightKeyDown))
-        sync(KeyEvent(Key.FORWARD, player.movementInput.forwardKeyDown))
-        sync(KeyEvent(Key.BACKWARD, player.movementInput.backKeyDown))
+        sync(KeyEvent(Key.UP, player.input.jumping))
+        sync(KeyEvent(Key.LEFT, player.input.left))
+        sync(KeyEvent(Key.RIGHT, player.input.right))
+        sync(KeyEvent(Key.FORWARD, player.input.forwardImpulse > 0))
+        sync(KeyEvent(Key.BACKWARD, player.input.forwardImpulse < 0))
 
     }
 
@@ -101,7 +101,7 @@ object ControlManager {
     fun onKey(event: InputEvent.KeyInputEvent) {
         val player = Minecraft.getInstance().player ?: return
 
-        Key.values().filter { it.toggle && it.binding?.isPressed == true }.forEach {
+        Key.values().filter { it.toggle && it.binding?.isDown == true }.forEach {
             sync(KeyEvent(it, !isPressed(player, it), true))
         }
 

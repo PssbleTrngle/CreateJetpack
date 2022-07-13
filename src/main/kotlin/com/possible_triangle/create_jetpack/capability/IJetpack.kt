@@ -1,18 +1,18 @@
 package com.possible_triangle.create_jetpack.capability
 
 import com.possible_triangle.create_jetpack.item.Jetpack.ControlType
-import net.minecraft.entity.LivingEntity
-import net.minecraft.inventory.EquipmentSlotType
-import net.minecraft.item.ItemStack
-import net.minecraft.world.World
+import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.Level
 
 interface IJetpack {
 
     data class Context(
         val entity: LivingEntity,
-        val world: World,
+        val world: Level,
         val stack: ItemStack? = null,
-        val slot: EquipmentSlotType? = null
+        val slot: EquipmentSlot? = null,
     )
 
     fun activeType(context: Context): ControlType {
@@ -28,6 +28,7 @@ interface IJetpack {
     fun hoverVerticalSpeed(context: Context): Double {
         return verticalSpeed(context) * 0.8
     }
+
     fun hoverHorizontalSpeed(context: Context): Double {
         return horizontalSpeed(context) * 0.8
     }

@@ -1,38 +1,42 @@
 package com.possible_triangle.create_jetpack.block
 
 import com.possible_triangle.create_jetpack.Content
-import com.simibubi.create.AllBlocks
 import com.simibubi.create.content.curiosities.armor.CopperBacktankBlock
-import net.minecraft.block.BlockState
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.ListNBT
-import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.math.BlockPos
-import net.minecraft.world.IBlockReader
+import com.simibubi.create.content.curiosities.armor.CopperBacktankTileEntity
+import net.minecraft.core.BlockPos
+import net.minecraft.nbt.ListTag
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.block.state.BlockState
 
-class JetpackBlock : CopperBacktankBlock(Properties.from(AllBlocks.COPPER_BACKTANK.get())) {
+class JetpackBlock(properties: Properties) : CopperBacktankBlock(properties) {
 
-    override fun getItem(world: IBlockReader, pos: BlockPos, state: BlockState): ItemStack {
-        val item = ItemStack(Content.JETPACK)
+    override fun getCloneItemStack(
+        world: BlockGetter,
+        pos: BlockPos,
+        state: BlockState
+    ): ItemStack {
+        val item = ItemStack(Content.JETPACK.get())
         val tile = getTileEntityOptional(world, pos)
 
         val air = tile.map { it.getAirLevel() }.orElse(0) as Int
         item.orCreateTag.putInt("Air", air)
 
-        val enchants = tile.map { it.enchantmentTag }.orElse(ListNBT())
+        val enchants = tile.map { it.enchantmentTag }.orElse(ListTag())
         if (!enchants.isEmpty()) {
-            val enchantmentTagList = item.enchantmentTagList
+            val enchantmentTagList = item.enchantmentTags
             enchantmentTagList.addAll(enchants)
             item.orCreateTag.put("Enchantments", enchantmentTagList)
         }
 
-        tile.map { it.customName }.ifPresent { item.displayName = it }
+        tile.map { it.customName }.ifPresent { item.hoverName = it }
 
         return item
     }
 
-    override fun createTileEntity(state: BlockState, world: IBlockReader): TileEntity? {
-        return Content.JETPACK_TILE.create()
+    override fun getTileEntityType(): BlockEntityType<out CopperBacktankTileEntity> {
+        return Content.JETPACK_TILE.get()
     }
 
 }
