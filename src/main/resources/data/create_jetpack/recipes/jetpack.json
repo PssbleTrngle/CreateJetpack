@@ -1,0 +1,32 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    " PYP ",
+    "PXEXP",
+    "PSXSP",
+    " C C "
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:elytra"
+    },
+    "S": {
+      "item": "create:shaft"
+    },
+    "C": {
+      "item": "create:cogwheel"
+    },
+    "X": {
+      "item": "create:chromatic_compound"
+    },
+    "Y": {
+      "item": "create:precision_mechanism"
+    },
+    "P": {
+      "tag": "forge:plates/brass"
+    }
+  },
+  "result": {
+    "item": "create_jetpack:jetpack"
+  }
+}
