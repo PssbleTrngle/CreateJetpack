@@ -13,19 +13,18 @@ import net.minecraftforge.client.settings.KeyConflictContext
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.event.entity.player.PlayerEvent
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 
 @Mod.EventBusSubscriber
 object ControlManager {
 
-    enum class Key(val toggle: Boolean, createKeybind: Boolean = true) {
-        UP(false, false),
-        LEFT(false, false),
-        RIGHT(false, false),
-        FORWARD(false, false),
-        BACKWARD(false, false),
-        TOGGLE_ACTIVE(true),
+    enum class Key(val toggle: Boolean, createKeybind: Boolean = true, val default: Boolean = false) {
+        UP(false, createKeybind = false),
+        LEFT(false, createKeybind = false),
+        RIGHT(false, createKeybind = false),
+        FORWARD(false, createKeybind = false),
+        BACKWARD(false, createKeybind = false),
+        TOGGLE_ACTIVE(true, default = true),
         TOGGLE_HOVER(true);
 
         @OnlyIn(Dist.CLIENT)
@@ -47,7 +46,7 @@ object ControlManager {
     }
 
     fun isPressed(player: Player, key: Key): Boolean {
-        return KEYS[player]?.get(key) ?: false
+        return KEYS[player]?.get(key) ?: key.default
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -61,12 +60,10 @@ object ControlManager {
         setKey(player, event.key, event.pressed)
     }
 
-    @SubscribeEvent
     fun onDimensionChange(event: PlayerEvent.PlayerChangedDimensionEvent) {
         KEYS.remove(event.player)
     }
 
-    @SubscribeEvent
     fun onLogout(event: PlayerLoggedOutEvent) {
         KEYS.remove(event.player)
     }
@@ -78,10 +75,8 @@ object ControlManager {
         handle(player, event)
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
     fun onTick(event: TickEvent.PlayerTickEvent) {
-        if(!event.player.level.isClientSide) return
+        if (!event.player.level.isClientSide) return
         val player = event.player as LocalPlayer
 
         Key.values().filter { !it.toggle && it.binding != null }.forEach {
@@ -96,8 +91,6 @@ object ControlManager {
 
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
     fun onKey(event: InputEvent.KeyInputEvent) {
         val player = Minecraft.getInstance().player ?: return
 

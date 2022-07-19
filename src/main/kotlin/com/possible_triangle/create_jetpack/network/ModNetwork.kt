@@ -1,6 +1,6 @@
 package com.possible_triangle.create_jetpack.network
 
-import com.possible_triangle.create_jetpack.CreateJetpack.MOD_ID
+import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
 import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.network.NetworkRegistry
 

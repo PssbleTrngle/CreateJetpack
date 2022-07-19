@@ -1,12 +1,18 @@
 package com.possible_triangle.create_jetpack
 
-import com.possible_triangle.create_jetpack.CreateJetpack.MOD_ID
+import com.jozufozu.flywheel.core.PartialModel
+import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
 import com.possible_triangle.create_jetpack.block.JetpackBlock
 import com.possible_triangle.create_jetpack.capability.IJetpack
+import com.possible_triangle.create_jetpack.capability.JetpackLogic
+import com.possible_triangle.create_jetpack.client.ControlsDisplay
+import com.possible_triangle.create_jetpack.client.JetpackArmorLayer
 import com.possible_triangle.create_jetpack.item.Jetpack
-import com.simibubi.create.AllItems
+import com.possible_triangle.create_jetpack.network.ControlManager
+import com.possible_triangle.create_jetpack.network.ModNetwork
 import com.simibubi.create.AllTags.pickaxeOnly
 import com.simibubi.create.Create
+import com.simibubi.create.content.AllSections
 import com.simibubi.create.content.CreateItemGroup
 import com.simibubi.create.content.curiosities.armor.CopperBacktankInstance
 import com.simibubi.create.content.curiosities.armor.CopperBacktankItem.CopperBacktankBlockItem
@@ -16,7 +22,9 @@ import com.simibubi.create.foundation.block.BlockStressDefaults
 import com.simibubi.create.foundation.data.AssetLookup
 import com.simibubi.create.foundation.data.CreateRegistrate
 import com.simibubi.create.foundation.data.SharedProperties
+import com.simibubi.create.repack.registrate.util.entry.ItemEntry
 import com.simibubi.create.repack.registrate.util.nullness.NonNullFunction
+import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.resources.ResourceLocation
@@ -29,16 +37,24 @@ import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
+import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.common.capabilities.CapabilityManager
 import net.minecraftforge.common.capabilities.CapabilityToken
 import net.minecraftforge.common.capabilities.ICapabilityProvider
+import net.minecraftforge.event.AttachCapabilitiesEvent
+import net.minecraftforge.eventbus.api.IEventBus
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
+import thedarkcolour.kotlinforforge.forge.FORGE_BUS
+import java.util.function.BiConsumer
 import java.util.function.BiFunction
 import java.util.function.Supplier
 
-
 object Content {
 
-    private val REGISTRATE = CreateRegistrate.lazy(MOD_ID).get().creativeModeTab { CreateItemGroup.TAB_TOOLS }
+    val REGISTRATE = CreateRegistrate.lazy(MOD_ID).get()
+        .creativeModeTab { CreateItemGroup.TAB_TOOLS }
+        .startSection(AllSections.CURIOSITIES)
 
     //private val ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID)
     //private val BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MOD_ID)
@@ -62,7 +78,7 @@ object Content {
             lt.add(block, builder.withPool(LootPool.lootPool()
                 .`when`(survivesExplosion)
                 .setRolls(ConstantValue.exactly(1F))
-                .add(LootItem.lootTableItem(AllItems.COPPER_BACKTANK.get())
+                .add(LootItem.lootTableItem(JETPACK.get())
                     .apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY))
                     .apply(CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
                         .copy("Air", "Air"))
@@ -93,22 +109,50 @@ object Content {
         provider.withExistingParent(context.name, provider.mcLoc("item/barrier"))
     }.register()
 
-    val JETPACK = REGISTRATE.item<Jetpack>("jetpack") { Jetpack(it, JETPACK_PLACEABLE) }
+    val JETPACK: ItemEntry<Jetpack> = REGISTRATE.item<Jetpack>("jetpack") { Jetpack(it, JETPACK_PLACEABLE) }
         .model(AssetLookup.customGenericItemModel("_", "item"))
         .register()
 
     val JETPACK_CAPABILITY = CapabilityManager.get(object : CapabilityToken<IJetpack>() {})
 
-    fun attachCapabilities(stack: ItemStack, add: (id: ResourceLocation, ICapabilityProvider) -> Unit) {
+    val THRUSTERS_MODEL = PartialModel(ResourceLocation(MOD_ID, "block/jetpack/thrusters"))
+
+    fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
         val item = stack.item
-        if (item is Jetpack) add(ResourceLocation(MOD_ID, "jetpack"), item)
+        if (item is Jetpack) add.accept(ResourceLocation(MOD_ID, "jetpack"), item)
     }
 
-    fun register() {
-        // Load this class
-       // listOf(ITEMS, BLOCKS, EFFECTS, FLUIDS, TILES, RECIPE_SERIALIZERS).forEach {
-       //     it.register(MOD_BUS)
-       // }
+    fun register(modBus: IEventBus) {
+        modBus.addListener { _: FMLCommonSetupEvent ->
+            // TODO check if neccessary
+            //CapabilityManager.INSTANCE.(IJetpack::class.java, JetpackStorage) { FakeJetpack }
+            ModNetwork.init()
+        }
+
+        modBus.addListener { _: FMLClientSetupEvent ->
+            ControlManager.registerKeybinds()
+            ControlsDisplay.register()
+
+            //InstancedRenderRegistry().register(Content.JETPACK_TILE, ::CopperBacktankInstance)
+            //ClientRegistry.bindTileEntityRenderer(Content.JETPACK_TILE, ::CopperBacktankRenderer)
+            //RenderTypeLookup.setRenderLayer(Content.JETPACK_BLOCK, RenderType.getCutoutMipped())
+        }
+
+        modBus.addListener { _: EntityRenderersEvent.AddLayers ->
+            val dispatcher = Minecraft.getInstance().entityRenderDispatcher
+            JetpackArmorLayer.registerOnAll(dispatcher)
+        }
+
+        FORGE_BUS.addListener(ControlManager::onDimensionChange)
+        FORGE_BUS.addListener(ControlManager::onLogout)
+
+        FORGE_BUS.addListener(JetpackLogic::tick)
+        FORGE_BUS.addGenericListener(ItemStack::class.java) { event: AttachCapabilitiesEvent<ItemStack> ->
+            attachCapabilities(event.`object`, event::addCapability)
+        }
+
+        FORGE_BUS.addListener(ControlManager::onTick)
+        FORGE_BUS.addListener(ControlManager::onKey)
     }
 
 }

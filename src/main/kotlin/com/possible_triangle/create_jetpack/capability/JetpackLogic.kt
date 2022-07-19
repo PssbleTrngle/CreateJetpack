@@ -13,7 +13,6 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.phys.Vec3
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import kotlin.math.max
 import kotlin.math.min
@@ -28,12 +27,18 @@ object JetpackLogic {
         Key.RIGHT to Vec3(-1.0, 0.0, 0.0),
     )
 
-    private fun active(type: ControlType, key: Key, entity: LivingEntity): Boolean {
+    fun active(type: ControlType, key: Key, entity: LivingEntity): Boolean {
         return when (type) {
             ALWAYS -> true
             NEVER -> false
             TOGGLE -> entity is Player && ControlManager.isPressed(entity, key)
         }
+    }
+
+    fun getActiveJetpack(entity: LivingEntity): Pair<Context, IJetpack>? {
+        return getJetpack(entity)
+            ?.takeIf { active(it.second.activeType(it.first), Key.TOGGLE_ACTIVE, entity) }
+            ?.takeIf { it.second.isUsable(it.first) }
     }
 
     fun getJetpack(entity: LivingEntity): Pair<Context, IJetpack>? {
@@ -53,13 +58,12 @@ object JetpackLogic {
             .map { it.first to it.second.getCapability(JETPACK_CAPABILITY) }
             .filter { it.second.isPresent }
             .map { it.first to it.second.resolve().get() }
-            .filter { active(it.second.activeType(it.first), Key.TOGGLE_ACTIVE, entity) }
-            .firstOrNull { it.second.isUsable(it.first) }
-
+            .firstOrNull()
     }
 
-    private fun tick(entity: LivingEntity) {
-        val (context, jetpack) = getJetpack(entity) ?: return
+    fun tick(event: TickEvent.PlayerTickEvent) {
+        val entity = event.player
+        val (context, jetpack) = getActiveJetpack(entity) ?: return
 
         val buttonUp = entity is Player && ControlManager.isPressed(entity, Key.UP)
         // TODO check if this == sneaking
@@ -104,11 +108,6 @@ object JetpackLogic {
             }
         }
 
-    }
-
-    @SubscribeEvent
-    fun onPlayerTick(event: TickEvent.PlayerTickEvent) {
-        tick(event.player)
     }
 
 }

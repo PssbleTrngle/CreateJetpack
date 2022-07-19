@@ -2,8 +2,8 @@ package com.possible_triangle.create_jetpack.client
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.possible_triangle.create_jetpack.Content
+import com.possible_triangle.create_jetpack.capability.JetpackLogic
 import com.simibubi.create.AllBlockPartials
-import com.simibubi.create.AllBlocks
 import com.simibubi.create.content.curiosities.armor.CopperBacktankBlock
 import com.simibubi.create.foundation.render.CachedBufferer
 import com.simibubi.create.foundation.utility.AngleHelper
@@ -58,17 +58,22 @@ class JetpackArmorLayer<T : LivingEntity, M : EntityModel<T>>(private val render
         f3: Float,
     ) {
         if (entity.pose === Pose.SLEEPING) return
-        if (!Content.JETPACK.get().isWornBy(entity)) return
-
         val entityModel: M = renderer.model
         if (entityModel !is HumanoidModel<*>) return
 
+        if (!Content.JETPACK.get().isWornBy(entity)) return
+        val jetpack = JetpackLogic.getActiveJetpack(entity)
+
         val renderedState =
-            AllBlocks.COPPER_BACKTANK.defaultState.setValue(CopperBacktankBlock.HORIZONTAL_FACING, Direction.SOUTH)
+            Content.JETPACK_BLOCK.defaultState.setValue(CopperBacktankBlock.HORIZONTAL_FACING, Direction.SOUTH)
         val renderType = Sheets.cutoutBlockSheet()
 
         val backtank = CachedBufferer.block(renderedState)
         val cogs = CachedBufferer.partial(AllBlockPartials.COPPER_BACKTANK_COGS, renderedState)
+        //val thrusters = CachedBufferer.partial(Content.THRUSTERS_MODEL, renderedState)
+
+        val using = jetpack?.let { (context, jetpack) -> jetpack.isThrusting(context) } ?: false
+        val cogSpeed = if(using) 32.0 else 2.0
 
         ms.pushPose()
 
@@ -79,10 +84,13 @@ class JetpackArmorLayer<T : LivingEntity, M : EntityModel<T>>(private val render
 
         cogs.centre().rotateY(180.0).unCentre()
             .translate(0.0, (6.5f / 16).toDouble(), (11f / 16).toDouble())
-            .rotate(Direction.EAST, AngleHelper.rad(2.0 * AnimationTickHolder.getRenderTime(entity.level) % 360))
+            .rotate(Direction.EAST, AngleHelper.rad(cogSpeed * AnimationTickHolder.getRenderTime(entity.level) % 360))
             .translate(0.0, (-6.5f / 16).toDouble(), (-11f / 16).toDouble())
 
         cogs.forEntityRender().light(light).renderInto(ms, buffer.getBuffer(renderType))
+
+        //thrusters.centre()
+        //thrusters.forEntityRender().light(light).renderInto(ms, buffer.getBuffer(renderType))
 
         ms.popPose()
 

@@ -122,8 +122,8 @@ dependencies {
     // Use the latest version of Minecraft Forge
     minecraft "net.minecraftforge:forge:${project.mc_version}-${project.forge_version}"
     
-    compileOnly("mezz.jei:jei-${project.mc_version}:${project.jei_version}:api")
-    runtimeOnly("mezz.jei:jei-${project.mc_version}:${project.jei_version}")
+    //compileOnly("mezz.jei:jei-${project.mc_version}:${project.jei_version}:api")
+    //runtimeOnly("mezz.jei:jei-${project.mc_version}:${project.jei_version}")
     
     implementation fg.deobf("curse.maven:create-328085:${project.create_version}")
     implementation fg.deobf("curse.maven:flywheel-486392:${project.flywheel_version}")

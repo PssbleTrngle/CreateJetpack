@@ -1,13 +1,13 @@
-modLoader="kotlinforforge"
-loaderVersion="[1.10,)" # Require at least 1.9.x
+modLoader="javafml"
+loaderVersion="[40,)"
 license='LGPL'
 
 [[mods]]
     modId="create_jetpack"
     version="${file.jarVersion}"
-    displayName="Create Jetpack"
+    displayName="Proceessing Pattern"
     authors="possible_triangle"
-    description='''Jetpacks for the create mod'''
+    description='''Nerv RefinedStorage patterns'''
 
 [[dependencies.create_jetpack]]
     modId="forge"
@@ -20,10 +20,4 @@ license='LGPL'
     mandatory=true
     versionRange="[1.16.5,)"
     ordering="NONE"
-    side="BOTH"
-[[dependencies.create_jetpack]]
-    modId="create"
-    mandatory=true
-    versionRange="[mc1.16.5_v0.3.2,)"
-    ordering="AFTER"
     side="BOTH"

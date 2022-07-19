@@ -1,8 +1,10 @@
 package com.possible_triangle.create_jetpack.capability
 
 import com.possible_triangle.create_jetpack.item.Jetpack.ControlType
+import com.possible_triangle.create_jetpack.network.ControlManager
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 
@@ -36,5 +38,11 @@ interface IJetpack {
     fun isUsable(context: Context): Boolean
 
     fun onUse(context: Context) {}
+
+    fun isThrusting(context: Context): Boolean {
+        val entity = context.entity
+        if (JetpackLogic.active(hoverType(context), ControlManager.Key.TOGGLE_HOVER, entity)) return true
+        return entity is Player && ControlManager.isPressed(entity, ControlManager.Key.UP)
+    }
 
 }
