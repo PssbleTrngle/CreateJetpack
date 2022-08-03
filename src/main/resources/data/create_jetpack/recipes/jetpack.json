@@ -1,23 +1,23 @@
 {
   "type": "create:mechanical_crafting",
   "pattern": [
-    " PYP ",
-    "PXEXP",
-    "PSXSP",
+    " PSP ",
+    "PYXYP",
+    "PCECP",
     " C C "
   ],
   "key": {
     "E": {
       "item": "minecraft:elytra"
     },
-    "S": {
-      "item": "create:shaft"
-    },
     "C": {
-      "item": "create:cogwheel"
+      "item": "create:chute"
     },
     "X": {
-      "item": "create:chromatic_compound"
+      "item": "create:copper_backtank"
+    },
+    "S": {
+      "item": "create:shaft"
     },
     "Y": {
       "item": "create:precision_mechanism"
