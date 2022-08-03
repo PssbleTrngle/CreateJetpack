@@ -1,23 +1,31 @@
-modLoader="javafml"
-loaderVersion="[40,)"
-license='LGPL'
+modLoader = "javafml"
+loaderVersion = "[40,)"
+license = 'LGPL'
 
 [[mods]]
-    modId="create_jetpack"
-    version="${file.jarVersion}"
-    displayName="Proceessing Pattern"
-    authors="possible_triangle"
-    description='''Nerv RefinedStorage patterns'''
+modId = "create_jetpack"
+version = "${file.jarVersion}"
+displayName = "Create Jetpack"
+authors = "possible_triangle"
+description = '''Upgrade your backtank and utilize the pressurized air to fly'''
 
 [[dependencies.create_jetpack]]
-    modId="forge"
-    mandatory=true
-    versionRange="[36,)"
-    ordering="NONE"
-    side="BOTH"
+modId = "forge"
+mandatory = true
+versionRange = "[36,)"
+ordering = "NONE"
+side = "BOTH"
+
 [[dependencies.create_jetpack]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[1.16.5,)"
-    ordering="NONE"
-    side="BOTH"
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.16.5,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.create_jetpack]]
+modId = "create"
+mandatory = true
+versionRange = "[0.5.0a,)"
+ordering = "NONE"
+side = "BOTH"

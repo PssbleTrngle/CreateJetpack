@@ -13,5 +13,9 @@
   "message.create_jetpack.control.toggle_active": "Turned jetpack engine %s",
   "message.create_jetpack.control.toggle_hover": "Turned jetpack hover mode %s",
   "message.create_jetpack.control.on": "on",
-  "message.create_jetpack.control.off": "off"
+  "message.create_jetpack.control.off": "off",
+  "overlay.create_jetpack.control.toggle_hover": "Hover",
+  "overlay.create_jetpack.control.toggle_active": "Active",
+  "key.jetpack.toggle_hover.description": "Toggle Hover Mode",
+  "key.jetpack.toggle_active.description": "Toggle Jetpack Engine"
 }

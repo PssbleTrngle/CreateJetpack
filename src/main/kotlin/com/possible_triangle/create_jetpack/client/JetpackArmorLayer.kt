@@ -26,7 +26,6 @@ class JetpackArmorLayer<T : LivingEntity, M : EntityModel<T>>(private val render
 
     companion object {
         fun registerOnAll(dispatcher: EntityRenderDispatcher) {
-
             dispatcher.skinMap.values.forEach(::registerOn)
             dispatcher.renderers.values.forEach(::registerOn)
         }

@@ -28,6 +28,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.TagKey
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.storage.loot.LootPool
 import net.minecraft.world.level.storage.loot.LootTable
@@ -62,6 +63,8 @@ object Content {
     //private val EFFECTS = DeferredRegister.create(ForgeRegistries.POTIONS, MOD_ID)
     //private val FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, MOD_ID)
     //private val RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MOD_ID)
+
+    val PRESSURIZED_AIR_SOURCES = TagKey.create(net.minecraft.core.Registry.ITEM_REGISTRY, Create.asResource("pressurized_air_sources"))
 
     val JETPACK_BLOCK = REGISTRATE.block<JetpackBlock>("jetpack", ::JetpackBlock)
         .initialProperties { SharedProperties.copperMetal() }
@@ -111,6 +114,7 @@ object Content {
 
     val JETPACK: ItemEntry<Jetpack> = REGISTRATE.item<Jetpack>("jetpack") { Jetpack(it, JETPACK_PLACEABLE) }
         .model(AssetLookup.customGenericItemModel("_", "item"))
+        .tag(PRESSURIZED_AIR_SOURCES)
         .register()
 
     val JETPACK_CAPABILITY = CapabilityManager.get(object : CapabilityToken<IJetpack>() {})

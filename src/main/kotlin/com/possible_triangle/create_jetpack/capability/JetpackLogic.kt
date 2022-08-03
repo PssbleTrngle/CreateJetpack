@@ -36,6 +36,7 @@ object JetpackLogic {
     }
 
     fun getActiveJetpack(entity: LivingEntity): Pair<Context, IJetpack>? {
+        if(entity is Player && entity.abilities.flying) return null
         return getJetpack(entity)
             ?.takeIf { active(it.second.activeType(it.first), Key.TOGGLE_ACTIVE, entity) }
             ?.takeIf { it.second.isUsable(it.first) }

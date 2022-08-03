@@ -14,25 +14,26 @@ import net.minecraftforge.event.TickEvent
 import net.minecraftforge.event.entity.player.PlayerEvent
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
 import net.minecraftforge.fml.common.Mod
+import org.lwjgl.glfw.GLFW
 
 @Mod.EventBusSubscriber
 object ControlManager {
 
-    enum class Key(val toggle: Boolean, createKeybind: Boolean = true, val default: Boolean = false) {
-        UP(false, createKeybind = false),
-        LEFT(false, createKeybind = false),
-        RIGHT(false, createKeybind = false),
-        FORWARD(false, createKeybind = false),
-        BACKWARD(false, createKeybind = false),
-        TOGGLE_ACTIVE(true, default = true),
-        TOGGLE_HOVER(true);
+    enum class Key(val toggle: Boolean, defaultKey: Int? = null, val default: Boolean = false) {
+        UP(false),
+        LEFT(false),
+        RIGHT(false),
+        FORWARD(false),
+        BACKWARD(false),
+        TOGGLE_ACTIVE(true, default = true, defaultKey = GLFW.GLFW_KEY_G),
+        TOGGLE_HOVER(true, defaultKey = GLFW.GLFW_KEY_H);
 
         @OnlyIn(Dist.CLIENT)
-        val binding: KeyMapping? = if (createKeybind) KeyMapping(
+        val binding: KeyMapping? = if (defaultKey != null) KeyMapping(
             "key.jetpack.${name.lowercase()}.description",
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
-            12 + ordinal,
+            defaultKey,
             "jetpack"
         ) else null
 
