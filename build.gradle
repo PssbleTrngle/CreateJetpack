@@ -163,7 +163,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/pssbletrngle/${project.mod_id}")
+            url = uri("https://maven.pkg.github.com/${project.repository}")
             version = version
             credentials {
                 username = ENV.GITHUB_ACTOR
@@ -219,7 +219,7 @@ tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
 
 sonarqube {
     properties {
-        property 'sonar.projectVersion', mod_version
+        property 'sonar.projectVersion', project.mod_version
         property "sonar.projectKey", project.mod_id
     }
 }
