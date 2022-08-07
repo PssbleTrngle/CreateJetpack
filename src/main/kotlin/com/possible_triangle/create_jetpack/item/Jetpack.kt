@@ -3,6 +3,7 @@ package com.possible_triangle.create_jetpack.item
 import com.possible_triangle.create_jetpack.Content.JETPACK_CAPABILITY
 import com.possible_triangle.create_jetpack.capability.IJetpack
 import com.possible_triangle.create_jetpack.capability.IJetpack.Context
+import com.possible_triangle.create_jetpack.config.Configs
 import com.simibubi.create.content.contraptions.particle.AirParticleData
 import com.simibubi.create.content.curiosities.armor.BackTankUtil
 import com.simibubi.create.content.curiosities.armor.CopperBacktankItem
@@ -15,17 +16,15 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.common.util.LazyOptional
 
 class Jetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBlockItem>) :
-    CopperBacktankItem(properties.rarity(Rarity.RARE), blockItem),
-    IJetpack,
-    ICapabilityProvider {
+    CopperBacktankItem(properties.rarity(Rarity.RARE), blockItem), IJetpack, ICapabilityProvider {
     private val capability = LazyOptional.of<IJetpack> { this }
 
     override fun hoverSpeed(context: Context): Double {
-        return -0.03
+        return Configs.SERVER.HOVER_SPEED.get()
     }
 
     override fun verticalSpeed(context: Context): Double {
-        return 0.4
+        return Configs.SERVER.VERTICAL_SPEED.get()
     }
 
     override fun activeType(context: Context): ControlType {
@@ -37,15 +36,15 @@ class Jetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBlockIt
     }
 
     override fun horizontalSpeed(context: Context): Double {
-        return 0.02
+        return Configs.SERVER.HORIZONTAL_SPEED.get()
     }
 
     override fun acceleration(context: Context): Double {
-        return 0.6
+        return Configs.SERVER.ACCELERATION.get()
     }
 
     override fun onUse(context: Context) {
-        if(!isThrusting(context)) return
+        if (!isThrusting(context)) return
         val yaw = (context.entity.yBodyRot / 180 * -Math.PI).toFloat()
         listOf(-0.35, 0.35).forEach { offset ->
             val pos = Vec3(offset, 0.7, -0.5).yRot(yaw)
@@ -59,10 +58,21 @@ class Jetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBlockIt
                 0.0
             )
         }
+
+        BackTankUtil.canAbsorbDamage(context.entity, usesPerTank(context))
+    }
+
+    private fun usesPerTank(context: Context): Int {
+        return if (isHovering(context)) Configs.SERVER.USES_PER_TANK_HOVER.get()
+        else Configs.SERVER.USES_PER_TANK.get()
     }
 
     override fun isUsable(context: Context): Boolean {
-        return BackTankUtil.canAbsorbDamage(context.entity, 10)
+        val tank = BackTankUtil.get(context.entity)
+        if (tank.isEmpty) return false
+        val air = BackTankUtil.getAir(tank)
+        val cost = BackTankUtil.maxAirWithoutEnchants() / usesPerTank(context)
+        return air >= cost
     }
 
     override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {

@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
 import com.possible_triangle.create_jetpack.capability.IJetpack
 import com.possible_triangle.create_jetpack.capability.JetpackLogic
+import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.Jetpack
 import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ControlManager.Key
@@ -42,6 +43,7 @@ object ControlsDisplay : IIngameOverlay {
 
     override fun render(gui: ForgeIngameGui, poseStack: PoseStack, partialTick: Float, width: Int, height: Int) {
         val mc = Minecraft.getInstance()
+        if(!Configs.CLIENT.SHOW_OVERLAY.get()) return
         if (mc.options.hideGui) return
         val player = mc.player ?: return
         val (context, jetpack) = JetpackLogic.getJetpack(player) ?: return

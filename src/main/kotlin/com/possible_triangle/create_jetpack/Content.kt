@@ -7,6 +7,7 @@ import com.possible_triangle.create_jetpack.capability.IJetpack
 import com.possible_triangle.create_jetpack.capability.JetpackLogic
 import com.possible_triangle.create_jetpack.client.ControlsDisplay
 import com.possible_triangle.create_jetpack.client.JetpackArmorLayer
+import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.Jetpack
 import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ModNetwork
@@ -27,6 +28,7 @@ import com.simibubi.create.repack.registrate.util.nullness.NonNullFunction
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
+import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.ItemStack
@@ -44,9 +46,12 @@ import net.minecraftforge.common.capabilities.CapabilityToken
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.eventbus.api.IEventBus
+import net.minecraftforge.fml.config.ModConfig
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
+import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
+import thedarkcolour.kotlinforforge.forge.MOD_CONTEXT
 import java.util.function.BiConsumer
 import java.util.function.BiFunction
 import java.util.function.Supplier
@@ -57,14 +62,7 @@ object Content {
         .creativeModeTab { CreateItemGroup.TAB_TOOLS }
         .startSection(AllSections.CURIOSITIES)
 
-    //private val ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID)
-    //private val BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MOD_ID)
-    //private val TILES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, MOD_ID)
-    //private val EFFECTS = DeferredRegister.create(ForgeRegistries.POTIONS, MOD_ID)
-    //private val FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, MOD_ID)
-    //private val RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MOD_ID)
-
-    val PRESSURIZED_AIR_SOURCES = TagKey.create(net.minecraft.core.Registry.ITEM_REGISTRY, Create.asResource("pressurized_air_sources"))
+    val PRESSURIZED_AIR_SOURCES = TagKey.create(Registry.ITEM_REGISTRY, Create.asResource("pressurized_air_sources"))
 
     val JETPACK_BLOCK = REGISTRATE.block<JetpackBlock>("jetpack", ::JetpackBlock)
         .initialProperties { SharedProperties.copperMetal() }
@@ -119,27 +117,22 @@ object Content {
 
     val JETPACK_CAPABILITY = CapabilityManager.get(object : CapabilityToken<IJetpack>() {})
 
-    val THRUSTERS_MODEL = PartialModel(ResourceLocation(MOD_ID, "block/jetpack/thrusters"))
-
-    fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
+    private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
         val item = stack.item
         if (item is Jetpack) add.accept(ResourceLocation(MOD_ID, "jetpack"), item)
     }
 
     fun register(modBus: IEventBus) {
+        LOADING_CONTEXT.registerConfig(ModConfig.Type.COMMON, Configs.SERVER_SPEC)
+        LOADING_CONTEXT.registerConfig(ModConfig.Type.CLIENT, Configs.CLIENT_SPEC)
+
         modBus.addListener { _: FMLCommonSetupEvent ->
-            // TODO check if neccessary
-            //CapabilityManager.INSTANCE.(IJetpack::class.java, JetpackStorage) { FakeJetpack }
             ModNetwork.init()
         }
 
         modBus.addListener { _: FMLClientSetupEvent ->
             ControlManager.registerKeybinds()
             ControlsDisplay.register()
-
-            //InstancedRenderRegistry().register(Content.JETPACK_TILE, ::CopperBacktankInstance)
-            //ClientRegistry.bindTileEntityRenderer(Content.JETPACK_TILE, ::CopperBacktankRenderer)
-            //RenderTypeLookup.setRenderLayer(Content.JETPACK_BLOCK, RenderType.getCutoutMipped())
         }
 
         modBus.addListener { _: EntityRenderersEvent.AddLayers ->

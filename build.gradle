@@ -53,6 +53,7 @@ minecraft {
 
             arg '-mixin.config=create.mixins.json'
             arg '-mixin.config=flywheel.mixins.json'
+            arg "-mixin.config=${project.mod_id}.mixins.json"
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
@@ -70,6 +71,7 @@ minecraft {
 
             arg '-mixin.config=create.mixins.json'
             arg '-mixin.config=flywheel.mixins.json'
+            arg "-mixin.config=${project.mod_id}.mixins.json"
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
@@ -87,6 +89,7 @@ minecraft {
 
             arg '-mixin.config=create.mixins.json'
             arg '-mixin.config=flywheel.mixins.json'
+            arg "-mixin.config=${project.mod_id}.mixins.json"
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 

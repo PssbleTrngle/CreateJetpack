@@ -39,9 +39,13 @@ interface IJetpack {
 
     fun onUse(context: Context) {}
 
+    fun isHovering(context: Context): Boolean {
+        return JetpackLogic.active(hoverType(context), ControlManager.Key.TOGGLE_HOVER, context.entity)
+    }
+
     fun isThrusting(context: Context): Boolean {
         val entity = context.entity
-        if (JetpackLogic.active(hoverType(context), ControlManager.Key.TOGGLE_HOVER, entity)) return true
+        if (isHovering(context)) return true
         return entity is Player && ControlManager.isPressed(entity, ControlManager.Key.UP)
     }
 
