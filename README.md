@@ -5,3 +5,6 @@ using the pressurized air inside to propel yourself through the air.
 
 Inspired by [Simply Jetpacks](https://www.curseforge.com/minecraft/mc-mods/simply-jetpacks-2),
 this jetpack also has a hover mode.
+
+Like the copper backtank, the jetpack does also go in the chest slot, 
+feeds air to items like the extendo-grip and can be enchanted with _Capacity_
