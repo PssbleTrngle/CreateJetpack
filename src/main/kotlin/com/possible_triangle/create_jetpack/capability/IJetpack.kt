@@ -70,8 +70,9 @@ interface IJetpack {
 
     fun isThrusting(context: Context): Boolean {
         val entity = context.entity
+        if(!JetpackLogic.active(context.jetpack.activeType(context), ControlManager.Key.TOGGLE_ACTIVE, entity)) return false
         if (context.pose == FlyingPose.SUPERMAN && entity.deltaMovement.length() > 0.1) return true
-        if (isHovering(context)) return true
+        if (isHovering(context) && !entity.isOnGround) return true
         return entity is Player && ControlManager.isPressed(entity, ControlManager.Key.UP)
     }
 

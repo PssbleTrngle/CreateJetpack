@@ -10,6 +10,7 @@ import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.BronzeJetpack
 import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ControlManager.Key
+import com.simibubi.create.content.curiosities.armor.BackTankUtil
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiComponent
 import net.minecraft.network.chat.TranslatableComponent
@@ -17,18 +18,18 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.client.gui.ForgeIngameGui
 import net.minecraftforge.client.gui.IIngameOverlay
 import net.minecraftforge.client.gui.OverlayRegistry
+import kotlin.math.ceil
 
 
 object ControlsDisplay : IIngameOverlay {
 
-    private val texture = ResourceLocation(MOD_ID, "textures/gui/controls.png")
-    private const val textureSize = 32
+    private val controls = ResourceLocation(MOD_ID, "textures/gui/controls.png")
+    private val airIndicator = ResourceLocation(MOD_ID, "textures/gui/air_indicator.png")
 
     private fun spritePos(index: Int): Vector2f {
-        val spritePerRow = textureSize / 16
         return Vector2f(
-            index % spritePerRow * 16F,
-            index / spritePerRow * 16F,
+            index % 2 * 16F,
+            index / 2 * 16F,
         )
     }
 
@@ -43,7 +44,7 @@ object ControlsDisplay : IIngameOverlay {
 
     override fun render(gui: ForgeIngameGui, poseStack: PoseStack, partialTick: Float, width: Int, height: Int) {
         val mc = Minecraft.getInstance()
-        if(!Configs.CLIENT.SHOW_OVERLAY.get()) return
+        if (!Configs.CLIENT.SHOW_OVERLAY.get()) return
         if (mc.options.hideGui) return
         val player = mc.player ?: return
         val context = JetpackLogic.getJetpack(player) ?: return
@@ -53,22 +54,22 @@ object ControlsDisplay : IIngameOverlay {
         val scale = 1.0F
         val spriteWidth = 16 + margin
 
-        fun renderSprite(index: Int, x: Int, y: Int) {
+        fun renderSprite(index: Int, x: Int) {
             val sprite = spritePos(index)
-            RenderSystem.setShaderTexture(0, texture)
+            RenderSystem.setShaderTexture(0, controls)
             poseStack.scale(scale, scale, scale)
-            GuiComponent.blit(poseStack, x, y, 0, sprite.x, sprite.y, 16, 16, 32, 32)
+            GuiComponent.blit(poseStack, x, padding, 0, sprite.x, sprite.y, 16, 16, 32, 32)
         }
 
         val engineActive = ControlManager.isPressed(player, Key.TOGGLE_ACTIVE)
 
-        ICONS.filterKeys { it == Key.TOGGLE_ACTIVE || engineActive }
+        val renderedIcons = ICONS.filterKeys { it == Key.TOGGLE_ACTIVE || engineActive }
             .filterValues { getType -> getType(context) == BronzeJetpack.ControlType.TOGGLE }
-            .keys.forEachIndexed { index, key ->
+            .keys.mapIndexed { index, key ->
                 poseStack.pushPose()
 
                 val active = ControlManager.isPressed(player, key)
-                renderSprite(index + if (active) 0 else 2, padding + spriteWidth * index, padding)
+                renderSprite(index + if (active) 0 else 2, padding + spriteWidth * index)
 
                 val textScale = 0.5F
                 poseStack.scale(textScale, textScale, textScale)
@@ -80,6 +81,43 @@ object ControlsDisplay : IIngameOverlay {
                 )
                 poseStack.popPose()
 
+            }.count()
+
+        if (engineActive) {
+            poseStack.pushPose()
+
+            poseStack.scale(scale, scale, scale)
+            RenderSystem.setShaderTexture(0, airIndicator)
+            RenderSystem.enableBlend()
+
+            val barWidth = 5
+            fun renderBar(index: Int, barHeight: Int = 16, spriteOffset: Int = 0) {
+                GuiComponent.blit(
+                    poseStack,
+                    padding + spriteWidth * renderedIcons,
+                    padding + (19 - barHeight) - spriteOffset,
+                    (barWidth * index).toFloat(),
+                    16F - barHeight - spriteOffset,
+                    barWidth,
+                    barHeight,
+                    16,
+                    16
+                )
             }
+
+            val blink = player.level.gameTime % 20 < 5
+            val airSource = BackTankUtil.get(player)
+            val maxAir = BackTankUtil.maxAir(airSource)
+            val air = BackTankUtil.getAir(airSource)
+            val barHeight = ceil(air / maxAir * 14).toInt()
+            val shrinking = context.jetpack.isThrusting(context)
+
+            renderBar(1)
+            if (shrinking && barHeight > 0 && blink) renderBar(0, barHeight - 1, 1)
+            else renderBar(0, barHeight, 1)
+
+            RenderSystem.disableBlend()
+            poseStack.popPose()
+        }
     }
 }
