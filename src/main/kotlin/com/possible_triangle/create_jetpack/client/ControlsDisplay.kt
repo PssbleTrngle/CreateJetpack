@@ -7,7 +7,7 @@ import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
 import com.possible_triangle.create_jetpack.capability.IJetpack
 import com.possible_triangle.create_jetpack.capability.JetpackLogic
 import com.possible_triangle.create_jetpack.config.Configs
-import com.possible_triangle.create_jetpack.item.Jetpack
+import com.possible_triangle.create_jetpack.item.BronzeJetpack
 import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ControlManager.Key
 import net.minecraft.client.Minecraft
@@ -32,9 +32,9 @@ object ControlsDisplay : IIngameOverlay {
         )
     }
 
-    private val ICONS = mapOf<Key, (IJetpack, IJetpack.Context) -> Jetpack.ControlType>(
-        Key.TOGGLE_ACTIVE to { j, c -> j.activeType(c) },
-        Key.TOGGLE_HOVER to { j, c -> j.hoverType(c) },
+    private val ICONS = mapOf<Key, (IJetpack.Context) -> BronzeJetpack.ControlType>(
+        Key.TOGGLE_ACTIVE to { it.jetpack.activeType(it) },
+        Key.TOGGLE_HOVER to { it.jetpack.hoverType(it) },
     )
 
     fun register() {
@@ -46,7 +46,7 @@ object ControlsDisplay : IIngameOverlay {
         if(!Configs.CLIENT.SHOW_OVERLAY.get()) return
         if (mc.options.hideGui) return
         val player = mc.player ?: return
-        val (context, jetpack) = JetpackLogic.getJetpack(player) ?: return
+        val context = JetpackLogic.getJetpack(player) ?: return
 
         val padding = 4
         val margin = 6
@@ -63,7 +63,7 @@ object ControlsDisplay : IIngameOverlay {
         val engineActive = ControlManager.isPressed(player, Key.TOGGLE_ACTIVE)
 
         ICONS.filterKeys { it == Key.TOGGLE_ACTIVE || engineActive }
-            .filterValues { getType -> getType(jetpack, context) == Jetpack.ControlType.TOGGLE }
+            .filterValues { getType -> getType(context) == BronzeJetpack.ControlType.TOGGLE }
             .keys.forEachIndexed { index, key ->
                 poseStack.pushPose()
 

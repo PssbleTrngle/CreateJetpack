@@ -4,7 +4,6 @@ import com.possible_triangle.create_jetpack.Content.JETPACK_CAPABILITY
 import com.possible_triangle.create_jetpack.capability.IJetpack
 import com.possible_triangle.create_jetpack.capability.IJetpack.Context
 import com.possible_triangle.create_jetpack.config.Configs
-import com.simibubi.create.content.contraptions.particle.AirParticleData
 import com.simibubi.create.content.curiosities.armor.BackTankUtil
 import com.simibubi.create.content.curiosities.armor.CopperBacktankItem
 import com.simibubi.create.repack.registrate.util.entry.ItemEntry
@@ -15,7 +14,7 @@ import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.common.util.LazyOptional
 
-class Jetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBlockItem>) :
+class BronzeJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBlockItem>) :
     CopperBacktankItem(properties.rarity(Rarity.RARE), blockItem), IJetpack, ICapabilityProvider {
     private val capability = LazyOptional.of<IJetpack> { this }
 
@@ -43,22 +42,18 @@ class Jetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBlockIt
         return Configs.SERVER.ACCELERATION.get()
     }
 
+    override fun swimModifier(context: Context): Double {
+        return Configs.SERVER.SWIM_MODIFIER.get()
+    }
+
+    private val thrusters = listOf(-0.35, 0.35).map { offset ->
+        Vec3(offset, 0.7, -0.5)
+    }
+
+    override fun getThrusters(context: Context) = thrusters
+
     override fun onUse(context: Context) {
         if (!isThrusting(context)) return
-        val yaw = (context.entity.yBodyRot / 180 * -Math.PI).toFloat()
-        listOf(-0.35, 0.35).forEach { offset ->
-            val pos = Vec3(offset, 0.7, -0.5).yRot(yaw)
-            context.world.addParticle(
-                AirParticleData(0F, 0.01F),
-                context.entity.x + pos.x,
-                context.entity.y + pos.y,
-                context.entity.z + pos.z,
-                0.0,
-                -1.0,
-                0.0
-            )
-        }
-
         BackTankUtil.canAbsorbDamage(context.entity, usesPerTank(context))
     }
 

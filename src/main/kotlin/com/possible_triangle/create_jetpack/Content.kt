@@ -1,6 +1,5 @@
 package com.possible_triangle.create_jetpack
 
-import com.jozufozu.flywheel.core.PartialModel
 import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
 import com.possible_triangle.create_jetpack.block.JetpackBlock
 import com.possible_triangle.create_jetpack.capability.IJetpack
@@ -8,7 +7,7 @@ import com.possible_triangle.create_jetpack.capability.JetpackLogic
 import com.possible_triangle.create_jetpack.client.ControlsDisplay
 import com.possible_triangle.create_jetpack.client.JetpackArmorLayer
 import com.possible_triangle.create_jetpack.config.Configs
-import com.possible_triangle.create_jetpack.item.Jetpack
+import com.possible_triangle.create_jetpack.item.BronzeJetpack
 import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ModNetwork
 import com.simibubi.create.AllTags.pickaxeOnly
@@ -51,7 +50,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
-import thedarkcolour.kotlinforforge.forge.MOD_CONTEXT
 import java.util.function.BiConsumer
 import java.util.function.BiFunction
 import java.util.function.Supplier
@@ -110,7 +108,7 @@ object Content {
         provider.withExistingParent(context.name, provider.mcLoc("item/barrier"))
     }.register()
 
-    val JETPACK: ItemEntry<Jetpack> = REGISTRATE.item<Jetpack>("jetpack") { Jetpack(it, JETPACK_PLACEABLE) }
+    val JETPACK: ItemEntry<BronzeJetpack> = REGISTRATE.item<BronzeJetpack>("jetpack") { BronzeJetpack(it, JETPACK_PLACEABLE) }
         .model(AssetLookup.customGenericItemModel("_", "item"))
         .tag(PRESSURIZED_AIR_SOURCES)
         .register()
@@ -119,7 +117,7 @@ object Content {
 
     private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
         val item = stack.item
-        if (item is Jetpack) add.accept(ResourceLocation(MOD_ID, "jetpack"), item)
+        if (item is BronzeJetpack) add.accept(ResourceLocation(MOD_ID, "jetpack"), item)
     }
 
     fun register(modBus: IEventBus) {

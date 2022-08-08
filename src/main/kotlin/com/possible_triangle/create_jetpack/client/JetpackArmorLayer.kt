@@ -69,9 +69,8 @@ class JetpackArmorLayer<T : LivingEntity, M : EntityModel<T>>(private val render
 
         val backtank = CachedBufferer.block(renderedState)
         val cogs = CachedBufferer.partial(AllBlockPartials.COPPER_BACKTANK_COGS, renderedState)
-        //val thrusters = CachedBufferer.partial(Content.THRUSTERS_MODEL, renderedState)
 
-        val using = jetpack?.let { (context, jetpack) -> jetpack.isThrusting(context) } ?: false
+        val using = jetpack?.let { it.jetpack.isThrusting(it) } ?: false
         val cogSpeed = if(using) 32.0 else 2.0
 
         ms.pushPose()

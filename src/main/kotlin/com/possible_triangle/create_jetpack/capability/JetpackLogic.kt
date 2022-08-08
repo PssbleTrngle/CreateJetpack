@@ -1,19 +1,26 @@
 package com.possible_triangle.create_jetpack.capability
 
 import com.possible_triangle.create_jetpack.Content.JETPACK_CAPABILITY
+import com.possible_triangle.create_jetpack.CreateJetpackMod
 import com.possible_triangle.create_jetpack.capability.IJetpack.Context
-import com.possible_triangle.create_jetpack.item.Jetpack.ControlType
-import com.possible_triangle.create_jetpack.item.Jetpack.ControlType.*
+import com.possible_triangle.create_jetpack.item.BronzeJetpack.ControlType
+import com.possible_triangle.create_jetpack.item.BronzeJetpack.ControlType.*
 import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ControlManager.Key
+import com.simibubi.create.content.contraptions.particle.AirParticleData
+import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.ai.attributes.AttributeModifier
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.phys.Vec3
+import net.minecraftforge.common.ForgeMod
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.fml.common.Mod
+import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -35,55 +42,131 @@ object JetpackLogic {
         }
     }
 
-    fun getActiveJetpack(entity: LivingEntity): Pair<Context, IJetpack>? {
-        if(entity is Player && entity.abilities.flying) return null
+    fun getActiveJetpack(entity: LivingEntity): Context? {
+        if (entity is Player && entity.abilities.flying) return null
         return getJetpack(entity)
-            ?.takeIf { active(it.second.activeType(it.first), Key.TOGGLE_ACTIVE, entity) }
-            ?.takeIf { it.second.isUsable(it.first) }
+            ?.takeIf { active(it.jetpack.activeType(it), Key.TOGGLE_ACTIVE, entity) }
+            ?.takeIf { it.jetpack.isUsable(it) }
     }
 
-    fun getJetpack(entity: LivingEntity): Pair<Context, IJetpack>? {
+    fun getJetpack(entity: LivingEntity): Context? {
         val world = entity.level ?: return null
+
+        val pose = FlyingPose.get(entity)
 
         val equipment = EquipmentSlot.values().map {
             val stack = entity.getItemBySlot(it)
-            Context(entity, world, stack, it) to stack
+            Context.builder(entity, world, pose, stack, it) to stack
         }
 
-        val sources = listOf<List<Pair<Context, ICapabilityProvider>>>(
+        val sources = listOf<List<Pair<(IJetpack) -> Context, ICapabilityProvider>>>(
             equipment,
-            listOf(Context(entity, world) to entity),
+            listOf(Context.builder(entity, world, pose) to entity),
         ).flatten()
 
         return sources.asSequence()
             .map { it.first to it.second.getCapability(JETPACK_CAPABILITY) }
             .filter { it.second.isPresent }
             .map { it.first to it.second.resolve().get() }
+            .map { it.first(it.second) }
             .firstOrNull()
     }
 
+    private val ATTRIBUTE_ID = UUID.fromString("f4f2d961-fac9-42c2-93b8-69abd884d386")
+
+    enum class FlyingPose {
+        UPRIGHT, SUPERMAN;
+
+        companion object {
+            fun get(entity: LivingEntity): FlyingPose {
+                return if (entity.isFallFlying) SUPERMAN
+                else if (entity.isVisuallySwimming && entity.isSprinting && (entity !is Player || entity.isAffectedByFluids)) SUPERMAN
+                else UPRIGHT
+            }
+        }
+    }
+
+    private fun handleSwimModifier(entity: LivingEntity, context: Context?) {
+        val attribute = entity.getAttribute(ForgeMod.SWIM_SPEED.get()) ?: return
+
+        val hasModifier = attribute.getModifier(ATTRIBUTE_ID) != null
+        val shouldHaveModifier = context?.pose == FlyingPose.SUPERMAN && entity.isUnderWater
+
+        if (!shouldHaveModifier && hasModifier) attribute.removeModifier(ATTRIBUTE_ID)
+        else if (shouldHaveModifier && !hasModifier) {
+            val modifier = context!!.jetpack.swimModifier(context)
+            if (modifier > 0) attribute.addPermanentModifier(
+                AttributeModifier(
+                    ATTRIBUTE_ID,
+                    "${CreateJetpackMod.MOD_ID}:boost",
+                    modifier,
+                    Operation.MULTIPLY_TOTAL
+                )
+            )
+        }
+    }
+
     fun tick(event: TickEvent.PlayerTickEvent) {
-        val entity = event.player
-        val (context, jetpack) = getActiveJetpack(entity) ?: return
+        val player = event.player
+        val context = getActiveJetpack(player)
+        handleSwimModifier(player, context)
 
+        if (context == null) return
+
+        val isUsed = when (context.pose) {
+            FlyingPose.SUPERMAN -> elytraBoost(context)
+            FlyingPose.UPRIGHT -> uprightMovement(context)
+        }
+
+        if (isUsed) {
+            spawnParticles(context)
+            context.jetpack.onUse(context)
+        }
+    }
+
+    private fun elytraBoost(ctx: Context): Boolean {
+        val entity = ctx.entity
+        if (!entity.isFallFlying) return true
+        if (entity !is Player || !ControlManager.isPressed(entity, Key.UP)) return false
+
+        if (entity.level.gameTime % 15 == 0L) {
+            val look = entity.lookAngle
+            val factor = { i: Double -> i * 0.1 + (i * 1.1 - i) * 0.5 }
+            entity.deltaMovement = entity.deltaMovement.add(
+                factor(look.x),
+                factor(look.y),
+                factor(look.z),
+            )
+
+        }
+
+        return true
+    }
+
+    private fun uprightMovement(ctx: Context): Boolean {
+        val entity = ctx.entity
         val buttonUp = entity is Player && ControlManager.isPressed(entity, Key.UP)
-        // TODO check if this == sneaking
         val buttonDown = entity.isShiftKeyDown
-        val hovering = active(jetpack.hoverType(context), Key.TOGGLE_HOVER, entity)
+        val hovering = active(ctx.jetpack.hoverType(ctx), Key.TOGGLE_HOVER, entity)
 
-        if (entity.isOnGround && !buttonUp) return
+        if (ctx.entity.isOnGround && !buttonUp) return false
 
-        jetpack.onUse(context)
+        val verticalSpeed =
+            if (hovering) ctx.jetpack.hoverVerticalSpeed(ctx)
+            else ctx.jetpack.verticalSpeed(ctx)
 
-        val verticalSpeed = if (hovering) jetpack.hoverVerticalSpeed(context) else jetpack.verticalSpeed(context)
         val horizontalSpeed =
-            if (hovering) jetpack.hoverHorizontalSpeed(context) else jetpack.horizontalSpeed(context)
-        val acceleration = jetpack.acceleration(context)
+            if (hovering) {
+                if (entity.isUnderWater) 0.0
+                else ctx.jetpack.hoverHorizontalSpeed(ctx)
+            } else ctx.jetpack.horizontalSpeed(ctx)
+        val acceleration = ctx.jetpack.acceleration(ctx)
 
         val speed = when {
             buttonUp && !buttonDown -> verticalSpeed
             buttonDown && !buttonUp -> -verticalSpeed
-            hovering -> jetpack.hoverSpeed(context)
+            hovering && entity.isUnderWater -> 0.0
+            hovering -> ctx.jetpack.hoverSpeed(ctx)
             else -> null
         }
 
@@ -109,6 +192,25 @@ object JetpackLogic {
             }
         }
 
+        return true
+    }
+
+    private fun spawnParticles(context: Context) {
+        val thrusters = context.jetpack.getThrusters(context) ?: return
+        val yaw = (context.entity.yBodyRot / 180 * -Math.PI).toFloat()
+        thrusters.map { it.yRot(yaw) }.forEach { pos ->
+            val particle = if (context.entity.isUnderWater) ParticleTypes.BUBBLE
+            else AirParticleData(0F, 0.01F)
+            context.world.addParticle(
+                particle,
+                context.entity.x + pos.x,
+                context.entity.y + pos.y,
+                context.entity.z + pos.z,
+                0.0,
+                -1.0,
+                0.0
+            )
+        }
     }
 
 }

@@ -11,5 +11,6 @@ class ServerConfig(builder: ForgeConfigSpec.Builder) {
     val VERTICAL_SPEED = builder.defineInRange("speed.vertical", 0.4, 0.01, 100.0)
     val ACCELERATION = builder.defineInRange("speed.acceleration", 0.6, 0.01, 100.0)
     val HOVER_SPEED = builder.defineInRange("speed.hover_descend", -0.03, -100.0, 0.0)
+    val SWIM_MODIFIER = builder.defineInRange("speed.swim_modifier", 1.8, 0.0, 100.0)
 
 }
