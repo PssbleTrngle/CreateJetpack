@@ -15,11 +15,12 @@ import net.minecraftforge.event.entity.player.PlayerEvent
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
 import net.minecraftforge.fml.common.Mod
 import org.lwjgl.glfw.GLFW
+import java.util.*
 
 @Mod.EventBusSubscriber
 object ControlManager {
 
-    enum class Key(val toggle: Boolean, defaultKey: Int? = null, val default: Boolean = false) {
+    enum class Key(val toggle: Boolean, val defaultKey: Int? = null, val default: Boolean = false) {
         UP(false),
         LEFT(false),
         RIGHT(false),
@@ -29,13 +30,7 @@ object ControlManager {
         TOGGLE_HOVER(true, defaultKey = GLFW.GLFW_KEY_H);
 
         @OnlyIn(Dist.CLIENT)
-        val binding: KeyMapping? = if (defaultKey != null) KeyMapping(
-            "key.jetpack.${name.lowercase()}.description",
-            KeyConflictContext.IN_GAME,
-            InputConstants.Type.KEYSYM,
-            defaultKey,
-            "jetpack"
-        ) else null
+        lateinit var binding: Optional<KeyMapping>
 
     }
 
@@ -52,8 +47,19 @@ object ControlManager {
 
     @OnlyIn(Dist.CLIENT)
     fun registerKeybinds() {
-        Key.values().filter { it.binding != null }.forEach {
-            ClientRegistry.registerKeyBinding(it.binding)
+        Key.values().forEach { key ->
+            key.binding = Optional.ofNullable(key.defaultKey).map {
+                KeyMapping(
+                    "key.jetpack.${key.name.lowercase()}.description",
+                    KeyConflictContext.IN_GAME,
+                    InputConstants.Type.KEYSYM,
+                    it,
+                    "jetpack"
+                )
+            }
+            key.binding.ifPresent {
+                ClientRegistry.registerKeyBinding(it)
+            }
         }
     }
 
@@ -61,12 +67,20 @@ object ControlManager {
         setKey(player, event.key, event.pressed)
     }
 
+    private fun reset(player: Player) {
+        KEYS[player]?.apply {
+            Key.values()
+                .filterNot { it.toggle }
+                .forEach { remove(it) }
+        }
+    }
+
     fun onDimensionChange(event: PlayerEvent.PlayerChangedDimensionEvent) {
-        KEYS.remove(event.player)
+        reset(event.player)
     }
 
     fun onLogout(event: PlayerLoggedOutEvent) {
-        KEYS.remove(event.player)
+        reset(event.player)
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -80,8 +94,8 @@ object ControlManager {
         if (!event.player.level.isClientSide) return
         val player = event.player as LocalPlayer
 
-        Key.values().filter { !it.toggle && it.binding != null }.forEach {
-            sync(KeyEvent(it, it.binding!!.isDown))
+        Key.values().filter { !it.toggle && it.binding.isPresent }.forEach {
+            sync(KeyEvent(it, it.binding.get().isDown))
         }
 
         sync(KeyEvent(Key.UP, player.input.jumping))
@@ -95,7 +109,7 @@ object ControlManager {
     fun onKey(event: InputEvent.KeyInputEvent) {
         val player = Minecraft.getInstance().player ?: return
 
-        Key.values().filter { it.toggle && it.binding?.isDown == true }.forEach {
+        Key.values().filter { key -> key.toggle && key.binding.filter { it.isDown }.isPresent }.forEach {
             sync(KeyEvent(it, !isPressed(player, it), true))
         }
 
