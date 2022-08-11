@@ -1,5 +1,6 @@
 package com.possible_triangle.create_jetpack.capability
 
+import com.possible_triangle.create_jetpack.Content
 import com.possible_triangle.create_jetpack.Content.JETPACK_CAPABILITY
 import com.possible_triangle.create_jetpack.CreateJetpackMod
 import com.possible_triangle.create_jetpack.capability.IJetpack.Context
@@ -120,6 +121,9 @@ object JetpackLogic {
 
         if (isUsed) {
             spawnParticles(context)
+
+            Content.SOUND_WHOOSH.play(context.world,player, player.x, player.y, player.z , 1F, 1F)
+
             context.jetpack.onUse(context)
         }
     }

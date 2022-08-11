@@ -10,6 +10,7 @@ import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.BronzeJetpack
 import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ModNetwork
+import com.simibubi.create.AllSoundEvents
 import com.simibubi.create.AllTags.pickaxeOnly
 import com.simibubi.create.Create
 import com.simibubi.create.content.AllSections
@@ -29,6 +30,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.sounds.SoundSource
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.storage.loot.LootPool
@@ -115,6 +117,11 @@ object Content {
 
     val JETPACK_CAPABILITY = CapabilityManager.get(object : CapabilityToken<IJetpack>() {})
 
+    val SOUND_WHOOSH = AllSoundEvents.create(ResourceLocation(MOD_ID,"whoosh"))
+        .category(SoundSource.PLAYERS)
+        .noSubtitle()
+        .build()
+
     private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
         val item = stack.item
         if (item is BronzeJetpack) add.accept(ResourceLocation(MOD_ID, "jetpack"), item)
@@ -148,6 +155,8 @@ object Content {
 
         FORGE_BUS.addListener(ControlManager::onTick)
         FORGE_BUS.addListener(ControlManager::onKey)
+
+        SOUND_WHOOSH.prepare()
     }
 
 }

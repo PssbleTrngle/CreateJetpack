@@ -1,0 +1,11 @@
+{
+  "whoosh": {
+    "sounds": [
+      {
+        "name": "create_jetpack:whoosh",
+        "type": "sound"
+      }
+    ],
+    "subtitle": "create_jetpack.subtitle.whoosh"
+  }
+}
