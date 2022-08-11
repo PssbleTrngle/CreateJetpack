@@ -1,6 +1,7 @@
 package com.possible_triangle.create_jetpack.network
 
 import com.mojang.blaze3d.platform.InputConstants
+import com.possible_triangle.create_jetpack.capability.JetpackLogic
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.LocalPlayer
@@ -106,12 +107,16 @@ object ControlManager {
 
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onKey(event: InputEvent.KeyInputEvent) {
         val player = Minecraft.getInstance().player ?: return
+        JetpackLogic.getJetpack(player) ?: return
 
-        Key.values().filter { key -> key.toggle && key.binding.filter { it.isDown }.isPresent }.forEach {
-            sync(KeyEvent(it, !isPressed(player, it), true))
-        }
+        val key = Key.values()
+            .filter { it.toggle }
+            .firstOrNull { it.binding.get().isDown } ?: return
+
+        sync(KeyEvent(key, !isPressed(player, key), true))
 
     }
 
