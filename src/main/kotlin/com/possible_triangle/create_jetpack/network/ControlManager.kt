@@ -91,8 +91,8 @@ object ControlManager {
     }
 
     fun onTick(event: TickEvent.PlayerTickEvent) {
-        if (!event.player.level.isClientSide) return
-        val player = event.player as LocalPlayer
+        val player = event.player
+        if (player !is LocalPlayer) return
 
         Key.values().filter { !it.toggle && it.binding.isPresent }.forEach {
             sync(KeyEvent(it, it.binding.get().isDown))
