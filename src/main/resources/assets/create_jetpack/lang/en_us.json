@@ -17,5 +17,6 @@
   "overlay.create_jetpack.control.toggle_hover": "Hover",
   "overlay.create_jetpack.control.toggle_active": "Active",
   "key.jetpack.toggle_hover.description": "Toggle Hover Mode",
-  "key.jetpack.toggle_active.description": "Toggle Jetpack Engine"
+  "key.jetpack.toggle_active.description": "Toggle Jetpack Engine",
+  "create_jetpack.subtitle.whoosh": "Jetpack whooshes"
 }

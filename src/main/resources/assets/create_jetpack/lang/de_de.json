@@ -1,0 +1,22 @@
+{
+  "item.create_jetpack.jetpack": "Jetpack",
+  "item.create_jetpack.jetpack.tooltip": "",
+  "item.create_jetpack.jetpack.tooltip.summary": "Ermöglicht Fliegen mithilfe komprimierter Luft",
+  "item.create_jetpack.jetpack.tooltip.control1": "Drücke [SPRINGEN]",
+  "item.create_jetpack.jetpack.tooltip.action1": "Aufwärts schweben",
+  "item.create_jetpack.jetpack.tooltip.control2": "Drücke [SHIFT]",
+  "item.create_jetpack.jetpack.tooltip.action2": "Abwärts schweben",
+  "item.create_jetpack.jetpack.tooltip.control3": "Drücke [G]",
+  "item.create_jetpack.jetpack.tooltip.action3": "Schalte den Motor an/ab",
+  "item.create_jetpack.jetpack.tooltip.control4": "Press [H]",
+  "item.create_jetpack.jetpack.tooltip.action4": "Schalte den Schwebemodus an/ab",
+  "message.create_jetpack.control.toggle_active": "Jetpack-Motor %s",
+  "message.create_jetpack.control.toggle_hover": "Jetpack-Schwebemodus %s",
+  "message.create_jetpack.control.on": "angeschalten",
+  "message.create_jetpack.control.off": "abgeschalten",
+  "overlay.create_jetpack.control.toggle_hover": "Schweben",
+  "overlay.create_jetpack.control.toggle_active": "Motor",
+  "key.jetpack.toggle_hover.description": "Schalte Jetpack-Motor an/ab",
+  "key.jetpack.toggle_active.description": "Schalte Jetpack-Schebemodus an/ab",
+  "create_jetpack.subtitle.whoosh": "Jetpack rauscht"
+}

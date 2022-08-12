@@ -1,5 +1,6 @@
 package com.possible_triangle.create_jetpack.capability
 
+import com.possible_triangle.create_jetpack.Content
 import com.possible_triangle.create_jetpack.Content.JETPACK_CAPABILITY
 import com.possible_triangle.create_jetpack.CreateJetpackMod
 import com.possible_triangle.create_jetpack.capability.IJetpack.Context
@@ -9,7 +10,10 @@ import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ControlManager.Key
 import com.simibubi.create.content.contraptions.particle.AirParticleData
 import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.AttributeModifier
@@ -38,7 +42,7 @@ object JetpackLogic {
         return when (type) {
             ALWAYS -> true
             NEVER -> false
-            TOGGLE -> entity is Player && ControlManager.isPressed(entity, key)
+            TOGGLE -> key.isPressed(entity)
         }
     }
 
@@ -120,14 +124,44 @@ object JetpackLogic {
 
         if (isUsed) {
             spawnParticles(context)
+            playSound(context)
             context.jetpack.onUse(context)
+        }
+    }
+
+    private fun playSound(context: Context) {
+        val pos = context.entity.blockPosition()
+
+        val volume = if (Key.UP.isPressed(context.entity)) 2F else 1F
+        val pitch = context.world.random.nextFloat() * 0.4F + 1F
+
+        if (context.entity.isUnderWater) {
+
+            if (context.world.gameTime % 10 != 0L) return
+
+            val (sound, volumeModifier) = when (context.pose) {
+                FlyingPose.SUPERMAN -> SoundEvents.BUBBLE_COLUMN_UPWARDS_INSIDE to -0.5F
+                else -> SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT to 0F
+            }
+
+            context.world.playSound(
+                null,
+                pos,
+                sound,
+                SoundSource.PLAYERS,
+                volume + volumeModifier,
+                pitch - 0.5F
+            )
+        } else {
+            if (context.world.gameTime % 5 != 0L) return
+            Content.SOUND_WHOOSH.playOnServer(context.world, pos, volume, pitch)
         }
     }
 
     private fun elytraBoost(ctx: Context): Boolean {
         val entity = ctx.entity
         if (!entity.isFallFlying) return true
-        if (entity !is Player || !ControlManager.isPressed(entity, Key.UP)) return false
+        if (entity !is Player || !Key.UP.isPressed(entity)) return false
 
         if (entity.level.gameTime % 15 == 0L) {
             val look = entity.lookAngle
@@ -145,7 +179,7 @@ object JetpackLogic {
 
     private fun uprightMovement(ctx: Context): Boolean {
         val entity = ctx.entity
-        val buttonUp = entity is Player && ControlManager.isPressed(entity, Key.UP)
+        val buttonUp = Key.UP.isPressed(entity)
         val buttonDown = entity.isShiftKeyDown
         val hovering = active(ctx.jetpack.hoverType(ctx), Key.TOGGLE_HOVER, entity)
 
@@ -173,7 +207,7 @@ object JetpackLogic {
         if (speed != null) {
 
             if (entity is Player) {
-                DIRECTIONS.filter { ControlManager.isPressed(entity, it.first) }.forEach {
+                DIRECTIONS.filter { it.first.isPressed(entity) }.forEach {
                     val vec = Vec3(it.second.x, 0.0, it.second.z).scale(horizontalSpeed)
                     entity.moveRelative(1F, vec)
                 }

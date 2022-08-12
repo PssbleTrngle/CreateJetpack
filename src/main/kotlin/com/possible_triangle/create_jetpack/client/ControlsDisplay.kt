@@ -61,14 +61,14 @@ object ControlsDisplay : IIngameOverlay {
             GuiComponent.blit(poseStack, x, padding, 0, sprite.x, sprite.y, 16, 16, 32, 32)
         }
 
-        val engineActive = ControlManager.isPressed(player, Key.TOGGLE_ACTIVE)
+        val engineActive = Key.TOGGLE_ACTIVE.isPressed(player)
 
         val renderedIcons = ICONS.filterKeys { it == Key.TOGGLE_ACTIVE || engineActive }
             .filterValues { getType -> getType(context) == BronzeJetpack.ControlType.TOGGLE }
             .keys.mapIndexed { index, key ->
                 poseStack.pushPose()
 
-                val active = ControlManager.isPressed(player, key)
+                val active = key.isPressed(player)
                 renderSprite(index + if (active) 0 else 2, padding + spriteWidth * index)
 
                 val textScale = 0.5F

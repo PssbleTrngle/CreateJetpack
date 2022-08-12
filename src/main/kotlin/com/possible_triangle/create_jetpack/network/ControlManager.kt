@@ -5,6 +5,7 @@ import com.possible_triangle.create_jetpack.capability.JetpackLogic
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.LocalPlayer
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn
@@ -33,6 +34,11 @@ object ControlManager {
         @OnlyIn(Dist.CLIENT)
         lateinit var binding: Optional<KeyMapping>
 
+        fun isPressed(entity: LivingEntity): Boolean {
+            if(entity !is Player) return false
+            return KEYS[entity]?.get(this) ?: default
+        }
+
     }
 
     private val KEYS = mutableMapOf<Player, MutableMap<Key, Boolean>>()
@@ -40,10 +46,6 @@ object ControlManager {
     private fun setKey(player: Player, key: Key, pressed: Boolean) {
         val keys = KEYS.getOrPut(player) { mutableMapOf() }
         keys[key] = pressed
-    }
-
-    fun isPressed(player: Player, key: Key): Boolean {
-        return KEYS[player]?.get(key) ?: key.default
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -116,7 +118,7 @@ object ControlManager {
             .filter { it.toggle }
             .firstOrNull { it.binding.get().isDown } ?: return
 
-        sync(KeyEvent(key, !isPressed(player, key), true))
+        sync(KeyEvent(key, !key.isPressed(player), true))
 
     }
 
