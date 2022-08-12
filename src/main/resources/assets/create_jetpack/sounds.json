@@ -2,8 +2,16 @@
   "whoosh": {
     "sounds": [
       {
-        "name": "create_jetpack:whoosh",
-        "type": "sound"
+        "name": "create_jetpack:whoosh_1",
+        "type": "file"
+      },
+      {
+        "name": "create_jetpack:whoosh_2",
+        "type": "file"
+      },
+      {
+        "name": "create_jetpack:whoosh_3",
+        "type": "file"
       }
     ],
     "subtitle": "create_jetpack.subtitle.whoosh"
