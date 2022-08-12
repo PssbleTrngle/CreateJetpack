@@ -232,7 +232,12 @@ object JetpackLogic {
     private fun spawnParticles(context: Context) {
         val thrusters = context.jetpack.getThrusters(context) ?: return
         val yaw = (context.entity.yBodyRot / 180 * -Math.PI).toFloat()
-        thrusters.map { it.yRot(yaw) }.forEach { pos ->
+        val pitch = (context.entity.xRot / 180 * -Math.PI).toFloat()
+        val xRot = when(context.pose) {
+            FlyingPose.SUPERMAN -> pitch
+            FlyingPose.UPRIGHT -> 0F
+        }
+        thrusters.map { it.xRot(xRot) }.map { it.yRot(yaw) }.forEach { pos ->
             val particle = if (context.entity.isUnderWater) ParticleTypes.BUBBLE
             else AirParticleData(0F, 0.01F)
             context.world.addParticle(
