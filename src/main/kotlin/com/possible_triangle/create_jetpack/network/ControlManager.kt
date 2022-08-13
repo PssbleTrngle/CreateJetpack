@@ -95,6 +95,7 @@ object ControlManager {
 
     fun onTick(event: TickEvent.PlayerTickEvent) {
         val player = event.player
+        if (!player.level.isClientSide) return
         if (player !is LocalPlayer) return
 
         Key.values().filter { !it.toggle && it.binding.isPresent }.forEach {
