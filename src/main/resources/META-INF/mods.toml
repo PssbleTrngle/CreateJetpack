@@ -29,3 +29,10 @@ mandatory = true
 versionRange = "[0.5.0a,)"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies.create_jetpack]]
+modId = "kotlinforforge"
+mandatory = true
+versionRange = "*"
+ordering = "NONE"
+side = "BOTH"
