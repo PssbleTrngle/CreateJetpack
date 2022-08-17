@@ -1,6 +1,5 @@
 package com.possible_triangle.create_jetpack.client
 
-import com.jozufozu.flywheel.repack.joml.Vector2f
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
 import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
@@ -8,13 +7,13 @@ import com.possible_triangle.create_jetpack.capability.IJetpack
 import com.possible_triangle.create_jetpack.capability.JetpackLogic
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.BronzeJetpack
-import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ControlManager.Key
 import com.simibubi.create.content.curiosities.armor.BackTankUtil
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiComponent
 import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.phys.Vec2
 import net.minecraftforge.client.gui.ForgeIngameGui
 import net.minecraftforge.client.gui.IIngameOverlay
 import net.minecraftforge.client.gui.OverlayRegistry
@@ -26,8 +25,8 @@ object ControlsDisplay : IIngameOverlay {
     private val controls = ResourceLocation(MOD_ID, "textures/gui/controls.png")
     private val airIndicator = ResourceLocation(MOD_ID, "textures/gui/air_indicator.png")
 
-    private fun spritePos(index: Int): Vector2f {
-        return Vector2f(
+    private fun spritePos(index: Int): Vec2 {
+        return Vec2(
             index % 2 * 16F,
             index / 2 * 16F,
         )

@@ -6,7 +6,7 @@ import com.possible_triangle.create_jetpack.capability.IJetpack.Context
 import com.possible_triangle.create_jetpack.config.Configs
 import com.simibubi.create.content.curiosities.armor.BackTankUtil
 import com.simibubi.create.content.curiosities.armor.CopperBacktankItem
-import com.simibubi.create.repack.registrate.util.entry.ItemEntry
+import com.tterrag.registrate.util.entry.ItemEntry
 import net.minecraft.core.Direction
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.phys.Vec3
