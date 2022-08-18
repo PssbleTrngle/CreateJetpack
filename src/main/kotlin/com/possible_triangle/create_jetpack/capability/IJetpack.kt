@@ -5,7 +5,6 @@ import com.possible_triangle.create_jetpack.item.BronzeJetpack.ControlType
 import com.possible_triangle.create_jetpack.network.ControlManager
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
@@ -54,6 +53,7 @@ interface IJetpack {
 
     fun swimModifier(context: Context): Double
 
+    fun isValid(context: Context): Boolean
     fun isUsable(context: Context): Boolean
 
     fun onUse(context: Context) {}

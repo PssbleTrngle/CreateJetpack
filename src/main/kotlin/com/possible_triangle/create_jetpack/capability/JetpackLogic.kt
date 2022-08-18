@@ -6,11 +6,9 @@ import com.possible_triangle.create_jetpack.CreateJetpackMod
 import com.possible_triangle.create_jetpack.capability.IJetpack.Context
 import com.possible_triangle.create_jetpack.item.BronzeJetpack.ControlType
 import com.possible_triangle.create_jetpack.item.BronzeJetpack.ControlType.*
-import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ControlManager.Key
 import com.simibubi.create.content.contraptions.particle.AirParticleData
 import net.minecraft.core.particles.ParticleTypes
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -69,10 +67,11 @@ object JetpackLogic {
         ).flatten()
 
         return sources.asSequence()
-            .map { it.first to it.second.getCapability(JETPACK_CAPABILITY) }
-            .filter { it.second.isPresent }
-            .map { it.first to it.second.resolve().get() }
-            .map { it.first(it.second) }
+            .map { (builder, source) -> builder to source.getCapability(JETPACK_CAPABILITY) }
+            .filter { (_, capability) -> capability.isPresent }
+            .map { (builder, capability) -> builder to capability.resolve().get() }
+            .map { (builder, capability) -> builder(capability) }
+            .filter { it.jetpack.isValid(it) }
             .firstOrNull()
     }
 
@@ -233,7 +232,7 @@ object JetpackLogic {
         val thrusters = context.jetpack.getThrusters(context) ?: return
         val yaw = (context.entity.yBodyRot / 180 * -Math.PI).toFloat()
         val pitch = (context.entity.xRot / 180 * -Math.PI).toFloat()
-        val xRot = when(context.pose) {
+        val xRot = when (context.pose) {
             FlyingPose.SUPERMAN -> pitch
             FlyingPose.UPRIGHT -> 0F
         }

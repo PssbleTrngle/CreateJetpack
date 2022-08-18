@@ -8,6 +8,7 @@ import com.simibubi.create.content.curiosities.armor.BackTankUtil
 import com.simibubi.create.content.curiosities.armor.CopperBacktankItem
 import com.tterrag.registrate.util.entry.ItemEntry
 import net.minecraft.core.Direction
+import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.phys.Vec3
 import net.minecraftforge.common.capabilities.Capability
@@ -60,6 +61,10 @@ class BronzeJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankB
     private fun usesPerTank(context: Context): Int {
         return if (isHovering(context)) Configs.SERVER.USES_PER_TANK_HOVER.get()
         else Configs.SERVER.USES_PER_TANK.get()
+    }
+
+    override fun isValid(context: Context): Boolean {
+        return context.slot == EquipmentSlot.CHEST
     }
 
     override fun isUsable(context: Context): Boolean {
