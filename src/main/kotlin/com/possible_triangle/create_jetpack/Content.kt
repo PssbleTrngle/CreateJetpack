@@ -131,6 +131,8 @@ object Content {
         LOADING_CONTEXT.registerConfig(ModConfig.Type.COMMON, Configs.SERVER_SPEC)
         LOADING_CONTEXT.registerConfig(ModConfig.Type.CLIENT, Configs.CLIENT_SPEC)
 
+        Configs.Network.register()
+
         modBus.addListener { _: FMLCommonSetupEvent ->
             ModNetwork.init()
         }
@@ -149,6 +151,7 @@ object Content {
         FORGE_BUS.addListener(ControlManager::onLogout)
 
         FORGE_BUS.addListener(JetpackLogic::tick)
+        FORGE_BUS.addListener(Configs::syncConfig)
         FORGE_BUS.addGenericListener(ItemStack::class.java) { event: AttachCapabilitiesEvent<ItemStack> ->
             attachCapabilities(event.`object`, event::addCapability)
         }

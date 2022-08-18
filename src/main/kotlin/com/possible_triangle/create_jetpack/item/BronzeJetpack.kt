@@ -20,11 +20,11 @@ class BronzeJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankB
     private val capability = LazyOptional.of<IJetpack> { this }
 
     override fun hoverSpeed(context: Context): Double {
-        return Configs.SERVER.HOVER_SPEED.get()
+        return Configs.SERVER.hoverSpeed
     }
 
     override fun verticalSpeed(context: Context): Double {
-        return Configs.SERVER.VERTICAL_SPEED.get()
+        return Configs.SERVER.verticalSpeed
     }
 
     override fun activeType(context: Context): ControlType {
@@ -36,15 +36,15 @@ class BronzeJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankB
     }
 
     override fun horizontalSpeed(context: Context): Double {
-        return Configs.SERVER.HORIZONTAL_SPEED.get()
+        return Configs.SERVER.horizontalSpeed
     }
 
     override fun acceleration(context: Context): Double {
-        return Configs.SERVER.ACCELERATION.get()
+        return Configs.SERVER.acceleration
     }
 
     override fun swimModifier(context: Context): Double {
-        return Configs.SERVER.SWIM_MODIFIER.get()
+        return Configs.SERVER.swimModifier
     }
 
     private val thrusters = listOf(-0.35, 0.35).map { offset ->
@@ -59,8 +59,8 @@ class BronzeJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankB
     }
 
     private fun usesPerTank(context: Context): Int {
-        return if (isHovering(context)) Configs.SERVER.USES_PER_TANK_HOVER.get()
-        else Configs.SERVER.USES_PER_TANK.get()
+        return if (isHovering(context)) Configs.SERVER.usesPerTankHover
+        else Configs.SERVER.usesPerTank
     }
 
     override fun isValid(context: Context): Boolean {

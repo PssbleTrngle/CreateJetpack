@@ -21,12 +21,10 @@ import net.minecraft.world.phys.Vec3
 import net.minecraftforge.common.ForgeMod
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.event.TickEvent
-import net.minecraftforge.fml.common.Mod
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
-@Mod.EventBusSubscriber
 object JetpackLogic {
 
     private val DIRECTIONS = listOf(
