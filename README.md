@@ -29,7 +29,7 @@ Curios Support is possible by adding it via a datapack. Save to following to `da
 {
   "replace": false,
   "values": [
-    "create_jetpack"
+    "create_jetpack:jetpack"
   ]
 }
 ```
