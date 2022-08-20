@@ -1,0 +1,22 @@
+{
+  "item.create_jetpack.jetpack": "喷气背包",
+  "item.create_jetpack.jetpack.tooltip": "",
+  "item.create_jetpack.jetpack.tooltip.summary": "允许使用压缩空气进行飞行",
+  "item.create_jetpack.jetpack.tooltip.control1": "按住 [空格键]",
+  "item.create_jetpack.jetpack.tooltip.action1": "向上飞",
+  "item.create_jetpack.jetpack.tooltip.control2": "按住 [SHIFT]",
+  "item.create_jetpack.jetpack.tooltip.action2": "向下飞",
+  "item.create_jetpack.jetpack.tooltip.control3": "按住 [G]",
+  "item.create_jetpack.jetpack.tooltip.action3": "开启/关闭引擎",
+  "item.create_jetpack.jetpack.tooltip.control4": "按住 [H]",
+  "item.create_jetpack.jetpack.tooltip.action4": "开启/关闭悬浮模式",
+  "message.create_jetpack.control.toggle_active": "喷气背包引擎: %s",
+  "message.create_jetpack.control.toggle_hover": "喷气背包悬浮模式: %s",
+  "message.create_jetpack.control.on": "开启",
+  "message.create_jetpack.control.off": "关闭",
+  "overlay.create_jetpack.control.toggle_hover": "悬浮",
+  "overlay.create_jetpack.control.toggle_active": "开启",
+  "key.jetpack.toggle_hover.description": "切换悬浮模式",
+  "key.jetpack.toggle_active.description": "切换喷气背包引擎",
+  "create_jetpack.subtitle.whoosh": "喷气背包：呼啸"
+}
