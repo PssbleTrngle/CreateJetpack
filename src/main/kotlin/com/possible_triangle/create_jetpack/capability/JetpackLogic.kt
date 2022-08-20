@@ -4,6 +4,9 @@ import com.possible_triangle.create_jetpack.Content
 import com.possible_triangle.create_jetpack.Content.JETPACK_CAPABILITY
 import com.possible_triangle.create_jetpack.CreateJetpackMod
 import com.possible_triangle.create_jetpack.capability.IJetpack.Context
+import com.possible_triangle.create_jetpack.capability.sources.EntitySource
+import com.possible_triangle.create_jetpack.capability.sources.EquipmentSource
+import com.possible_triangle.create_jetpack.capability.sources.ISource
 import com.possible_triangle.create_jetpack.item.BronzeJetpack.ControlType
 import com.possible_triangle.create_jetpack.item.BronzeJetpack.ControlType.*
 import com.possible_triangle.create_jetpack.network.ControlManager.Key
@@ -49,24 +52,27 @@ object JetpackLogic {
             ?.takeIf { it.jetpack.isUsable(it) }
     }
 
+    init {
+        ISource.addSource { player -> listOf(player to EntitySource) }
+        ISource.addSource { player ->
+            EquipmentSlot.values().map {
+                val stack = player.getItemBySlot(it)
+                stack to EquipmentSource(it)
+            }
+        }
+    }
+
     fun getJetpack(entity: LivingEntity): Context? {
         val world = entity.level ?: return null
 
         val pose = FlyingPose.get(entity)
 
-        val equipment = EquipmentSlot.values().map {
-            val stack = entity.getItemBySlot(it)
-            Context.builder(entity, world, pose, stack, it) to stack
-        }
-
-        val sources = listOf<List<Pair<(IJetpack) -> Context, ICapabilityProvider>>>(
-            equipment,
-            listOf(Context.builder(entity, world, pose) to entity),
-        ).flatten()
+        val sources = ISource.get(entity)
 
         return sources.asSequence()
-            .map { (builder, source) -> builder to source.getCapability(JETPACK_CAPABILITY) }
+            .map { (provider, source) -> source to provider.getCapability(JETPACK_CAPABILITY) }
             .filter { (_, capability) -> capability.isPresent }
+            .map { (source, capability) -> Context.builder(entity, world, pose, source) to capability }
             .map { (builder, capability) -> builder to capability.resolve().get() }
             .map { (builder, capability) -> builder(capability) }
             .filter { it.jetpack.isValid(it) }

@@ -6,6 +6,7 @@ import com.possible_triangle.create_jetpack.capability.IJetpack
 import com.possible_triangle.create_jetpack.capability.JetpackLogic
 import com.possible_triangle.create_jetpack.client.ControlsDisplay
 import com.possible_triangle.create_jetpack.client.JetpackArmorLayer
+import com.possible_triangle.create_jetpack.compat.CuriosCompat
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.BronzeJetpack
 import com.possible_triangle.create_jetpack.network.ControlManager
@@ -13,6 +14,7 @@ import com.possible_triangle.create_jetpack.network.ModNetwork
 import com.simibubi.create.AllSoundEvents
 import com.simibubi.create.AllTags.pickaxeOnly
 import com.simibubi.create.Create
+import com.simibubi.create.compat.curios.Curios
 import com.simibubi.create.content.AllSections
 import com.simibubi.create.content.CreateItemGroup
 import com.simibubi.create.content.curiosities.armor.CopperBacktankInstance
@@ -47,9 +49,12 @@ import net.minecraftforge.common.capabilities.CapabilityToken
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.eventbus.api.IEventBus
+import net.minecraftforge.fml.InterModComms
+import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.config.ModConfig
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
 import java.util.function.BiConsumer
@@ -67,8 +72,10 @@ object Content {
     val JETPACK_BLOCK = REGISTRATE.block<JetpackBlock>("jetpack", ::JetpackBlock)
         .initialProperties { SharedProperties.copperMetal() }
         .blockstate { c, p ->
-            p.horizontalBlock(c.entry,
-                AssetLookup.partialBaseModel(c, p))
+            p.horizontalBlock(
+                c.entry,
+                AssetLookup.partialBaseModel(c, p)
+            )
         }
         .transform(pickaxeOnly())
         .addLayer { Supplier { RenderType.cutoutMipped() } }
@@ -76,21 +83,33 @@ object Content {
         .loot { lt, block ->
             val builder = LootTable.lootTable()
             val survivesExplosion = ExplosionCondition.survivesExplosion()
-            lt.add(block, builder.withPool(LootPool.lootPool()
-                .`when`(survivesExplosion)
-                .setRolls(ConstantValue.exactly(1F))
-                .add(LootItem.lootTableItem(JETPACK.get())
-                    .apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY))
-                    .apply(CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                        .copy("Air", "Air"))
-                    .apply(CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                        .copy("Enchantments", "Enchantments")))))
+            lt.add(
+                block, builder.withPool(
+                    LootPool.lootPool()
+                        .`when`(survivesExplosion)
+                        .setRolls(ConstantValue.exactly(1F))
+                        .add(
+                            LootItem.lootTableItem(JETPACK.get())
+                                .apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY))
+                                .apply(
+                                    CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
+                                        .copy("Air", "Air")
+                                )
+                                .apply(
+                                    CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
+                                        .copy("Enchantments", "Enchantments")
+                                )
+                        )
+                )
+            )
         }
         .register()
 
     val JETPACK_TILE = Create.registrate()
-        .tileEntity("jetpack",
-            ::CopperBacktankTileEntity)
+        .tileEntity(
+            "jetpack",
+            ::CopperBacktankTileEntity
+        )
         .instance {
             BiFunction { manager, tile ->
                 CopperBacktankInstance(manager, tile)
@@ -110,14 +129,15 @@ object Content {
         provider.withExistingParent(context.name, provider.mcLoc("item/barrier"))
     }.register()
 
-    val JETPACK: ItemEntry<BronzeJetpack> = REGISTRATE.item<BronzeJetpack>("jetpack") { BronzeJetpack(it, JETPACK_PLACEABLE) }
-        .model(AssetLookup.customGenericItemModel("_", "item"))
-        .tag(PRESSURIZED_AIR_SOURCES)
-        .register()
+    val JETPACK: ItemEntry<BronzeJetpack> =
+        REGISTRATE.item<BronzeJetpack>("jetpack") { BronzeJetpack(it, JETPACK_PLACEABLE) }
+            .model(AssetLookup.customGenericItemModel("_", "item"))
+            .tag(PRESSURIZED_AIR_SOURCES)
+            .register()
 
     val JETPACK_CAPABILITY = CapabilityManager.get(object : CapabilityToken<IJetpack>() {})
 
-    val SOUND_WHOOSH = AllSoundEvents.create(ResourceLocation(MOD_ID,"whoosh"))
+    val SOUND_WHOOSH = AllSoundEvents.create(ResourceLocation(MOD_ID, "whoosh"))
         .category(SoundSource.PLAYERS)
         .noSubtitle()
         .build()
@@ -160,6 +180,10 @@ object Content {
         FORGE_BUS.addListener(ControlManager::onKey)
 
         SOUND_WHOOSH.prepare()
+
+        if (ModList.get().isLoaded("curios")) {
+            CuriosCompat.register()
+        }
     }
 
 }

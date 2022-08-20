@@ -3,6 +3,7 @@ package com.possible_triangle.create_jetpack.client
 import com.mojang.blaze3d.vertex.PoseStack
 import com.possible_triangle.create_jetpack.Content
 import com.possible_triangle.create_jetpack.capability.JetpackLogic
+import com.possible_triangle.create_jetpack.item.BronzeJetpack
 import com.simibubi.create.AllBlockPartials
 import com.simibubi.create.content.curiosities.armor.CopperBacktankBlock
 import com.simibubi.create.foundation.render.CachedBufferer
@@ -60,8 +61,8 @@ class JetpackArmorLayer<T : LivingEntity, M : EntityModel<T>>(private val render
         val entityModel: M = renderer.model
         if (entityModel !is HumanoidModel<*>) return
 
-        if (!Content.JETPACK.get().isWornBy(entity)) return
-        val jetpack = JetpackLogic.getActiveJetpack(entity)
+        val context = JetpackLogic.getJetpack(entity) ?: return
+        if(context.jetpack !is BronzeJetpack) return
 
         val renderedState =
             Content.JETPACK_BLOCK.defaultState.setValue(CopperBacktankBlock.HORIZONTAL_FACING, Direction.SOUTH)
@@ -70,7 +71,7 @@ class JetpackArmorLayer<T : LivingEntity, M : EntityModel<T>>(private val render
         val backtank = CachedBufferer.block(renderedState)
         val cogs = CachedBufferer.partial(AllBlockPartials.COPPER_BACKTANK_COGS, renderedState)
 
-        val using = jetpack?.let { it.jetpack.isThrusting(it) } ?: false
+        val using = context.let { it.jetpack.isThrusting(it) } ?: false
         val cogSpeed = if(using) 32.0 else 2.0
 
         ms.pushPose()

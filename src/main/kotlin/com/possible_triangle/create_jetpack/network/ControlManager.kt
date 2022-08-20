@@ -113,7 +113,7 @@ object ControlManager {
     @Suppress("UNUSED_PARAMETER")
     fun onKey(event: InputEvent.KeyInputEvent) {
         val player = Minecraft.getInstance().player ?: return
-        JetpackLogic.getJetpack(player) ?: return
+        JetpackLogic.getJetpack(player) ?: return   
 
         val key = Key.values()
             .filter { it.toggle }

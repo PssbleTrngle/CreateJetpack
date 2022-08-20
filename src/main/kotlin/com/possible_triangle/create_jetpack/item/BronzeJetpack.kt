@@ -3,6 +3,8 @@ package com.possible_triangle.create_jetpack.item
 import com.possible_triangle.create_jetpack.Content.JETPACK_CAPABILITY
 import com.possible_triangle.create_jetpack.capability.IJetpack
 import com.possible_triangle.create_jetpack.capability.IJetpack.Context
+import com.possible_triangle.create_jetpack.capability.sources.CuriosSource
+import com.possible_triangle.create_jetpack.capability.sources.EquipmentSource
 import com.possible_triangle.create_jetpack.config.Configs
 import com.simibubi.create.content.curiosities.armor.BackTankUtil
 import com.simibubi.create.content.curiosities.armor.CopperBacktankItem
@@ -64,14 +66,19 @@ class BronzeJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankB
     }
 
     override fun isValid(context: Context): Boolean {
-        return context.slot == EquipmentSlot.CHEST
+        return when (val source = context.source) {
+            is EquipmentSource -> source.slot == EquipmentSlot.CHEST
+            is CuriosSource -> source.slot == "back"
+            else -> false
+        }
     }
 
     override fun isUsable(context: Context): Boolean {
         val tank = BackTankUtil.get(context.entity)
         if (tank.isEmpty) return false
         val air = BackTankUtil.getAir(tank)
-        val cost = BackTankUtil.maxAirWithoutEnchants() / usesPerTank(context)
+        if (air <= 0F) return false
+        val cost = BackTankUtil.maxAirWithoutEnchants().toFloat() / usesPerTank(context)
         return air >= cost
     }
 

@@ -1,11 +1,10 @@
 package com.possible_triangle.create_jetpack.capability
 
 import com.possible_triangle.create_jetpack.capability.JetpackLogic.FlyingPose
+import com.possible_triangle.create_jetpack.capability.sources.ISource
 import com.possible_triangle.create_jetpack.item.BronzeJetpack.ControlType
 import com.possible_triangle.create_jetpack.network.ControlManager
-import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 
@@ -16,18 +15,16 @@ interface IJetpack {
         val entity: LivingEntity,
         val world: Level,
         val pose: FlyingPose,
-        val stack: ItemStack? = null,
-        val slot: EquipmentSlot? = null,
+        val source: ISource,
     ) {
         companion object {
             fun builder(
                 entity: LivingEntity,
                 world: Level,
                 pose: FlyingPose,
-                stack: ItemStack? = null,
-                slot: EquipmentSlot? = null,
+                source: ISource,
             ): (IJetpack) -> Context {
-                return { Context(it, entity, world, pose, stack, slot) }
+                return { Context(it, entity, world, pose, source) }
             }
         }
     }
@@ -70,7 +67,12 @@ interface IJetpack {
 
     fun isThrusting(context: Context): Boolean {
         val entity = context.entity
-        if(!JetpackLogic.active(context.jetpack.activeType(context), ControlManager.Key.TOGGLE_ACTIVE, entity)) return false
+        if (!JetpackLogic.active(
+                context.jetpack.activeType(context),
+                ControlManager.Key.TOGGLE_ACTIVE,
+                entity
+            )
+        ) return false
         if (context.pose == FlyingPose.SUPERMAN && entity.deltaMovement.length() > 0.1) return true
         if (isHovering(context) && !entity.isOnGround) return true
         return ControlManager.Key.UP.isPressed(entity)

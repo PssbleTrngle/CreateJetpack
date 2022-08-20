@@ -4,7 +4,9 @@
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.8",
   "refmap": "create_jetpack.refmap.json",
-  "mixins": [],
+  "mixins": [
+    "BackTankUtilMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
