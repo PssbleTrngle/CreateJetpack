@@ -22,3 +22,14 @@ which enables equipping an elytra in addition to a chestplate,
 the jetpack will instead give you firework-like boost while the player is pressing the `UP`-key.
 
 ![Elytra Support](https://raw.githubusercontent.com/PssbleTrngle/CreateJetpack/1.18.x/screenshots/elytra.png)
+
+Curios Support is possible by adding it via a datapack. Save to following to `data/curios/tags/items/back.json`:
+
+```json
+{
+  "replace": false,
+  "values": [
+    "create_jetpack"
+  ]
+}
+```
