@@ -13,6 +13,7 @@ import com.possible_triangle.create_jetpack.network.ControlManager.Key
 import com.simibubi.create.content.contraptions.particle.AirParticleData
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.EquipmentSlot
@@ -22,7 +23,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.phys.Vec3
 import net.minecraftforge.common.ForgeMod
-import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.event.TickEvent
 import java.util.*
 import kotlin.math.max
@@ -47,8 +47,7 @@ object JetpackLogic {
 
     fun getActiveJetpack(entity: LivingEntity): Context? {
         if (entity is Player && entity.abilities.flying) return null
-        return getJetpack(entity)
-            ?.takeIf { active(it.jetpack.activeType(it), Key.TOGGLE_ACTIVE, entity) }
+        return getJetpack(entity)?.takeIf { active(it.jetpack.activeType(it), Key.TOGGLE_ACTIVE, entity) }
             ?.takeIf { it.jetpack.isUsable(it) }
     }
 
@@ -69,14 +68,11 @@ object JetpackLogic {
 
         val sources = ISource.get(entity)
 
-        return sources.asSequence()
-            .map { (provider, source) -> source to provider.getCapability(JETPACK_CAPABILITY) }
+        return sources.asSequence().map { (provider, source) -> source to provider.getCapability(JETPACK_CAPABILITY) }
             .filter { (_, capability) -> capability.isPresent }
             .map { (source, capability) -> Context.builder(entity, world, pose, source) to capability }
             .map { (builder, capability) -> builder to capability.resolve().get() }
-            .map { (builder, capability) -> builder(capability) }
-            .filter { it.jetpack.isValid(it) }
-            .firstOrNull()
+            .map { (builder, capability) -> builder(capability) }.filter { it.jetpack.isValid(it) }.firstOrNull()
     }
 
     private val ATTRIBUTE_ID = UUID.fromString("f4f2d961-fac9-42c2-93b8-69abd884d386")
@@ -104,10 +100,7 @@ object JetpackLogic {
             val modifier = context!!.jetpack.swimModifier(context)
             if (modifier > 0) attribute.addPermanentModifier(
                 AttributeModifier(
-                    ATTRIBUTE_ID,
-                    "${CreateJetpackMod.MOD_ID}:boost",
-                    modifier,
-                    Operation.MULTIPLY_TOTAL
+                    ATTRIBUTE_ID, "${CreateJetpackMod.MOD_ID}:boost", modifier, Operation.MULTIPLY_TOTAL
                 )
             )
         }
@@ -138,6 +131,12 @@ object JetpackLogic {
         val volume = if (Key.UP.isPressed(context.entity)) 2F else 1F
         val pitch = context.world.random.nextFloat() * 0.4F + 1F
 
+        fun SoundEvent.play(volume: Float = 1F, pitch: Float = 1F) {
+            context.world.playSound(
+                null, pos, this, SoundSource.PLAYERS, volume, pitch
+            )
+        }
+
         if (context.entity.isUnderWater) {
 
             if (context.world.gameTime % 10 != 0L) return
@@ -147,17 +146,10 @@ object JetpackLogic {
                 else -> SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT to 0F
             }
 
-            context.world.playSound(
-                null,
-                pos,
-                sound,
-                SoundSource.PLAYERS,
-                volume + volumeModifier,
-                pitch - 0.5F
-            )
+            sound.play(volume + volumeModifier, pitch - 0.5F)
         } else {
             if (context.world.gameTime % 5 != 0L) return
-            Content.SOUND_WHOOSH.playOnServer(context.world, pos, volume, pitch)
+            Content.SOUND_WHOOSH.get().play(volume, pitch)
         }
     }
 
@@ -188,15 +180,13 @@ object JetpackLogic {
 
         if (ctx.entity.isOnGround && !buttonUp) return false
 
-        val verticalSpeed =
-            if (hovering) ctx.jetpack.hoverVerticalSpeed(ctx)
-            else ctx.jetpack.verticalSpeed(ctx)
+        val verticalSpeed = if (hovering) ctx.jetpack.hoverVerticalSpeed(ctx)
+        else ctx.jetpack.verticalSpeed(ctx)
 
-        val horizontalSpeed =
-            if (hovering) {
-                if (entity.isUnderWater) 0.0
-                else ctx.jetpack.hoverHorizontalSpeed(ctx)
-            } else ctx.jetpack.horizontalSpeed(ctx)
+        val horizontalSpeed = if (hovering) {
+            if (entity.isUnderWater) 0.0
+            else ctx.jetpack.hoverHorizontalSpeed(ctx)
+        } else ctx.jetpack.horizontalSpeed(ctx)
         val acceleration = ctx.jetpack.acceleration(ctx)
 
         val speed = when {
@@ -244,13 +234,7 @@ object JetpackLogic {
             val particle = if (context.entity.isUnderWater) ParticleTypes.BUBBLE
             else AirParticleData(0F, 0.01F)
             context.world.addParticle(
-                particle,
-                context.entity.x + pos.x,
-                context.entity.y + pos.y,
-                context.entity.z + pos.z,
-                0.0,
-                -1.0,
-                0.0
+                particle, context.entity.x + pos.x, context.entity.y + pos.y, context.entity.z + pos.z, 0.0, -1.0, 0.0
             )
         }
     }

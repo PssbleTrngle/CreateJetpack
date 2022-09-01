@@ -11,7 +11,6 @@ import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.BronzeJetpack
 import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ModNetwork
-import com.simibubi.create.AllSoundEvents
 import com.simibubi.create.AllTags.pickaxeOnly
 import com.simibubi.create.Create
 import com.simibubi.create.content.CreateItemGroup
@@ -30,7 +29,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.sounds.SoundSource
+import net.minecraft.sounds.SoundEvent
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.storage.loot.LootPool
@@ -51,6 +50,7 @@ import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.config.ModConfig
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
+import net.minecraftforge.registries.DeferredRegister
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
 import java.util.function.BiConsumer
@@ -131,10 +131,9 @@ object Content {
 
     val JETPACK_CAPABILITY = CapabilityManager.get(object : CapabilityToken<IJetpack>() {})
 
-    val SOUND_WHOOSH = AllSoundEvents.create(ResourceLocation(MOD_ID, "whoosh"))
-        .category(SoundSource.PLAYERS)
-        .noSubtitle()
-        .build()
+    val SOUNDS = DeferredRegister.create(Registry.SOUND_EVENT_REGISTRY, MOD_ID)
+
+    val SOUND_WHOOSH = SOUNDS.register("whoosh") { SoundEvent(ResourceLocation(MOD_ID, "whoosh")) }
 
     private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
         val item = stack.item
@@ -144,6 +143,8 @@ object Content {
     fun register(modBus: IEventBus) {
         LOADING_CONTEXT.registerConfig(ModConfig.Type.COMMON, Configs.SERVER_SPEC)
         LOADING_CONTEXT.registerConfig(ModConfig.Type.CLIENT, Configs.CLIENT_SPEC)
+
+        SOUNDS.register(modBus)
 
         Configs.Network.register()
 
@@ -172,8 +173,6 @@ object Content {
 
         FORGE_BUS.addListener(ControlManager::onTick)
         FORGE_BUS.addListener(ControlManager::onKey)
-
-        SOUND_WHOOSH.prepare()
 
         if (ModList.get().isLoaded("curios")) {
             CuriosCompat.register()
