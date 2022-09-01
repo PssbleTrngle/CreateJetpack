@@ -14,8 +14,6 @@ import com.possible_triangle.create_jetpack.network.ModNetwork
 import com.simibubi.create.AllSoundEvents
 import com.simibubi.create.AllTags.pickaxeOnly
 import com.simibubi.create.Create
-import com.simibubi.create.compat.curios.Curios
-import com.simibubi.create.content.AllSections
 import com.simibubi.create.content.CreateItemGroup
 import com.simibubi.create.content.curiosities.armor.CopperBacktankInstance
 import com.simibubi.create.content.curiosities.armor.CopperBacktankItem.CopperBacktankBlockItem
@@ -23,8 +21,8 @@ import com.simibubi.create.content.curiosities.armor.CopperBacktankRenderer
 import com.simibubi.create.content.curiosities.armor.CopperBacktankTileEntity
 import com.simibubi.create.foundation.block.BlockStressDefaults
 import com.simibubi.create.foundation.data.AssetLookup
-import com.simibubi.create.foundation.data.CreateRegistrate
 import com.simibubi.create.foundation.data.SharedProperties
+import com.tterrag.registrate.Registrate
 import com.tterrag.registrate.util.entry.ItemEntry
 import com.tterrag.registrate.util.nullness.NonNullFunction
 import net.minecraft.client.Minecraft
@@ -49,12 +47,10 @@ import net.minecraftforge.common.capabilities.CapabilityToken
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.eventbus.api.IEventBus
-import net.minecraftforge.fml.InterModComms
 import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.config.ModConfig
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
 import java.util.function.BiConsumer
@@ -63,9 +59,7 @@ import java.util.function.Supplier
 
 object Content {
 
-    val REGISTRATE = CreateRegistrate.lazy(MOD_ID).get()
-        .creativeModeTab { CreateItemGroup.TAB_TOOLS }
-        .startSection(AllSections.CURIOSITIES)
+    private val REGISTRATE = Registrate.create(MOD_ID).creativeModeTab { CreateItemGroup.TAB_TOOLS }
 
     val PRESSURIZED_AIR_SOURCES = TagKey.create(Registry.ITEM_REGISTRY, Create.asResource("pressurized_air_sources"))
 
