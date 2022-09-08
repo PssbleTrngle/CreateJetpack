@@ -1,7 +1,18 @@
 [KOTLIN_FORGE_FORGE]: https://www.curseforge.com/minecraft/mc-mods/kotlin-for-forge
 [CREATE]: https://www.curseforge.com/minecraft/mc-mods/create
+[ISSUES]: https://github.com/PssbleTrngle/CreateJetpack/issues
+[DOWNLOAD]: https://www.curseforge.com/minecraft/mc-mods/create-jetpack/files
+[CURSEFORGE]: https://www.curseforge.com/minecraft/mc-mods/create-jetpack
+[MODRINTH]: https://modrinth.com/mod/create-jetpack
 
-# Create Jetpack <!-- modrinth_exclude.start --> <img src="https://raw.githubusercontent.com/PssbleTrngle/CreateJetpack/1.18.x/src/main/resources/assets/create_jetpack/icon.png" align="right" height="128" /> <!-- modrinth_exclude.end -->
+# Create Jetpack <!-- modrinth_exclude.start --> <img src="https://raw.githubusercontent.com/PssbleTrngle/CreateJetpack/1.18.x/src/main/resources/assets/create_jetpack/icon.png" align="right" height="128" />
+
+[![Release](https://img.shields.io/github/v/release/PssbleTrngle/CreateJetpack?label=Version&sort=semver)][DOWNLOAD]
+[![Downloads](https://cf.way2muchnoise.eu/full_655608_downloads.svg)][CURSEFORGE]
+[![Version](https://cf.way2muchnoise.eu/versions/655608.svg)][DOWNLOAD]
+[![Issues](https://img.shields.io/github/issues/PssbleTrngle/CreateJetpack?label=Issues)][ISSUES]
+[![Modrinth](https://modrinth-utils.vercel.app/api/badge/downloads?id=UbFnAd4l&logo=true)][MODRINTH]
+<!-- modrinth_exclude.end -->
 
 [![](https://img.shields.io/badge/REQUIRES%20KOTLIN%20FOR%20FORGE-blue?logo=curseforge&labelColor=gray&style=for-the-badge)][KOTLIN_FORGE_FORGE]
 [![](https://img.shields.io/badge/REQUIRES%20CREATE-gold?logo=curseforge&labelColor=gray&style=for-the-badge)][CREATE]
