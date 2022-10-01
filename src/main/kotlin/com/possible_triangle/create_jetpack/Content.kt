@@ -40,12 +40,14 @@ import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
+import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.common.capabilities.CapabilityManager
 import net.minecraftforge.common.capabilities.CapabilityToken
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.eventbus.api.IEventBus
+import net.minecraftforge.fml.DistExecutor
 import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.config.ModConfig
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
@@ -151,7 +153,11 @@ object Content {
             ModNetwork.init()
         }
 
-        modBus.addListener(ControlManager::registerKeybinds)
+        DistExecutor.safeCallWhenOn(Dist.CLIENT) {
+            DistExecutor.SafeCallable {
+                modBus.addListener(ControlManager::registerKeybinds)
+            }
+        }
 
         modBus.addListener { _: EntityRenderersEvent.AddLayers ->
             val dispatcher = Minecraft.getInstance().entityRenderDispatcher
