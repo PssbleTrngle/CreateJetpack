@@ -48,7 +48,6 @@ object ControlManager {
         keys[key] = pressed
     }
 
-    @OnlyIn(Dist.CLIENT)
     fun registerKeybinds(event: RegisterKeyMappingsEvent) {
         Key.values().forEach { key ->
             key.binding = Optional.ofNullable(key.defaultKey).map {
