@@ -134,17 +134,17 @@ dependencies {
     // Use the latest version of Minecraft Forge
     minecraft "net.minecraftforge:forge:${project.mc_version}-${project.forge_version}"
 
-    compileOnly fg.deobf("mezz.jei:jei-${project.mc_version}:${project.jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${project.mc_version}:${project.jei_version}")
+    //compileOnly fg.deobf("mezz.jei:jei-${project.mc_version}:${project.jei_version}:api")
+    //runtimeOnly fg.deobf("mezz.jei:jei-${project.mc_version}:${project.jei_version}")
 
     compileOnly fg.deobf("com.tterrag.registrate:Registrate:${project.registrate_version}")
     implementation fg.deobf("curse.maven:create-328085:${project.create_version}")
-    implementation fg.deobf("curse.maven:flywheel-486392:${project.flywheel_version}")
+    implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${project.mc_version}:${project.flywheel_version}")
 
     // Only here to test jetpack+elytra combination behaviour
-    implementation fg.deobf("curse.maven:curios-309927:3841948")
-    runtimeOnly fg.deobf("top.theillusivec4.caelus:caelus-forge:1.18.1-3.0.0.2")
-    runtimeOnly fg.deobf("curse.maven:elytra-slot-317716:3601975")
+    implementation fg.deobf("curse.maven:curios-309927:${project.curios_version}")
+    //runtimeOnly fg.deobf("top.theillusivec4.caelus:caelus-forge:1.18.1-3.0.0.2")
+    //runtimeOnly fg.deobf("curse.maven:elytra-slot-317716:3601975")
 
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 }

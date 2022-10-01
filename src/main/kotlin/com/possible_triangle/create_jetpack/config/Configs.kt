@@ -38,7 +38,7 @@ object Configs {
     }
 
     fun syncConfig(event: PlayerEvent.PlayerLoggedInEvent) {
-        val player = event.player
+        val player = event.entity
         if (player !is ServerPlayer) return
         CreateJetpackMod.LOGGER.debug("Sending server config to ${player.scoreboardName}")
         Network.CHANNEL.send(PacketDistributor.PLAYER.with { player }, SyncConfigMessage(LOCAL_SERVER))

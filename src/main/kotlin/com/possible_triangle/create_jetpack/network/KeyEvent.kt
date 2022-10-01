@@ -3,8 +3,7 @@ package com.possible_triangle.create_jetpack.network
 import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
 import com.possible_triangle.create_jetpack.network.ControlManager.Key
 import net.minecraft.network.FriendlyByteBuf
-import net.minecraft.network.chat.ChatType
-import net.minecraft.network.chat.TranslatableComponent
+import net.minecraft.network.chat.Component
 import net.minecraftforge.network.NetworkDirection
 import net.minecraftforge.network.NetworkEvent
 import java.util.function.Supplier
@@ -19,11 +18,11 @@ class KeyEvent(val key: Key, val pressed: Boolean, val notify: Boolean = false) 
             val player = context.sender
             if (context.direction == NetworkDirection.PLAY_TO_SERVER && player != null) {
                 context.enqueueWork {
-                    if (event.notify) player.sendMessage(
-                        TranslatableComponent(
+                    if (event.notify) player.sendSystemMessage(
+                        Component.translatable(
                             "message.$MOD_ID.control.${event.key.name.lowercase()}",
-                            TranslatableComponent("message.$MOD_ID.control.${if (event.pressed) "on" else "off"}")
-                        ), ChatType.GAME_INFO, player.uuid
+                            Component.translatable("message.$MOD_ID.control.${if (event.pressed) "on" else "off"}")
+                        ), true,
                     )
                     ControlManager.handle(player, event)
                 }

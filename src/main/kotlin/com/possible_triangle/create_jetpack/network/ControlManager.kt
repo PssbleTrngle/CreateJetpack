@@ -9,8 +9,8 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn
-import net.minecraftforge.client.ClientRegistry
 import net.minecraftforge.client.event.InputEvent
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent
 import net.minecraftforge.client.settings.KeyConflictContext
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.event.entity.player.PlayerEvent
@@ -49,7 +49,7 @@ object ControlManager {
     }
 
     @OnlyIn(Dist.CLIENT)
-    fun registerKeybinds() {
+    fun registerKeybinds(event: RegisterKeyMappingsEvent) {
         Key.values().forEach { key ->
             key.binding = Optional.ofNullable(key.defaultKey).map {
                 KeyMapping(
@@ -61,7 +61,7 @@ object ControlManager {
                 )
             }
             key.binding.ifPresent {
-                ClientRegistry.registerKeyBinding(it)
+                event.register(it)
             }
         }
     }
@@ -79,11 +79,11 @@ object ControlManager {
     }
 
     fun onDimensionChange(event: PlayerEvent.PlayerChangedDimensionEvent) {
-        reset(event.player)
+        reset(event.entity)
     }
 
     fun onLogout(event: PlayerLoggedOutEvent) {
-        reset(event.player)
+        reset(event.entity)
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -111,7 +111,7 @@ object ControlManager {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun onKey(event: InputEvent.KeyInputEvent) {
+    fun onKey(event: InputEvent.Key) {
         val player = Minecraft.getInstance().player ?: return
         JetpackLogic.getJetpack(player) ?: return   
 

@@ -48,7 +48,6 @@ import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.eventbus.api.IEventBus
 import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.config.ModConfig
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.registries.DeferredRegister
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
@@ -152,15 +151,14 @@ object Content {
             ModNetwork.init()
         }
 
-        modBus.addListener { _: FMLClientSetupEvent ->
-            ControlManager.registerKeybinds()
-            ControlsDisplay.register()
-        }
+        modBus.addListener(ControlManager::registerKeybinds)
 
         modBus.addListener { _: EntityRenderersEvent.AddLayers ->
             val dispatcher = Minecraft.getInstance().entityRenderDispatcher
             JetpackArmorLayer.registerOnAll(dispatcher)
         }
+
+        modBus.addListener(ControlsDisplay::register)
 
         FORGE_BUS.addListener(ControlManager::onDimensionChange)
         FORGE_BUS.addListener(ControlManager::onLogout)
@@ -175,7 +173,7 @@ object Content {
         FORGE_BUS.addListener(ControlManager::onKey)
 
         if (ModList.get().isLoaded("curios")) {
-            CuriosCompat.register()
+            CuriosCompat.register(modBus)
         }
     }
 

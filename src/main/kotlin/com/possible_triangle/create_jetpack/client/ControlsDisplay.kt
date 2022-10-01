@@ -11,16 +11,17 @@ import com.possible_triangle.create_jetpack.network.ControlManager.Key
 import com.simibubi.create.content.curiosities.armor.BackTankUtil
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiComponent
-import net.minecraft.network.chat.TranslatableComponent
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.phys.Vec2
-import net.minecraftforge.client.gui.ForgeIngameGui
-import net.minecraftforge.client.gui.IIngameOverlay
-import net.minecraftforge.client.gui.OverlayRegistry
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent
+import net.minecraftforge.client.gui.overlay.ForgeGui
+import net.minecraftforge.client.gui.overlay.IGuiOverlay
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay
 import kotlin.math.ceil
 
 
-object ControlsDisplay : IIngameOverlay {
+object ControlsDisplay : IGuiOverlay {
 
     private val controls = ResourceLocation(MOD_ID, "textures/gui/controls.png")
     private val airIndicator = ResourceLocation(MOD_ID, "textures/gui/air_indicator.png")
@@ -37,11 +38,11 @@ object ControlsDisplay : IIngameOverlay {
         Key.TOGGLE_HOVER to { it.jetpack.hoverType(it) },
     )
 
-    fun register() {
-        OverlayRegistry.registerOverlayAbove(ForgeIngameGui.HOTBAR_ELEMENT, "Jetpack Controls", this)
+    fun register(event: RegisterGuiOverlaysEvent) {
+        event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "jetpack_controls", this)
     }
 
-    override fun render(gui: ForgeIngameGui, poseStack: PoseStack, partialTick: Float, width: Int, height: Int) {
+    override fun render(gui: ForgeGui, poseStack: PoseStack, partialTick: Float, width: Int, height: Int) {
         val mc = Minecraft.getInstance()
         if (!Configs.CLIENT.SHOW_OVERLAY.get()) return
         if (mc.options.hideGui) return
@@ -73,7 +74,7 @@ object ControlsDisplay : IIngameOverlay {
                 val textScale = 0.5F
                 poseStack.scale(textScale, textScale, textScale)
                 val textMargin = (padding + 8 + spriteWidth * index) * (1 / textScale)
-                val text = TranslatableComponent("overlay.create_jetpack.control.${key.name.lowercase()}")
+                val text = Component.translatable("overlay.create_jetpack.control.${key.name.lowercase()}")
                 val color = if (active) 0xFFFFFF else 0xBBBBBB
                 GuiComponent.drawCenteredString(
                     poseStack, gui.font, text, textMargin.toInt(), (22 / textScale).toInt(), color

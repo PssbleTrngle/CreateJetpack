@@ -1,7 +1,9 @@
 name: Analyze
 on:
   push:
-    branches: [ 1.18.x ]
+    branches:
+      - 1.18.x
+      - 1.19.x
 
 jobs:
   build:
