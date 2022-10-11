@@ -8,7 +8,7 @@ import com.possible_triangle.create_jetpack.client.ControlsDisplay
 import com.possible_triangle.create_jetpack.client.JetpackArmorLayer
 import com.possible_triangle.create_jetpack.compat.CuriosCompat
 import com.possible_triangle.create_jetpack.config.Configs
-import com.possible_triangle.create_jetpack.item.BronzeJetpack
+import com.possible_triangle.create_jetpack.item.BrassJetpack
 import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ModNetwork
 import com.simibubi.create.AllTags.pickaxeOnly
@@ -123,8 +123,8 @@ object Content {
         provider.withExistingParent(context.name, provider.mcLoc("item/barrier"))
     }.register()
 
-    val JETPACK: ItemEntry<BronzeJetpack> =
-        REGISTRATE.item<BronzeJetpack>("jetpack") { BronzeJetpack(it, JETPACK_PLACEABLE) }
+    val JETPACK: ItemEntry<BrassJetpack> =
+        REGISTRATE.item<BrassJetpack>("jetpack") { BrassJetpack(it, JETPACK_PLACEABLE) }
             .model(AssetLookup.customGenericItemModel("_", "item"))
             .tag(PRESSURIZED_AIR_SOURCES)
             .register()
@@ -137,7 +137,7 @@ object Content {
 
     private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
         val item = stack.item
-        if (item is BronzeJetpack) add.accept(ResourceLocation(MOD_ID, "jetpack"), item)
+        if (item is BrassJetpack) add.accept(ResourceLocation(MOD_ID, "jetpack"), item)
     }
 
     fun register(modBus: IEventBus) {
