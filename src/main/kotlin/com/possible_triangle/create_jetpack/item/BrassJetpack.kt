@@ -3,6 +3,7 @@ package com.possible_triangle.create_jetpack.item
 import com.possible_triangle.create_jetpack.Content.JETPACK_CAPABILITY
 import com.possible_triangle.create_jetpack.capability.IJetpack
 import com.possible_triangle.create_jetpack.capability.IJetpack.Context
+import com.possible_triangle.create_jetpack.capability.JetpackLogic
 import com.possible_triangle.create_jetpack.capability.sources.CuriosSource
 import com.possible_triangle.create_jetpack.capability.sources.EquipmentSource
 import com.possible_triangle.create_jetpack.config.Configs
@@ -11,13 +12,15 @@ import com.simibubi.create.content.curiosities.armor.CopperBacktankItem
 import com.tterrag.registrate.util.entry.ItemEntry
 import net.minecraft.core.Direction
 import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
+import net.minecraft.world.item.enchantment.Enchantment
 import net.minecraft.world.phys.Vec3
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.common.util.LazyOptional
 
-class BronzeJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBlockItem>) :
+class BrassJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBlockItem>) :
     CopperBacktankItem(properties.rarity(Rarity.RARE), blockItem), IJetpack, ICapabilityProvider {
     private val capability = LazyOptional.of<IJetpack> { this }
 
@@ -29,12 +32,12 @@ class BronzeJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankB
         return Configs.SERVER.verticalSpeed
     }
 
-    override fun activeType(context: Context): ControlType {
-        return ControlType.TOGGLE
+    override fun activeType(context: Context): JetpackLogic.ControlType {
+        return JetpackLogic.ControlType.TOGGLE
     }
 
-    override fun hoverType(context: Context): ControlType {
-        return ControlType.TOGGLE
+    override fun hoverType(context: Context): JetpackLogic.ControlType {
+        return JetpackLogic.ControlType.TOGGLE
     }
 
     override fun horizontalSpeed(context: Context): Double {
@@ -87,8 +90,8 @@ class BronzeJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankB
         return LazyOptional.empty()
     }
 
-    enum class ControlType {
-        ALWAYS, NEVER, TOGGLE
+    override fun canApplyAtEnchantingTable(stack: ItemStack, enchantment: Enchantment): Boolean {
+        return super.canApplyAtEnchantingTable(stack, enchantment) && Configs.SERVER.isAllowed(enchantment)
     }
 
 }

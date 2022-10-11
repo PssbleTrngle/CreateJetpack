@@ -3,7 +3,7 @@ package com.possible_triangle.create_jetpack.client
 import com.mojang.blaze3d.vertex.PoseStack
 import com.possible_triangle.create_jetpack.Content
 import com.possible_triangle.create_jetpack.capability.JetpackLogic
-import com.possible_triangle.create_jetpack.item.BronzeJetpack
+import com.possible_triangle.create_jetpack.item.BrassJetpack
 import com.simibubi.create.AllBlockPartials
 import com.simibubi.create.content.curiosities.armor.CopperBacktankBlock
 import com.simibubi.create.foundation.render.CachedBufferer
@@ -62,7 +62,7 @@ class JetpackArmorLayer<T : LivingEntity, M : EntityModel<T>>(private val render
         if (entityModel !is HumanoidModel<*>) return
 
         val context = JetpackLogic.getJetpack(entity) ?: return
-        if(context.jetpack !is BronzeJetpack) return
+        if(context.jetpack !is BrassJetpack) return
 
         val renderedState =
             Content.JETPACK_BLOCK.defaultState.setValue(CopperBacktankBlock.HORIZONTAL_FACING, Direction.SOUTH)

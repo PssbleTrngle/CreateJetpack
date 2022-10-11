@@ -4,11 +4,10 @@ import com.possible_triangle.create_jetpack.Content
 import com.possible_triangle.create_jetpack.Content.JETPACK_CAPABILITY
 import com.possible_triangle.create_jetpack.CreateJetpackMod
 import com.possible_triangle.create_jetpack.capability.IJetpack.Context
+import com.possible_triangle.create_jetpack.capability.JetpackLogic.ControlType.*
 import com.possible_triangle.create_jetpack.capability.sources.EntitySource
 import com.possible_triangle.create_jetpack.capability.sources.EquipmentSource
 import com.possible_triangle.create_jetpack.capability.sources.ISource
-import com.possible_triangle.create_jetpack.item.BronzeJetpack.ControlType
-import com.possible_triangle.create_jetpack.item.BronzeJetpack.ControlType.*
 import com.possible_triangle.create_jetpack.network.ControlManager.Key
 import com.simibubi.create.content.contraptions.particle.AirParticleData
 import net.minecraft.core.particles.ParticleTypes
@@ -237,6 +236,10 @@ object JetpackLogic {
                 particle, context.entity.x + pos.x, context.entity.y + pos.y, context.entity.z + pos.z, 0.0, -1.0, 0.0
             )
         }
+    }
+
+    enum class ControlType {
+        ALWAYS, NEVER, TOGGLE
     }
 
 }
