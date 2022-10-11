@@ -6,7 +6,6 @@ import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
 import com.possible_triangle.create_jetpack.capability.IJetpack
 import com.possible_triangle.create_jetpack.capability.JetpackLogic
 import com.possible_triangle.create_jetpack.config.Configs
-import com.possible_triangle.create_jetpack.item.BronzeJetpack
 import com.possible_triangle.create_jetpack.network.ControlManager.Key
 import com.simibubi.create.content.curiosities.armor.BackTankUtil
 import net.minecraft.client.Minecraft
@@ -33,7 +32,7 @@ object ControlsDisplay : IGuiOverlay {
         )
     }
 
-    private val ICONS = mapOf<Key, (IJetpack.Context) -> BronzeJetpack.ControlType>(
+    private val ICONS = mapOf<Key, (IJetpack.Context) -> JetpackLogic.ControlType>(
         Key.TOGGLE_ACTIVE to { it.jetpack.activeType(it) },
         Key.TOGGLE_HOVER to { it.jetpack.hoverType(it) },
     )
@@ -64,7 +63,7 @@ object ControlsDisplay : IGuiOverlay {
         val engineActive = Key.TOGGLE_ACTIVE.isPressed(player)
 
         val renderedIcons = ICONS.filterKeys { it == Key.TOGGLE_ACTIVE || engineActive }
-            .filterValues { getType -> getType(context) == BronzeJetpack.ControlType.TOGGLE }
+            .filterValues { getType -> getType(context) == JetpackLogic.ControlType.TOGGLE }
             .keys.mapIndexed { index, key ->
                 poseStack.pushPose()
 
