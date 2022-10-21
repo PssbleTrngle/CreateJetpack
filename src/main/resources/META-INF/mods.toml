@@ -12,7 +12,7 @@ description = '''Upgrade your backtank and utilize the pressurized air to fly'''
 [[dependencies.create_jetpack]]
 modId = "forge"
 mandatory = true
-versionRange = "[36,)"
+versionRange = "[40.1.60,)"
 ordering = "NONE"
 side = "BOTH"
 
