@@ -1,8 +1,8 @@
 package com.possible_triangle.create_jetpack.capability
 
+import com.possible_triangle.create_jetpack.capability.JetpackLogic.ControlType
 import com.possible_triangle.create_jetpack.capability.JetpackLogic.FlyingPose
 import com.possible_triangle.create_jetpack.capability.sources.ISource
-import com.possible_triangle.create_jetpack.capability.JetpackLogic.ControlType
 import com.possible_triangle.create_jetpack.network.ControlManager
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.level.Level
@@ -67,6 +67,7 @@ interface IJetpack {
 
     fun isThrusting(context: Context): Boolean {
         val entity = context.entity
+        if(entity.vehicle != null) return false
         if (!JetpackLogic.active(
                 context.jetpack.activeType(context),
                 ControlManager.Key.TOGGLE_ACTIVE,
