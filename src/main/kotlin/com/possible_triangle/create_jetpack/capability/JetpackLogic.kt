@@ -177,6 +177,7 @@ object JetpackLogic {
         val buttonDown = entity.isShiftKeyDown
         val hovering = active(ctx.jetpack.hoverType(ctx), Key.TOGGLE_HOVER, entity)
 
+        if(ctx.entity.vehicle != null) return false
         if (ctx.entity.isOnGround && !buttonUp) return false
 
         val verticalSpeed = if (hovering) ctx.jetpack.hoverVerticalSpeed(ctx)
