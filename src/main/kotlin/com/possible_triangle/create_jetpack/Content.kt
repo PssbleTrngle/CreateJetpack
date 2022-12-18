@@ -11,8 +11,8 @@ import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.BrassJetpack
 import com.possible_triangle.create_jetpack.network.ControlManager
 import com.possible_triangle.create_jetpack.network.ModNetwork
-import com.simibubi.create.AllTags.pickaxeOnly
 import com.simibubi.create.Create
+import com.simibubi.create.content.AllSections
 import com.simibubi.create.content.CreateItemGroup
 import com.simibubi.create.content.curiosities.armor.CopperBacktankInstance
 import com.simibubi.create.content.curiosities.armor.CopperBacktankItem.CopperBacktankBlockItem
@@ -20,8 +20,9 @@ import com.simibubi.create.content.curiosities.armor.CopperBacktankRenderer
 import com.simibubi.create.content.curiosities.armor.CopperBacktankTileEntity
 import com.simibubi.create.foundation.block.BlockStressDefaults
 import com.simibubi.create.foundation.data.AssetLookup
+import com.simibubi.create.foundation.data.CreateRegistrate
 import com.simibubi.create.foundation.data.SharedProperties
-import com.tterrag.registrate.Registrate
+import com.simibubi.create.foundation.data.TagGen
 import com.tterrag.registrate.util.entry.ItemEntry
 import com.tterrag.registrate.util.nullness.NonNullFunction
 import net.minecraft.client.Minecraft
@@ -59,7 +60,9 @@ import java.util.function.Supplier
 
 object Content {
 
-    private val REGISTRATE = Registrate.create(MOD_ID).creativeModeTab { CreateItemGroup.TAB_TOOLS }
+    private val REGISTRATE = CreateRegistrate.create(MOD_ID)
+        .creativeModeTab { CreateItemGroup.TAB_TOOLS }
+        .startSection(AllSections.CURIOSITIES)
 
     val PRESSURIZED_AIR_SOURCES = TagKey.create(Registry.ITEM_REGISTRY, Create.asResource("pressurized_air_sources"))
 
@@ -71,7 +74,7 @@ object Content {
                 AssetLookup.partialBaseModel(c, p)
             )
         }
-        .transform(pickaxeOnly())
+        .transform(TagGen.pickaxeOnly())
         .addLayer { Supplier { RenderType.cutoutMipped() } }
         .transform(BlockStressDefaults.setImpact(4.0))
         .loot { lt, block ->
@@ -99,11 +102,8 @@ object Content {
         }
         .register()
 
-    val JETPACK_TILE = Create.registrate()
-        .tileEntity(
-            "jetpack",
-            ::CopperBacktankTileEntity
-        )
+    val JETPACK_TILE = REGISTRATE
+        .tileEntity("jetpack", ::CopperBacktankTileEntity)
         .instance {
             BiFunction { manager, tile ->
                 CopperBacktankInstance(manager, tile)
@@ -141,6 +141,8 @@ object Content {
     }
 
     fun register(modBus: IEventBus) {
+        REGISTRATE.registerEventListeners(modBus)
+
         LOADING_CONTEXT.registerConfig(ModConfig.Type.COMMON, Configs.SERVER_SPEC)
         LOADING_CONTEXT.registerConfig(ModConfig.Type.CLIENT, Configs.CLIENT_SPEC)
 
