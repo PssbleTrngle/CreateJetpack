@@ -47,16 +47,25 @@ object ControlsDisplay : IIngameOverlay {
         val player = mc.player ?: return
         val context = JetpackLogic.getJetpack(player) ?: return
 
-        val padding = 4
         val margin = 6
-        val scale = 1.0F
+        val scale = Configs.CLIENT.OVERLAY_DISTANCE_SCALE.get().toFloat()
         val spriteWidth = 16 + margin
+
+        val startX = Configs.CLIENT.OVERLAY_DISTANCE_X.get().let {
+            if (it >= 0) it
+            else width + it - 50
+        }.let { it / scale }.toInt()
+
+        val startY = Configs.CLIENT.OVERLAY_DISTANCE_Y.get().let {
+            if (it >= 0) it
+            else height + it - 24
+        }.let { it / scale }.toInt()
 
         fun renderSprite(index: Int, x: Int) {
             val sprite = spritePos(index)
             RenderSystem.setShaderTexture(0, controls)
             poseStack.scale(scale, scale, scale)
-            GuiComponent.blit(poseStack, x, padding, 0, sprite.x, sprite.y, 16, 16, 32, 32)
+            GuiComponent.blit(poseStack, startX + x, startY, 0, sprite.x, sprite.y, 16, 16, 32, 32)
         }
 
         val engineActive = Key.TOGGLE_ACTIVE.isPressed(player)
@@ -67,15 +76,15 @@ object ControlsDisplay : IIngameOverlay {
                 poseStack.pushPose()
 
                 val active = key.isPressed(player)
-                renderSprite(index + if (active) 0 else 2, padding + spriteWidth * index)
+                renderSprite(index + if (active) 0 else 2, spriteWidth * index)
 
                 val textScale = 0.5F
                 poseStack.scale(textScale, textScale, textScale)
-                val textMargin = (padding + 8 + spriteWidth * index) * (1 / textScale)
+                val textMargin = (startX + 8 + spriteWidth * index) * (1 / textScale)
                 val text = TranslatableComponent("overlay.create_jetpack.control.${key.name.lowercase()}")
                 val color = if (active) 0xFFFFFF else 0xBBBBBB
                 GuiComponent.drawCenteredString(
-                    poseStack, gui.font, text, textMargin.toInt(), (22 / textScale).toInt(), color
+                    poseStack, gui.font, text, textMargin.toInt(), startY * 2 + 36, color
                 )
                 poseStack.popPose()
 
@@ -92,8 +101,8 @@ object ControlsDisplay : IIngameOverlay {
             fun renderBar(index: Int, barHeight: Int = 16, spriteOffset: Int = 0) {
                 GuiComponent.blit(
                     poseStack,
-                    padding + spriteWidth * renderedIcons,
-                    padding + (19 - barHeight) - spriteOffset,
+                    startX + spriteWidth * renderedIcons,
+                    startY + (19 - barHeight) - spriteOffset,
                     (barWidth * index).toFloat(),
                     16F - barHeight - spriteOffset,
                     barWidth,
