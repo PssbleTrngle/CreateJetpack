@@ -4,10 +4,6 @@ import net.minecraftforge.common.ForgeConfigSpec
 
 class ClientConfig(builder: ForgeConfigSpec.Builder) {
 
-    enum class OverlayPosition {
-        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
-    }
-
     val SHOW_OVERLAY = builder.define("overlay.enabled", true)
 
     init {
