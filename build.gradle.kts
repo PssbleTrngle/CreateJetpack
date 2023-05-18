@@ -273,8 +273,8 @@ env["CURSEFORGE_TOKEN"]?.let { token ->
             addGameVersion(mc_version)
             displayName = "Version $mod_version"
 
-            addRelation("create", "required")
-            addRelation("kotlin-for-forge", "required")
+            addRelation("create", "requiredDependency")
+            addRelation("kotlin-for-forge", "requiredDependency")
         }
     }
 }
