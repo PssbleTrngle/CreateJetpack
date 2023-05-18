@@ -9,14 +9,5 @@
   "item.create_jetpack.jetpack.tooltip.control3": "Gを押して",
   "item.create_jetpack.jetpack.tooltip.action3": "エンジンのオン/オフを切り替え",
   "item.create_jetpack.jetpack.tooltip.control4": "Hで",
-  "item.create_jetpack.jetpack.tooltip.action4": "ホバーモードのオン/オフを切り替え",
-  "message.create_jetpack.control.toggle_active": "ジェットパックのエンジンを%s",
-  "message.create_jetpack.control.toggle_hover": "ジェットパックのホバーモードを%s",
-  "message.create_jetpack.control.on": "有効化",
-  "message.create_jetpack.control.off": "無効化",
-  "overlay.create_jetpack.control.toggle_hover": "ホバー",
-  "overlay.create_jetpack.control.toggle_active": "エンジン",
-  "key.jetpack.toggle_hover.description": "ホバーモードの切り替え",
-  "key.jetpack.toggle_active.description": "エンジンの切り替え",
-  "create_jetpack.subtitle.whoosh": "ジェットパンクが噴射される"
+  "item.create_jetpack.jetpack.tooltip.action4": "ホバーモードのオン/オフを切り替え"
 }

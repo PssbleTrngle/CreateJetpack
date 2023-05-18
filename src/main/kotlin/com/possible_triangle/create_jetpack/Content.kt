@@ -2,15 +2,10 @@ package com.possible_triangle.create_jetpack
 
 import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
 import com.possible_triangle.create_jetpack.block.JetpackBlock
-import com.possible_triangle.create_jetpack.capability.IJetpack
-import com.possible_triangle.create_jetpack.capability.JetpackLogic
 import com.possible_triangle.create_jetpack.client.ControlsDisplay
 import com.possible_triangle.create_jetpack.client.JetpackArmorLayer
-import com.possible_triangle.create_jetpack.compat.CuriosCompat
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.BrassJetpack
-import com.possible_triangle.create_jetpack.network.ControlManager
-import com.possible_triangle.create_jetpack.network.ModNetwork
 import com.simibubi.create.Create
 import com.simibubi.create.content.AllSections
 import com.simibubi.create.content.CreateItemGroup
@@ -30,7 +25,6 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.sounds.SoundEvent
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.storage.loot.LootPool
@@ -41,18 +35,11 @@ import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
-import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityRenderersEvent
-import net.minecraftforge.common.capabilities.CapabilityManager
-import net.minecraftforge.common.capabilities.CapabilityToken
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.eventbus.api.IEventBus
-import net.minecraftforge.fml.DistExecutor
-import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.config.ModConfig
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
-import net.minecraftforge.registries.DeferredRegister
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
 import java.util.function.BiConsumer
@@ -133,12 +120,6 @@ object Content {
             .tag(PRESSURIZED_AIR_SOURCES)
             .register()
 
-    val JETPACK_CAPABILITY = CapabilityManager.get(object : CapabilityToken<IJetpack>() {})
-
-    val SOUNDS = DeferredRegister.create(Registry.SOUND_EVENT_REGISTRY, MOD_ID)
-
-    val SOUND_WHOOSH = SOUNDS.register("whoosh") { SoundEvent(ResourceLocation(MOD_ID, "whoosh")) }
-
     private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
         val item = stack.item
         if (item is BrassJetpack) add.accept(ResourceLocation(MOD_ID, "jetpack"), item)
@@ -150,19 +131,7 @@ object Content {
         LOADING_CONTEXT.registerConfig(ModConfig.Type.COMMON, Configs.SERVER_SPEC)
         LOADING_CONTEXT.registerConfig(ModConfig.Type.CLIENT, Configs.CLIENT_SPEC)
 
-        SOUNDS.register(modBus)
-
         Configs.Network.register()
-
-        modBus.addListener { _: FMLCommonSetupEvent ->
-            ModNetwork.init()
-        }
-
-        DistExecutor.safeCallWhenOn(Dist.CLIENT) {
-            DistExecutor.SafeCallable {
-                modBus.addListener(ControlManager::registerKeybinds)
-            }
-        }
 
         modBus.addListener { _: EntityRenderersEvent.AddLayers ->
             val dispatcher = Minecraft.getInstance().entityRenderDispatcher
@@ -171,20 +140,9 @@ object Content {
 
         modBus.addListener(ControlsDisplay::register)
 
-        FORGE_BUS.addListener(ControlManager::onDimensionChange)
-        FORGE_BUS.addListener(ControlManager::onLogout)
-
-        FORGE_BUS.addListener(JetpackLogic::tick)
         FORGE_BUS.addListener(Configs::syncConfig)
         FORGE_BUS.addGenericListener(ItemStack::class.java) { event: AttachCapabilitiesEvent<ItemStack> ->
             attachCapabilities(event.`object`, event::addCapability)
-        }
-
-        FORGE_BUS.addListener(ControlManager::onTick)
-        FORGE_BUS.addListener(ControlManager::onKey)
-
-        if (ModList.get().isLoaded("curios")) {
-            CuriosCompat.register(modBus)
         }
     }
 

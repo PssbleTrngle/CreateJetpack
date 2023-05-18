@@ -3,10 +3,11 @@ package com.possible_triangle.create_jetpack.client
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
 import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
-import com.possible_triangle.create_jetpack.capability.IJetpack
-import com.possible_triangle.create_jetpack.capability.JetpackLogic
 import com.possible_triangle.create_jetpack.config.Configs
-import com.possible_triangle.create_jetpack.network.ControlManager.Key
+import com.possible_triangle.flightlib.api.ControlType
+import com.possible_triangle.flightlib.api.FlightKey
+import com.possible_triangle.flightlib.api.IFlightApi
+import com.possible_triangle.flightlib.api.IJetpack
 import com.simibubi.create.content.curiosities.armor.BackTankUtil
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiComponent
@@ -32,9 +33,9 @@ object ControlsDisplay : IGuiOverlay {
         )
     }
 
-    private val ICONS = mapOf<Key, (IJetpack.Context) -> JetpackLogic.ControlType>(
-        Key.TOGGLE_ACTIVE to { it.jetpack.activeType(it) },
-        Key.TOGGLE_HOVER to { it.jetpack.hoverType(it) },
+    private val ICONS = mapOf<FlightKey, (IJetpack.Context) -> ControlType>(
+        FlightKey.TOGGLE_ACTIVE to { it.jetpack.activeType(it) },
+        FlightKey.TOGGLE_HOVER to { it.jetpack.hoverType(it) },
     )
 
     fun register(event: RegisterGuiOverlaysEvent) {
@@ -46,7 +47,7 @@ object ControlsDisplay : IGuiOverlay {
         if (!Configs.CLIENT.SHOW_OVERLAY.get()) return
         if (mc.options.hideGui) return
         val player = mc.player ?: return
-        val context = JetpackLogic.getJetpack(player) ?: return
+        val context = IFlightApi.INSTANCE.findJetpack(player) ?: return
 
         val margin = 6
         val scale = Configs.CLIENT.OVERLAY_DISTANCE_SCALE.get().toFloat()
@@ -69,10 +70,10 @@ object ControlsDisplay : IGuiOverlay {
             GuiComponent.blit(poseStack, startX + x, startY, 0, sprite.x, sprite.y, 16, 16, 32, 32)
         }
 
-        val engineActive = Key.TOGGLE_ACTIVE.isPressed(player)
+        val engineActive = FlightKey.TOGGLE_ACTIVE.isPressed(player)
 
-        val renderedIcons = ICONS.filterKeys { it == Key.TOGGLE_ACTIVE || engineActive }
-            .filterValues { getType -> getType(context) == JetpackLogic.ControlType.TOGGLE }
+        val renderedIcons = ICONS.filterKeys { it == FlightKey.TOGGLE_ACTIVE || engineActive }
+            .filterValues { getType -> getType(context) == ControlType.TOGGLE }
             .keys.mapIndexed { index, key ->
                 poseStack.pushPose()
 
@@ -82,7 +83,7 @@ object ControlsDisplay : IGuiOverlay {
                 val textScale = 0.5F
                 poseStack.scale(textScale, textScale, textScale)
                 val textMargin = (startX + 8 + spriteWidth * index) * (1 / textScale)
-                val text = Component.translatable("overlay.create_jetpack.control.${key.name.lowercase()}")
+                val text = Component.translatable("overlay.flightlib.control.${key.name.lowercase()}")
                 val color = if (active) 0xFFFFFF else 0xBBBBBB
                 GuiComponent.drawCenteredString(
                     poseStack, gui.font, text, textMargin.toInt(), startY * 2 + 36, color

@@ -1,16 +1,18 @@
 package com.possible_triangle.create_jetpack.item
 
-import com.possible_triangle.create_jetpack.Content.JETPACK_CAPABILITY
-import com.possible_triangle.create_jetpack.capability.IJetpack
-import com.possible_triangle.create_jetpack.capability.IJetpack.Context
-import com.possible_triangle.create_jetpack.capability.JetpackLogic
-import com.possible_triangle.create_jetpack.capability.sources.CuriosSource
-import com.possible_triangle.create_jetpack.capability.sources.EquipmentSource
 import com.possible_triangle.create_jetpack.config.Configs
+import com.possible_triangle.flightlib.api.ControlType
+import com.possible_triangle.flightlib.api.IJetpack
+import com.possible_triangle.flightlib.api.IJetpack.Context
+import com.possible_triangle.flightlib.api.sources.CuriosSource
+import com.possible_triangle.flightlib.api.sources.EquipmentSource
+import com.possible_triangle.flightlib.forge.api.ForgeFlightLib.JETPACK_CAPABILITY
+import com.simibubi.create.content.contraptions.particle.AirParticleData
 import com.simibubi.create.content.curiosities.armor.BackTankUtil
 import com.simibubi.create.content.curiosities.armor.CopperBacktankItem
 import com.tterrag.registrate.util.entry.ItemEntry
 import net.minecraft.core.Direction
+import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
@@ -32,12 +34,12 @@ class BrassJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBl
         return Configs.SERVER.verticalSpeed
     }
 
-    override fun activeType(context: Context): JetpackLogic.ControlType {
-        return JetpackLogic.ControlType.TOGGLE
+    override fun activeType(context: Context): ControlType {
+        return ControlType.TOGGLE
     }
 
-    override fun hoverType(context: Context): JetpackLogic.ControlType {
-        return JetpackLogic.ControlType.TOGGLE
+    override fun hoverType(context: Context): ControlType {
+        return ControlType.TOGGLE
     }
 
     override fun horizontalSpeed(context: Context): Double {
@@ -94,4 +96,7 @@ class BrassJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBl
         return super.canApplyAtEnchantingTable(stack, enchantment) && Configs.SERVER.isAllowed(enchantment)
     }
 
+    override fun createParticles(): ParticleOptions {
+        return AirParticleData(0F, 0.01F)
+    }
 }

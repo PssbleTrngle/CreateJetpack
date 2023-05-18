@@ -9,14 +9,5 @@
   "item.create_jetpack.jetpack.tooltip.control3": "Press [G]",
   "item.create_jetpack.jetpack.tooltip.action3": "Turn engine on/off",
   "item.create_jetpack.jetpack.tooltip.control4": "Press [H]",
-  "item.create_jetpack.jetpack.tooltip.action4": "Turn hover mode on/off",
-  "message.create_jetpack.control.toggle_active": "Turned jetpack engine %s",
-  "message.create_jetpack.control.toggle_hover": "Turned jetpack hover mode %s",
-  "message.create_jetpack.control.on": "on",
-  "message.create_jetpack.control.off": "off",
-  "overlay.create_jetpack.control.toggle_hover": "Hover",
-  "overlay.create_jetpack.control.toggle_active": "Active",
-  "key.jetpack.toggle_hover.description": "Toggle Hover Mode",
-  "key.jetpack.toggle_active.description": "Toggle Jetpack Engine",
-  "create_jetpack.subtitle.whoosh": "Jetpack whooshes"
+  "item.create_jetpack.jetpack.tooltip.action4": "Turn hover mode on/off"
 }

@@ -3,7 +3,6 @@ package com.possible_triangle.create_jetpack.mixins;
 import com.possible_triangle.create_jetpack.Content;
 import com.possible_triangle.create_jetpack.compat.CuriosCompat;
 import com.simibubi.create.content.curiosities.armor.BackTankUtil;
-import kotlin.Pair;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +17,6 @@ public class BackTankUtilMixin {
     private static void provideCuriosAir(LivingEntity entity, CallbackInfoReturnable<ItemStack> cir) {
         var stacks = CuriosCompat.INSTANCE.getCuriosStacksSafe(entity);
         stacks.stream()
-                .map(Pair::component1)
                 .filter(it -> it.is(Content.INSTANCE.getPRESSURIZED_AIR_SOURCES()))
                 .findFirst().ifPresent(cir::setReturnValue);
     }
