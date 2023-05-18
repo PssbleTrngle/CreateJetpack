@@ -260,7 +260,7 @@ publishing {
 }
 
 env["CURSEFORGE_TOKEN"]?.let { token ->
-    tasks.register<TaskPublishCurseForge>("publishCurseForge") {
+    tasks.register<TaskPublishCurseForge>("curseforge") {
         dependsOn(tasks.jar)
 
         apiToken = token
