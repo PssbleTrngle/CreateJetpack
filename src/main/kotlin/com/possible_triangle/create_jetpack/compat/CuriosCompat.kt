@@ -12,7 +12,7 @@ object CuriosCompat {
 
         val curios = entity.getCapability(CuriosCapability.INVENTORY)
         return curios.map {
-            it.curios.entries.flatMap { (slot, handler) ->
+            it.curios.values.flatMap { handler ->
                 val slots = 0 until handler.slots
                 slots.map { index ->
                     handler.stacks.getStackInSlot(index)
