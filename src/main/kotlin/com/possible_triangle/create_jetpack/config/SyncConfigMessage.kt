@@ -19,6 +19,7 @@ class SyncConfigMessage (private val config: IServerConfig) {
                 acceleration = buf.readDouble(),
                 hoverSpeed = buf.readDouble(),
                 swimModifier = buf.readDouble(),
+                elytraBoostEnabled = buf.readBoolean(),
             )
             return SyncConfigMessage(config)
         }
@@ -32,6 +33,7 @@ class SyncConfigMessage (private val config: IServerConfig) {
         buf.writeDouble(config.acceleration)
         buf.writeDouble(config.hoverSpeed)
         buf.writeDouble(config.swimModifier)
+        buf.writeBoolean(config.elytraBoostEnabled)
     }
 
     fun handle(context: Supplier<Context>) {

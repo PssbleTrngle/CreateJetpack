@@ -37,6 +37,7 @@ jobs:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
           CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
           CHANGELOG: ${{ github.event.release.body }}
+          CI: true
 
       - name: Upload to github releases
         if: ${{ github.event_name == 'release' }}

@@ -54,6 +54,10 @@ class BrassJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBl
         return Configs.SERVER.swimModifier
     }
 
+    override fun boostsElytra(): Boolean {
+        return Configs.SERVER.elytraBoostEnabled
+    }
+
     private val thrusters = listOf(-0.35, 0.35).map { offset ->
         Vec3(offset, 0.7, -0.5)
     }

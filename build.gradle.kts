@@ -17,13 +17,16 @@ val release_type: String by extra
 val modrinth_project_id: String by extra
 val curseforge_project_id: String by extra
 val curios_version: String by extra
+val caelus_version: String by extra
+val elytra_slot_version: String by extra
 
 val localEnv = file(".env").takeIf { it.exists() }?.readLines()?.associate {
     val (key, value) = it.split("=")
     key to value
-}  ?: emptyMap()
+} ?: emptyMap()
 
 val env = System.getenv() + localEnv
+val isCI = env["CI"] == "true"
 
 buildscript {
     dependencies {
@@ -192,10 +195,13 @@ dependencies {
     implementation(fg.deobf("curse.maven:create-328085:${create_version}"))
     implementation(fg.deobf("com.jozufozu.flywheel:flywheel-forge-${mc_version}:${flywheel_version}"))
 
-    // Only here to test jetpack+elytra combination behaviour
     implementation(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}"))
-    //runtimeOnly fg.deobf("top.theillusivec4.caelus:caelus-forge:1.18.1-3.0.0.2")
-    //runtimeOnly fg.deobf("curse.maven:elytra-slot-317716:3601975")
+
+    if (!isCI) {
+        // Only here to test jetpack+elytra combination behaviour
+        runtimeOnly(fg.deobf("top.theillusivec4.caelus:caelus-forge:${caelus_version}"))
+        runtimeOnly(fg.deobf("curse.maven:elytra-slot-317716:${elytra_slot_version}"))
+    }
 
     compileOnly(fg.deobf("com.possible_triangle:flightlib-api:${flightlib_version}"))
     compileOnly(fg.deobf("com.possible_triangle:flightlib-forge-api:${flightlib_version}"))
