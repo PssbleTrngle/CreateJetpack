@@ -8,7 +8,7 @@ import com.possible_triangle.flightlib.api.ControlType
 import com.possible_triangle.flightlib.api.FlightKey
 import com.possible_triangle.flightlib.api.IFlightApi
 import com.possible_triangle.flightlib.api.IJetpack
-import com.simibubi.create.content.curiosities.armor.BackTankUtil
+import com.simibubi.create.content.equipment.armor.BacktankUtil
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiComponent
 import net.minecraft.network.chat.Component
@@ -115,9 +115,9 @@ object ControlsDisplay : IGuiOverlay {
             }
 
             val blink = player.level.gameTime % 20 < 5
-            val airSource = BackTankUtil.get(player)
-            val maxAir = BackTankUtil.maxAir(airSource)
-            val air = BackTankUtil.getAir(airSource)
+            val airSource = BacktankUtil.get(player)
+            val maxAir = BacktankUtil.maxAir(airSource)
+            val air = BacktankUtil.getAir(airSource)
             val barHeight = ceil(air / maxAir * 14).toInt()
             val shrinking = context.jetpack.isThrusting(context)
 

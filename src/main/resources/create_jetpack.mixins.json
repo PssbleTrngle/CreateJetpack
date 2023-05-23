@@ -3,7 +3,7 @@
   "package": "com.possible_triangle.create_jetpack.mixins",
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.8",
-  "refmap": "create_jetpack.refmap.json",
+  "refmap": "${mod_id}.refmap.json",
   "mixins": [
     "BackTankUtilMixin"
   ],

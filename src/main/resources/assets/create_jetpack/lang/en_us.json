@@ -1,6 +1,6 @@
 {
   "item.create_jetpack.jetpack": "Jetpack",
-  "item.create_jetpack.jetpack.tooltip": "",
+  "item.create_jetpack.jetpack.tooltip": "JETPACK",
   "item.create_jetpack.jetpack.tooltip.summary": "Allows levitation using pressurized air",
   "item.create_jetpack.jetpack.tooltip.control1": "Press [JUMP]",
   "item.create_jetpack.jetpack.tooltip.action1": "Fly upwards",

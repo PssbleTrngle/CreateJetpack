@@ -3,29 +3,30 @@ package com.possible_triangle.create_jetpack
 import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
 import com.possible_triangle.create_jetpack.block.JetpackBlock
 import com.possible_triangle.create_jetpack.client.ControlsDisplay
-import com.possible_triangle.create_jetpack.client.JetpackArmorLayer
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.BrassJetpack
-import com.simibubi.create.Create
-import com.simibubi.create.content.AllSections
-import com.simibubi.create.content.CreateItemGroup
-import com.simibubi.create.content.curiosities.armor.CopperBacktankInstance
-import com.simibubi.create.content.curiosities.armor.CopperBacktankItem.CopperBacktankBlockItem
-import com.simibubi.create.content.curiosities.armor.CopperBacktankRenderer
-import com.simibubi.create.content.curiosities.armor.CopperBacktankTileEntity
-import com.simibubi.create.foundation.block.BlockStressDefaults
+import com.simibubi.create.AllCreativeModeTabs
+import com.simibubi.create.AllTags.AllItemTags
+import com.simibubi.create.content.equipment.armor.BacktankBlockEntity
+import com.simibubi.create.content.equipment.armor.BacktankInstance
+import com.simibubi.create.content.equipment.armor.BacktankItem.BacktankBlockItem
+import com.simibubi.create.content.equipment.armor.BacktankRenderer
+import com.simibubi.create.content.kinetics.BlockStressDefaults
 import com.simibubi.create.foundation.data.AssetLookup
 import com.simibubi.create.foundation.data.CreateRegistrate
 import com.simibubi.create.foundation.data.SharedProperties
 import com.simibubi.create.foundation.data.TagGen
+import com.simibubi.create.foundation.item.ItemDescription
+import com.simibubi.create.foundation.item.KineticStats
+import com.simibubi.create.foundation.item.TooltipHelper
+import com.simibubi.create.foundation.item.TooltipModifier
+import com.tterrag.registrate.builders.BlockEntityBuilder
 import com.tterrag.registrate.util.entry.ItemEntry
 import com.tterrag.registrate.util.nullness.NonNullFunction
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
-import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.tags.TagKey
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.storage.loot.LootPool
 import net.minecraft.world.level.storage.loot.LootTable
@@ -49,10 +50,11 @@ import java.util.function.Supplier
 object Content {
 
     private val REGISTRATE = CreateRegistrate.create(MOD_ID)
-        .creativeModeTab { CreateItemGroup.TAB_TOOLS }
-        .startSection(AllSections.CURIOSITIES)
-
-    val PRESSURIZED_AIR_SOURCES = TagKey.create(Registry.ITEM_REGISTRY, Create.asResource("pressurized_air_sources"))
+        .creativeModeTab { AllCreativeModeTabs.BASE_CREATIVE_TAB }
+        .setTooltipModifierFactory {
+            ItemDescription.Modifier(it, TooltipHelper.Palette.STANDARD_CREATE)
+                .andThen(TooltipModifier.mapNull(KineticStats.create(it)))
+        }
 
     val JETPACK_BLOCK = REGISTRATE.block<JetpackBlock>("jetpack", ::JetpackBlock)
         .initialProperties { SharedProperties.copperMetal() }
@@ -90,26 +92,18 @@ object Content {
         }
         .register()
 
-    val JETPACK_TILE = REGISTRATE
-        .tileEntity(
-            "jetpack",
-            ::CopperBacktankTileEntity
-        )
-        .instance {
-            BiFunction { manager, tile ->
-                CopperBacktankInstance(manager, tile)
-            }
-        }
+    val JETPACK_TILE = REGISTRATE.blockEntity("jetpack", BlockEntityBuilder.BlockEntityFactory(::BacktankBlockEntity))
+        .instance { BiFunction { manager, tile -> BacktankInstance(manager, tile) } }
         .validBlocks(JETPACK_BLOCK)
         .renderer {
             NonNullFunction { context: BlockEntityRendererProvider.Context? ->
-                CopperBacktankRenderer(context)
+                BacktankRenderer(context)
             }
         }
         .register()
 
-    val JETPACK_PLACEABLE = REGISTRATE.item<CopperBacktankBlockItem>("jetpack_placeable") {
-        CopperBacktankBlockItem(JETPACK_BLOCK.get(), it)
+    val JETPACK_PLACEABLE = REGISTRATE.item<BacktankBlockItem>("jetpack_placeable") {
+        BacktankBlockItem(JETPACK_BLOCK.get(), { JETPACK.get() }, it)
     }.model { context, provider ->
         provider.withExistingParent(context.name, provider.mcLoc("item/barrier"))
     }.register()
@@ -117,7 +111,7 @@ object Content {
     val JETPACK: ItemEntry<BrassJetpack> =
         REGISTRATE.item<BrassJetpack>("jetpack") { BrassJetpack(it, JETPACK_PLACEABLE) }
             .model(AssetLookup.customGenericItemModel("_", "item"))
-            .tag(PRESSURIZED_AIR_SOURCES)
+            .tag(AllItemTags.PRESSURIZED_AIR_SOURCES.tag)
             .register()
 
     private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
@@ -135,7 +129,7 @@ object Content {
 
         modBus.addListener { _: EntityRenderersEvent.AddLayers ->
             val dispatcher = Minecraft.getInstance().entityRenderDispatcher
-            JetpackArmorLayer.registerOnAll(dispatcher)
+            //JetpackArmorLayer.registerOnAll(dispatcher)
         }
 
         modBus.addListener(ControlsDisplay::register)

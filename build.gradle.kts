@@ -13,12 +13,15 @@ val flywheel_version: String by extra
 val flightlib_version: String by extra
 val repository: String by extra
 val mod_version: String by extra
+val mod_name: String by extra
+val mod_author: String by extra
 val release_type: String by extra
 val modrinth_project_id: String by extra
 val curseforge_project_id: String by extra
 val curios_version: String by extra
 val caelus_version: String by extra
 val elytra_slot_version: String by extra
+val jei_version: String by extra
 
 val localEnv = file(".env").takeIf { it.exists() }?.readLines()?.associate {
     val (key, value) = it.split("=")
@@ -141,7 +144,7 @@ sourceSets["main"].resources.srcDir("src/generated/resources/")
 
 repositories {
     maven {
-        url = uri("https://dvs1.progwml6.com/files/maven/")
+        url = uri("https://maven.blamejared.com/")
         content {
             includeGroup("mezz.jei")
         }
@@ -198,6 +201,8 @@ dependencies {
     implementation(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}"))
 
     if (!isCI) {
+        runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}"))
+
         // Only here to test jetpack+elytra combination behaviour
         runtimeOnly(fg.deobf("top.theillusivec4.caelus:caelus-forge:${caelus_version}"))
         runtimeOnly(fg.deobf("curse.maven:elytra-slot-317716:${elytra_slot_version}"))
@@ -241,6 +246,23 @@ tasks.jar {
 tasks.jarJar {
     finalizedBy("reobfJarJar")
     classifier = ""
+}
+
+tasks.withType<ProcessResources> {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property("version", version)
+
+    filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta", "${mod_id}.mixins.json")) {
+        expand(
+            mapOf(
+                "mod_version" to mod_version,
+                "mod_name" to mod_name,
+                "mod_id" to mod_id,
+                "mod_author" to mod_author,
+                "repository" to repository,
+            )
+        )
+    }
 }
 
 publishing {

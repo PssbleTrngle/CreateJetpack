@@ -7,9 +7,11 @@ import com.possible_triangle.flightlib.api.IJetpack.Context
 import com.possible_triangle.flightlib.api.sources.CuriosSource
 import com.possible_triangle.flightlib.api.sources.EquipmentSource
 import com.possible_triangle.flightlib.forge.api.ForgeFlightLib.JETPACK_CAPABILITY
-import com.simibubi.create.content.contraptions.particle.AirParticleData
-import com.simibubi.create.content.curiosities.armor.BackTankUtil
-import com.simibubi.create.content.curiosities.armor.CopperBacktankItem
+import com.simibubi.create.Create
+import com.simibubi.create.content.equipment.armor.AllArmorMaterials
+import com.simibubi.create.content.equipment.armor.BacktankItem
+import com.simibubi.create.content.equipment.armor.BacktankUtil
+import com.simibubi.create.foundation.particle.AirParticleData
 import com.tterrag.registrate.util.entry.ItemEntry
 import net.minecraft.core.Direction
 import net.minecraft.core.particles.ParticleOptions
@@ -22,8 +24,13 @@ import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.common.util.LazyOptional
 
-class BrassJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBlockItem>) :
-    CopperBacktankItem(properties.rarity(Rarity.RARE), blockItem), IJetpack, ICapabilityProvider {
+class BrassJetpack(properties: Properties, blockItem: ItemEntry<BacktankBlockItem>) :
+    BacktankItem(
+        AllArmorMaterials.COPPER,
+        properties.rarity(Rarity.RARE),
+        Create.asResource("copper_diving"),
+        blockItem
+    ), IJetpack, ICapabilityProvider {
     private val capability = LazyOptional.of<IJetpack> { this }
 
     override fun hoverSpeed(context: Context): Double {
@@ -66,7 +73,7 @@ class BrassJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBl
 
     override fun onUse(context: Context) {
         if (!isThrusting(context)) return
-        BackTankUtil.canAbsorbDamage(context.entity, usesPerTank(context))
+        BacktankUtil.canAbsorbDamage(context.entity, usesPerTank(context))
     }
 
     private fun usesPerTank(context: Context): Int {
@@ -83,11 +90,11 @@ class BrassJetpack(properties: Properties, blockItem: ItemEntry<CopperBacktankBl
     }
 
     override fun isUsable(context: Context): Boolean {
-        val tank = BackTankUtil.get(context.entity)
+        val tank = BacktankUtil.get(context.entity)
         if (tank.isEmpty) return false
-        val air = BackTankUtil.getAir(tank)
+        val air = BacktankUtil.getAir(tank)
         if (air <= 0F) return false
-        val cost = BackTankUtil.maxAirWithoutEnchants().toFloat() / usesPerTank(context)
+        val cost = BacktankUtil.maxAirWithoutEnchants().toFloat() / usesPerTank(context)
         return air >= cost
     }
 
