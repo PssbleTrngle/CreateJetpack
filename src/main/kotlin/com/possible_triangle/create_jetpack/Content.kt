@@ -23,7 +23,6 @@ import com.simibubi.create.foundation.item.TooltipModifier
 import com.tterrag.registrate.builders.BlockEntityBuilder
 import com.tterrag.registrate.util.entry.ItemEntry
 import com.tterrag.registrate.util.nullness.NonNullFunction
-import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.resources.ResourceLocation
@@ -36,11 +35,11 @@ import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
-import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.eventbus.api.IEventBus
 import net.minecraftforge.fml.config.ModConfig
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
 import java.util.function.BiConsumer
@@ -127,12 +126,7 @@ object Content {
 
         Configs.Network.register()
 
-        modBus.addListener { _: EntityRenderersEvent.AddLayers ->
-            val dispatcher = Minecraft.getInstance().entityRenderDispatcher
-            //JetpackArmorLayer.registerOnAll(dispatcher)
-        }
-
-        modBus.addListener(ControlsDisplay::register)
+        modBus.addListener { _: FMLClientSetupEvent -> ControlsDisplay.register() }
 
         FORGE_BUS.addListener(Configs::syncConfig)
         FORGE_BUS.addGenericListener(ItemStack::class.java) { event: AttachCapabilitiesEvent<ItemStack> ->
