@@ -57,7 +57,7 @@ configure<MixinExtension> {
 
 val artifactGroup = "com.possible_triangle"
 base {
-    archivesName.set("$mod_id-$mod_version")
+    archivesName.set("$mod_id-forge-$mod_version")
 }
 
 java {
@@ -280,7 +280,7 @@ publishing {
     publications {
         create<MavenPublication>("gpr") {
             groupId = artifactGroup
-            artifactId = mod_id
+            artifactId = "${mod_id}-forge"
             version = mod_version
             from(components["java"])
         }

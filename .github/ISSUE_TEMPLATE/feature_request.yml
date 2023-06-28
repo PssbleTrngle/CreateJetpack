@@ -11,11 +11,11 @@ body:
       placeholder: So I was think about...
     validations:
       required: true
-      
+
   - type: textarea
     id: problem-solving
     attributes:
       label: Does this solve a particular problem?
-      placeholder: Yes, it balances... 
+      placeholder: Yes, it balances...
     validations:
       required: false
