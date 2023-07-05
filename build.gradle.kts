@@ -1,6 +1,5 @@
 import com.modrinth.minotaur.TaskModrinthSyncBody
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
-import org.spongepowered.asm.gradle.plugins.MixinExtension
 import java.time.LocalDateTime
 
 val mod_id: String by extra
@@ -50,11 +49,6 @@ apply(plugin = "net.minecraftforge.gradle")
 apply(plugin = "kotlin")
 apply(plugin = "org.spongepowered.mixin")
 
-configure<MixinExtension> {
-    add(sourceSets.main.get(), "${mod_id}.refmap.json")
-    config("${mod_id}.mixins.json")
-}
-
 val artifactGroup = "com.possible_triangle"
 base {
     archivesName.set("$mod_id-forge-$mod_version")
@@ -75,50 +69,14 @@ minecraft {
     runs {
         create("client") {
             workingDirectory(project.file("run"))
-
-            property("forge.logging.console.level", "debug")
-
-            arg("-mixin.config=create.mixins.json")
-            arg("-mixin.config=flywheel.mixins.json")
-            arg("-mixin.config=${mod_id}.mixins.json")
-            property("mixin.env.remapRefMap", "true")
-            property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
-
-            mods {
-                create(mod_id) {
-                    source(sourceSets.main.get())
-                }
-            }
         }
 
         create("server") {
             workingDirectory(project.file("run/server"))
-
-            property("forge.logging.console.level", "debug")
-
-            arg("-mixin.config=create.mixins.json")
-            arg("-mixin.config=flywheel.mixins.json")
-            arg("-mixin.config=${mod_id}.mixins.json")
-            property("mixin.env.remapRefMap", "true")
-            property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
-
-            mods {
-                create(mod_id) {
-                    source(sourceSets.main.get())
-                }
-            }
         }
 
         create("data") {
             workingDirectory(project.file("run"))
-
-            property("forge.logging.console.level", "debug")
-
-            arg("-mixin.config=create.mixins.json")
-            arg("-mixin.config=flywheel.mixins.json")
-            arg("-mixin.config=${mod_id}.mixins.json")
-            property("mixin.env.remapRefMap", "true")
-            property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
 
             args(
                 "--mod",
@@ -129,8 +87,17 @@ minecraft {
                 "--existing",
                 file("src/main/resources")
             )
+        }
 
-            mods {
+        forEach {
+            it.property("forge.logging.console.level", "debug")
+
+            it.arg("-mixin.config=create.mixins.json")
+            it.arg("-mixin.config=flywheel.mixins.json")
+            it.property("mixin.env.remapRefMap", "true")
+            it.property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
+
+            it.mods {
                 create(mod_id) {
                     source(sourceSets.main.get())
                 }
@@ -198,12 +165,11 @@ dependencies {
     implementation(fg.deobf("curse.maven:create-328085:${create_version}"))
     implementation(fg.deobf("com.jozufozu.flywheel:flywheel-forge-${mc_version}:${flywheel_version}"))
 
-    implementation(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}"))
-
     if (!isCI) {
         runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}"))
 
         // Only here to test jetpack+elytra combination behaviour
+        runtimeOnly(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}"))
         runtimeOnly(fg.deobf("top.theillusivec4.caelus:caelus-forge:${caelus_version}"))
         runtimeOnly(fg.deobf("curse.maven:elytra-slot-317716:${elytra_slot_version}"))
     }
@@ -233,7 +199,6 @@ tasks.withType<Jar> {
                 "Implementation-Version" to mod_version,
                 "Implementation-Vendor" to "examplemodsareus",
                 "Implementation-Timestamp" to LocalDateTime.now().toString(),
-                "MixinConfigs" to "${mod_id}.mixins.json",
             )
         )
     }
