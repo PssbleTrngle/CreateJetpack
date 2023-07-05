@@ -90,7 +90,7 @@ class BrassJetpack(properties: Properties, blockItem: ItemEntry<BacktankBlockIte
     }
 
     override fun isUsable(context: Context): Boolean {
-        val tank = BacktankUtil.getAllWithAir(context.entity).firstOrNull { BacktankUtil.hasAirRemaining(it) } ?: return false
+        val tank = BacktankUtil.getAllWithAir(context.entity).firstOrNull() ?: return false
         val air = BacktankUtil.getAir(tank)
         val cost = BacktankUtil.maxAirWithoutEnchants().toFloat() / usesPerTank(context)
         return air >= cost
