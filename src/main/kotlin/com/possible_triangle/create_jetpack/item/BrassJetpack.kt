@@ -84,7 +84,7 @@ class BrassJetpack(properties: Properties, blockItem: ItemEntry<BacktankBlockIte
     override fun isValid(context: Context): Boolean {
         return when (val source = context.source) {
             is EquipmentSource -> source.slot == EquipmentSlot.CHEST
-            is CuriosSource -> Configs.SERVER.isCurioSlotAllowed(source.slot)
+            is CuriosSource -> Configs.SERVER.curioSlots.contains(source.slot)
             else -> false
         }
     }

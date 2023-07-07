@@ -6,7 +6,7 @@ import net.minecraftforge.network.NetworkDirection
 import net.minecraftforge.network.NetworkEvent.Context
 import java.util.function.Supplier
 
-class SyncConfigMessage (private val config: IServerConfig) {
+class SyncConfigMessage(private val config: IServerConfig) {
 
     companion object {
 
@@ -20,7 +20,7 @@ class SyncConfigMessage (private val config: IServerConfig) {
                 hoverSpeed = buf.readDouble(),
                 swimModifier = buf.readDouble(),
                 elytraBoostEnabled = buf.readBoolean(),
-                //curioSlots = buf.readList(),
+                curioSlots = buf.readList(FriendlyByteBuf::readUtf),
             )
             return SyncConfigMessage(config)
         }
@@ -35,7 +35,7 @@ class SyncConfigMessage (private val config: IServerConfig) {
         buf.writeDouble(config.hoverSpeed)
         buf.writeDouble(config.swimModifier)
         buf.writeBoolean(config.elytraBoostEnabled)
-        //buf.writeList(config.curioSlots)
+        buf.writeCollection(config.curioSlots, FriendlyByteBuf::writeUtf)
     }
 
     fun handle(context: Supplier<Context>) {
