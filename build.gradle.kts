@@ -64,7 +64,6 @@ java {
 
 minecraft {
     mappings(mappings_channel, mc_version)
-    accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
 
     runs {
         create("client") {
