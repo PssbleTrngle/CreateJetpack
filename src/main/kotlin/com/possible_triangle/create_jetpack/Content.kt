@@ -127,11 +127,6 @@ object Content {
 
         Configs.Network.register()
 
-        modBus.addListener { _: EntityRenderersEvent.AddLayers ->
-            val dispatcher = Minecraft.getInstance().entityRenderDispatcher
-            //JetpackArmorLayer.registerOnAll(dispatcher)
-        }
-
         modBus.addListener(ControlsDisplay::register)
 
         FORGE_BUS.addListener(Configs::syncConfig)
