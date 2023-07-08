@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiComponent
 import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.Vec2
 import net.minecraftforge.client.gui.ForgeIngameGui
 import net.minecraftforge.client.gui.IIngameOverlay
@@ -114,7 +115,7 @@ object ControlsDisplay : IIngameOverlay {
             }
 
             val blink = player.level.gameTime % 20 < 5
-            val airSource = BacktankUtil.get(player)
+            val airSource = BacktankUtil.getAllWithAir(player).firstOrNull() ?: ItemStack.EMPTY
             val maxAir = BacktankUtil.maxAir(airSource)
             val air = BacktankUtil.getAir(airSource)
             val barHeight = ceil(air / maxAir * 14).toInt()

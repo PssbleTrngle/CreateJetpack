@@ -1,6 +1,5 @@
 import com.modrinth.minotaur.TaskModrinthSyncBody
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
-import org.spongepowered.asm.gradle.plugins.MixinExtension
 import java.time.LocalDateTime
 
 val mod_id: String by extra
@@ -50,11 +49,6 @@ apply(plugin = "net.minecraftforge.gradle")
 apply(plugin = "kotlin")
 apply(plugin = "org.spongepowered.mixin")
 
-configure<MixinExtension> {
-    add(sourceSets.main.get(), "${mod_id}.refmap.json")
-    config("${mod_id}.mixins.json")
-}
-
 val artifactGroup = "com.possible_triangle"
 base {
     archivesName.set("$mod_id-$mod_version")
@@ -70,7 +64,6 @@ java {
 
 minecraft {
     mappings(mappings_channel, mc_version)
-    accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
 
     runs {
         create("client") {
@@ -100,7 +93,6 @@ minecraft {
 
             it.arg("-mixin.config=create.mixins.json")
             it.arg("-mixin.config=flywheel.mixins.json")
-            it.arg("-mixin.config=${mod_id}.mixins.json")
             it.property("mixin.env.remapRefMap", "true")
             it.property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
 
@@ -172,12 +164,12 @@ dependencies {
     implementation(fg.deobf("curse.maven:create-328085:${create_version}"))
     implementation(fg.deobf("com.jozufozu.flywheel:flywheel-forge-${mc_version}:${flywheel_version}"))
 
-    implementation(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}"))
 
     if (!isCI) {
         runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}"))
 
         // Only here to test jetpack+elytra combination behaviour
+        runtimeOnly(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}"))
         runtimeOnly(fg.deobf("top.theillusivec4.caelus:caelus-forge:${caelus_version}"))
         runtimeOnly(fg.deobf("curse.maven:elytra-slot-317716:${elytra_slot_version}"))
     }
@@ -207,7 +199,6 @@ tasks.withType<Jar> {
                 "Implementation-Version" to mod_version,
                 "Implementation-Vendor" to "examplemodsareus",
                 "Implementation-Timestamp" to LocalDateTime.now().toString(),
-                "MixinConfigs" to "${mod_id}.mixins.json",
             )
         )
     }

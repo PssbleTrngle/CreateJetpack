@@ -15,6 +15,7 @@ interface IServerConfig {
     val swimModifier: Double
     val elytraBoostEnabled: Boolean
     fun isAllowed(ench: Enchantment): Boolean
+    val curioSlots: Collection<String>
 }
 
 data class SyncedConfig(
@@ -26,6 +27,7 @@ data class SyncedConfig(
     override val hoverSpeed: Double,
     override val swimModifier: Double,
     override val elytraBoostEnabled: Boolean,
+    override val curioSlots: Collection<String>,
 ) : IServerConfig {
     override fun isAllowed(ench: Enchantment) = true
 }
@@ -64,4 +66,7 @@ class ServerConfig(builder: ForgeConfigSpec.Builder) : IServerConfig {
         val contained = enchantmentsList.get().map(::ResourceLocation).any { key == it }
         return contained != enchantmentsIsBlacklist.get()
     }
+
+    private val curiosSlotList = builder.defineList("curios.allowed_slots", listOf("back")) { true }
+    override val curioSlots: List<String> get() = curiosSlotList.get()
 }
