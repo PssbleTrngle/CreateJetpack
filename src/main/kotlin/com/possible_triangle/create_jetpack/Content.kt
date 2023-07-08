@@ -50,7 +50,7 @@ import java.util.function.Supplier
 object Content {
 
     private val REGISTRATE = CreateRegistrate.create(MOD_ID)
-        .creativeModeTab { AllCreativeModeTabs.BASE_CREATIVE_TAB }
+        .useCreativeTab(AllCreativeModeTabs.MAIN_TAB)
         .setTooltipModifierFactory {
             ItemDescription.Modifier(it, TooltipHelper.Palette.STANDARD_CREATE)
                 .andThen(TooltipModifier.mapNull(KineticStats.create(it)))
@@ -112,6 +112,7 @@ object Content {
         REGISTRATE.item<BrassJetpack>("jetpack") { BrassJetpack(it, JETPACK_PLACEABLE) }
             .model(AssetLookup.customGenericItemModel("_", "item"))
             .tag(AllItemTags.PRESSURIZED_AIR_SOURCES.tag)
+            .tab(AllCreativeModeTabs.MAIN_TAB.key!!)
             .register()
 
     private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
@@ -126,11 +127,6 @@ object Content {
         LOADING_CONTEXT.registerConfig(ModConfig.Type.CLIENT, Configs.CLIENT_SPEC)
 
         Configs.Network.register()
-
-        modBus.addListener { _: EntityRenderersEvent.AddLayers ->
-            val dispatcher = Minecraft.getInstance().entityRenderDispatcher
-            //JetpackArmorLayer.registerOnAll(dispatcher)
-        }
 
         modBus.addListener(ControlsDisplay::register)
 

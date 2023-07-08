@@ -1,7 +1,6 @@
 package com.possible_triangle.create_jetpack.client
 
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.vertex.PoseStack
 import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.flightlib.api.ControlType
@@ -10,7 +9,7 @@ import com.possible_triangle.flightlib.api.IFlightApi
 import com.possible_triangle.flightlib.api.IJetpack
 import com.simibubi.create.content.equipment.armor.BacktankUtil
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiComponent
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
@@ -43,7 +42,7 @@ object ControlsDisplay : IGuiOverlay {
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "jetpack_controls", this)
     }
 
-    override fun render(gui: ForgeGui, poseStack: PoseStack, partialTick: Float, width: Int, height: Int) {
+    override fun render(gui: ForgeGui, graphics: GuiGraphics, partialTick: Float, width: Int, height: Int) {
         val mc = Minecraft.getInstance()
         if (!Configs.CLIENT.SHOW_OVERLAY.get()) return
         if (mc.options.hideGui) return
@@ -66,9 +65,8 @@ object ControlsDisplay : IGuiOverlay {
 
         fun renderSprite(index: Int, x: Int) {
             val sprite = spritePos(index)
-            RenderSystem.setShaderTexture(0, controls)
-            poseStack.scale(scale, scale, scale)
-            GuiComponent.blit(poseStack, startX + x, startY, 0, sprite.x, sprite.y, 16, 16, 32, 32)
+            graphics.pose().scale(scale, scale, scale)
+            graphics.blit(controls, startX + x, startY, 0, sprite.x, sprite.y, 16, 16, 32, 32)
         }
 
         val engineActive = FlightKey.TOGGLE_ACTIVE.isPressed(player)
@@ -76,34 +74,31 @@ object ControlsDisplay : IGuiOverlay {
         val renderedIcons = ICONS.filterKeys { it == FlightKey.TOGGLE_ACTIVE || engineActive }
             .filterValues { getType -> getType(context) == ControlType.TOGGLE }
             .keys.mapIndexed { index, key ->
-                poseStack.pushPose()
+                graphics.pose().pushPose()
 
                 val active = key.isPressed(player)
                 renderSprite(index + if (active) 0 else 2, spriteWidth * index)
 
                 val textScale = 0.5F
-                poseStack.scale(textScale, textScale, textScale)
+                graphics.pose().scale(textScale, textScale, textScale)
                 val textMargin = (startX + 8 + spriteWidth * index) * (1 / textScale)
                 val text = Component.translatable("overlay.flightlib.control.${key.name.lowercase()}")
                 val color = if (active) 0xFFFFFF else 0xBBBBBB
-                GuiComponent.drawCenteredString(
-                    poseStack, gui.font, text, textMargin.toInt(), startY * 2 + 36, color
-                )
-                poseStack.popPose()
+                graphics.drawCenteredString(gui.font, text, textMargin.toInt(), startY * 2 + 36, color)
+                graphics.pose().popPose()
 
             }.count()
 
         if (engineActive) {
-            poseStack.pushPose()
+            graphics.pose().pushPose()
 
-            poseStack.scale(scale, scale, scale)
-            RenderSystem.setShaderTexture(0, airIndicator)
+            graphics.pose().scale(scale, scale, scale)
             RenderSystem.enableBlend()
 
             val barWidth = 5
             fun renderBar(index: Int, barHeight: Int = 16, spriteOffset: Int = 0) {
-                GuiComponent.blit(
-                    poseStack,
+                graphics.blit(
+                    airIndicator,
                     startX + spriteWidth * renderedIcons,
                     startY + (19 - barHeight) - spriteOffset,
                     (barWidth * index).toFloat(),
@@ -115,7 +110,7 @@ object ControlsDisplay : IGuiOverlay {
                 )
             }
 
-            val blink = player.level.gameTime % 20 < 5
+            val blink = player.level().gameTime % 20 < 5
             val airSource = BacktankUtil.getAllWithAir(player).firstOrNull() ?: ItemStack.EMPTY
             val maxAir = BacktankUtil.maxAir(airSource)
             val air = BacktankUtil.getAir(airSource)
@@ -127,7 +122,7 @@ object ControlsDisplay : IGuiOverlay {
             else renderBar(0, barHeight, 1)
 
             RenderSystem.disableBlend()
-            poseStack.popPose()
+            graphics.pose().popPose()
         }
     }
 }

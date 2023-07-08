@@ -8,6 +8,7 @@ val mc_version: String by extra
 val forge_version: String by extra
 val registrate_version: String by extra
 val create_version: String by extra
+val flywheel_mc_version: String by extra
 val flywheel_version: String by extra
 val flightlib_version: String by extra
 val repository: String by extra
@@ -21,6 +22,7 @@ val curios_version: String by extra
 val caelus_version: String by extra
 val elytra_slot_version: String by extra
 val jei_version: String by extra
+val kotlin_forge_version: String by extra
 
 val localEnv = file(".env").takeIf { it.exists() }?.readLines()?.associate {
     val (key, value) = it.split("=")
@@ -158,11 +160,11 @@ jarJar.enable()
 dependencies {
     minecraft("net.minecraftforge:forge:${mc_version}-${forge_version}")
 
-    implementation("thedarkcolour:kotlinforforge:3.12.0")
+    implementation("thedarkcolour:kotlinforforge:${kotlin_forge_version}")
 
     compileOnly(fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}"))
     implementation(fg.deobf("curse.maven:create-328085:${create_version}"))
-    implementation(fg.deobf("com.jozufozu.flywheel:flywheel-forge-${mc_version}:${flywheel_version}"))
+    implementation(fg.deobf("com.jozufozu.flywheel:flywheel-forge-${flywheel_mc_version}:${flywheel_version}"))
 
     if (!isCI) {
         runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}"))
