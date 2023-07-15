@@ -13,7 +13,7 @@ pluginManagement {
         }
 
         maven {
-            url = uri("https://maven.pkg.github.com/PssbleTrngle/FlightLib")
+            url = uri("https://maven.pkg.github.com/PssbleTrngle/GradleHelper")
             credentials {
                 username = env["GITHUB_ACTOR"]
                 password = env["GITHUB_TOKEN"]
