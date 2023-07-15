@@ -11,8 +11,10 @@ val elytra_slot_version: String by extra
 val jei_version: String by extra
 
 plugins {
-    id("net.somethingcatchy.gradle") version("0.0.1")
+    id("com.possible-triangle.gradle") version("0.0.1")
 }
+
+withKotlin()
 
 base {
     archivesName.set("$mod_id-forge-$mod_version")
@@ -55,18 +57,12 @@ repositories {
 }
 
 forge {
-    enableMixins()
     dataGen()
-}
-
-mod {
-    includedMods.set(listOf(
-        "com.possible_triangle:flightlib-forge:${flightlib_version}"
-    ))
+    includesMod("com.possible_triangle:flightlib-forge:${flightlib_version}")
 }
 
 dependencies {
-    modCompileOnly("com.tterrag.registrate:Registrate:${registrate_version}")
+    modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
     modImplementation("com.simibubi.create:create-${mc_version}:${create_version}:slim") { isTransitive = false }
     modImplementation("com.jozufozu.flywheel:flywheel-forge-${mc_version}:${flywheel_version}")
 
