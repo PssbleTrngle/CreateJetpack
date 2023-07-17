@@ -11,7 +11,7 @@ val elytra_slot_version: String by extra
 val jei_version: String by extra
 
 plugins {
-    id("net.somethingcatchy.gradle") version("0.0.2")
+    id("net.somethingcatchy.gradle") version("0.0.3")
 }
 
 withKotlin()
@@ -88,6 +88,7 @@ enablePublishing {
         githubPackages(project)
     }
 }
+
 uploadToCurseforge {
     dependencies {
         required("create")
