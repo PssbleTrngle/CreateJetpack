@@ -43,5 +43,5 @@ jobs:
         if: ${{ github.event_name == 'release' }}
         uses: svenstaro/upload-release-action@v2
         with:
-          file: build/libs/create_jetpack-${{ github.event.release.tag_name }}.jar
-          asset_name: create_jetpack-${{ github.event.release.tag_name }}.jar
+          file: build/libs/create_jetpack-forge-${{ github.event.release.tag_name }}.jar
+          asset_name: create_jetpack-forge-${{ github.event.release.tag_name }}.jar
