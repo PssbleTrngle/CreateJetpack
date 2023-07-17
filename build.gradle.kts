@@ -11,10 +11,15 @@ val elytra_slot_version: String by extra
 val jei_version: String by extra
 
 plugins {
-    id("com.possible-triangle.gradle") version("0.0.1")
+    id("net.somethingcatchy.gradle") version("0.0.2")
 }
 
 withKotlin()
+
+forge {
+    dataGen()
+    includesMod("com.possible_triangle:flightlib-forge:${flightlib_version}")
+}
 
 base {
     archivesName.set("$mod_id-forge-$mod_version")
@@ -54,11 +59,6 @@ repositories {
             includeGroup("com.possible_triangle")
         }
     }
-}
-
-forge {
-    dataGen()
-    includesMod("com.possible_triangle:flightlib-forge:${flightlib_version}")
 }
 
 dependencies {
