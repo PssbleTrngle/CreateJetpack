@@ -59,3 +59,5 @@ Curios Support is possible by adding it via a datapack. Save to following to `da
   ]
 }
 ```
+
+An example datapack enabling this support can be downloaded [here](https://github.com/PssbleTrngle/CreateJetpack/raw/1.20.x/curios_support_datapack.zip).
