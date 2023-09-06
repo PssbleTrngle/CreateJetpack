@@ -108,4 +108,10 @@ class BrassJetpack(properties: Properties, blockItem: ItemEntry<BacktankBlockIte
     override fun createParticles(): ParticleOptions {
         return AirParticleData(0F, 0.01F)
     }
+
+    fun createCreateTabEntry(): ItemStack {
+        return ItemStack(this).apply {
+            orCreateTag.putFloat("Air", BacktankUtil.maxAir(this).toFloat())
+        }
+    }
 }

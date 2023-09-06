@@ -50,7 +50,6 @@ import java.util.function.Supplier
 object Content {
 
     private val REGISTRATE = CreateRegistrate.create(MOD_ID)
-        .useCreativeTab(AllCreativeModeTabs.MAIN_TAB)
         .setTooltipModifierFactory {
             ItemDescription.Modifier(it, TooltipHelper.Palette.STANDARD_CREATE)
                 .andThen(TooltipModifier.mapNull(KineticStats.create(it)))
@@ -112,7 +111,7 @@ object Content {
         REGISTRATE.item<BrassJetpack>("jetpack") { BrassJetpack(it, JETPACK_PLACEABLE) }
             .model(AssetLookup.customGenericItemModel("_", "item"))
             .tag(AllItemTags.PRESSURIZED_AIR_SOURCES.tag)
-            .tab(AllCreativeModeTabs.MAIN_TAB.key!!)
+            .transform { it.tab(AllCreativeModeTabs.MAIN_TAB.key!!) { mod -> mod.accept(it.entry.createCreateTabEntry()) } }
             .register()
 
     private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
