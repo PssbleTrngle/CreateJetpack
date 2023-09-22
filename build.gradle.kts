@@ -11,7 +11,7 @@ val elytra_slot_version: String by extra
 val jei_version: String by extra
 
 plugins {
-    id("net.somethingcatchy.gradle") version("0.0.3")
+    id("com.possible-triangle.gradle") version("0.1.1")
 }
 
 withKotlin()
@@ -84,9 +84,7 @@ tasks.withType<Jar> {
 }
 
 enablePublishing {
-    repositories {
-        githubPackages(project)
-    }
+    githubPackages()
 }
 
 uploadToCurseforge {
