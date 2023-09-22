@@ -111,7 +111,7 @@ object Content {
         REGISTRATE.item<BrassJetpack>("jetpack") { BrassJetpack(it, JETPACK_PLACEABLE) }
             .model(AssetLookup.customGenericItemModel("_", "item"))
             .tag(AllItemTags.PRESSURIZED_AIR_SOURCES.tag)
-            .transform { it.tab(AllCreativeModeTabs.MAIN_TAB.key!!) { mod -> mod.accept(it.entry.createCreateTabEntry()) } }
+            .transform { it.tab(AllCreativeModeTabs.BASE_CREATIVE_TAB.key!!) { mod -> mod.accept(it.entry.createCreateTabEntry()) } }
             .register()
 
     private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
