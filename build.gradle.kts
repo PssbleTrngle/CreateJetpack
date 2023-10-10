@@ -18,7 +18,7 @@ withKotlin()
 
 forge {
     dataGen()
-    includesMod("com.possible_triangle:flightlib-forge:${flightlib_version}")
+    includesMod("com.possible-triangle:flightlib-forge:${flightlib_version}")
 }
 
 base {
@@ -56,7 +56,7 @@ repositories {
             password = env["GITHUB_TOKEN"]
         }
         content {
-            includeGroup("com.possible_triangle")
+            includeGroup("com.possible-triangle")
         }
     }
 }
@@ -75,8 +75,8 @@ dependencies {
         modRuntimeOnly("curse.maven:elytra-slot-317716:${elytra_slot_version}")
     }
 
-    modCompileOnly("com.possible_triangle:flightlib-api:${flightlib_version}")
-    modCompileOnly("com.possible_triangle:flightlib-forge-api:${flightlib_version}")
+    modCompileOnly("com.possible-triangle:flightlib-api:${flightlib_version}")
+    modCompileOnly("com.possible-triangle:flightlib-forge-api:${flightlib_version}")
 }
 
 tasks.withType<Jar> {
