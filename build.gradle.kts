@@ -3,7 +3,6 @@ val mc_version: String by extra
 val registrate_version: String by extra
 val create_version: String by extra
 val flywheel_version: String by extra
-val flywheel_mc_version: String by extra
 val flightlib_version: String by extra
 val mod_version: String by extra
 val curios_version: String by extra
@@ -19,7 +18,7 @@ withKotlin()
 
 forge {
     dataGen()
-    includesMod("com.possible_triangle:flightlib-forge:${flightlib_version}")
+    includesMod("com.possible-triangle:flightlib-forge:${flightlib_version}")
 }
 
 base {
@@ -57,7 +56,7 @@ repositories {
             password = env["GITHUB_TOKEN"]
         }
         content {
-            includeGroup("com.possible_triangle")
+            includeGroup("com.possible-triangle")
         }
     }
 }
@@ -65,7 +64,7 @@ repositories {
 dependencies {
     modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
     modImplementation("com.simibubi.create:create-${mc_version}:${create_version}:slim") { isTransitive = false }
-    modImplementation("com.jozufozu.flywheel:flywheel-forge-${flywheel_mc_version}:${flywheel_version}")
+    modImplementation("com.jozufozu.flywheel:flywheel-forge-${mc_version}:${flywheel_version}")
 
     if (!env.isCI) {
         modRuntimeOnly("mezz.jei:jei-${mc_version}-forge:${jei_version}")
@@ -76,8 +75,8 @@ dependencies {
         modRuntimeOnly("curse.maven:elytra-slot-317716:${elytra_slot_version}")
     }
 
-    modCompileOnly("com.possible_triangle:flightlib-api:${flightlib_version}")
-    modCompileOnly("com.possible_triangle:flightlib-forge-api:${flightlib_version}")
+    modCompileOnly("com.possible-triangle:flightlib-api:${flightlib_version}")
+    modCompileOnly("com.possible-triangle:flightlib-forge-api:${flightlib_version}")
 }
 
 tasks.withType<Jar> {
