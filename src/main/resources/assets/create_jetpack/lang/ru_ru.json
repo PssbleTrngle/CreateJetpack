@@ -1,0 +1,13 @@
+{
+  "item.create_jetpack.jetpack": "Реактивный ранец",
+  "item.create_jetpack.jetpack.tooltip": "РЕАКТИВНЫЙ РАНЕЦ",
+  "item.create_jetpack.jetpack.tooltip.summary": "Позволяет летать с помощью сжатого воздуха",
+  "item.create_jetpack.jetpack.tooltip.control1": "Нажмите [ПРЫЖОК]",
+  "item.create_jetpack.jetpack.tooltip.action1": "Полёт вверх",
+  "item.create_jetpack.jetpack.tooltip.control2": "Нажмите [SHIFT]",
+  "item.create_jetpack.jetpack.tooltip.action2": "Полёт вниз",
+  "item.create_jetpack.jetpack.tooltip.control3": "Нажмите [G]",
+  "item.create_jetpack.jetpack.tooltip.action3": "Включение/выключение реактивного ранца",
+  "item.create_jetpack.jetpack.tooltip.control4": "Нажмите [H]",
+  "item.create_jetpack.jetpack.tooltip.action4": "Включение/выключение режима наведения"
+}
