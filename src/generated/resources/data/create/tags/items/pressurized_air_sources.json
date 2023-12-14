@@ -1,5 +1,6 @@
 {
   "values": [
-    "create_jetpack:jetpack"
+    "create_jetpack:jetpack",
+    "create_jetpack:netherite_jetpack"
   ]
 }

@@ -1,6 +1,6 @@
 {
   "parent": "create_jetpack:block/jetpack/item",
   "textures": {
-    "0": "create_jetpack:block/jetpack"
+    "0": "create_jetpack:block/netherite_jetpack"
   }
 }

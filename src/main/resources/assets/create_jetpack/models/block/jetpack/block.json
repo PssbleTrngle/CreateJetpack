@@ -2,8 +2,7 @@
 	"credit": "Made with Blockbench",
 	"parent": "create:block/copper_backtank/block",
 	"textures": {
-		"0": "create_jetpack:block/jetpack",
-		"particle": "create_jetpack:block/jetpack"
+		"particle": "#0"
 	},
 	"elements": [
 		{
