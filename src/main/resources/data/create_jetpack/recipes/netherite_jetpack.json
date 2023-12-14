@@ -14,7 +14,7 @@
       "item": "create:chute"
     },
     "X": {
-      "item": "create:copper_backtank"
+      "item": "create:netherite_backtank"
     },
     "S": {
       "item": "create:shaft"
@@ -27,6 +27,6 @@
     }
   },
   "result": {
-    "item": "create_jetpack:jetpack"
+    "item": "create_jetpack:netherite_jetpack"
   }
 }
