@@ -11,7 +11,7 @@ val elytra_slot_version: String by extra
 val jei_version: String by extra
 
 plugins {
-    id("com.possible-triangle.gradle") version("0.1.1")
+    id("com.possible-triangle.gradle") version("0.1.4")
 }
 
 withKotlin()
@@ -27,6 +27,7 @@ base {
 
 repositories {
     curseMaven()
+    localMaven(project)
 
     maven {
         url = uri("https://maven.blamejared.com/")

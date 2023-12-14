@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "addition": {
+    "tag": "forge:ingots/netherite"
+  },
+  "base": {
+    "item": "create_jetpack:jetpack"
+  },
+  "result": {
+    "item": "create_jetpack:netherite_jetpack"
+  }
+}

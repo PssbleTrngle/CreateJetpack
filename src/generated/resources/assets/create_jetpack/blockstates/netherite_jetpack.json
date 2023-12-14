@@ -1,33 +1,33 @@
 {
   "variants": {
     "facing=north,waterlogged=false": {
-      "model": "create_jetpack:block/jetpack"
+      "model": "create_jetpack:block/netherite_jetpack"
     },
     "facing=south,waterlogged=false": {
-      "model": "create_jetpack:block/jetpack",
+      "model": "create_jetpack:block/netherite_jetpack",
       "y": 180
     },
     "facing=west,waterlogged=false": {
-      "model": "create_jetpack:block/jetpack",
+      "model": "create_jetpack:block/netherite_jetpack",
       "y": 270
     },
     "facing=east,waterlogged=false": {
-      "model": "create_jetpack:block/jetpack",
+      "model": "create_jetpack:block/netherite_jetpack",
       "y": 90
     },
     "facing=north,waterlogged=true": {
-      "model": "create_jetpack:block/jetpack"
+      "model": "create_jetpack:block/netherite_jetpack"
     },
     "facing=south,waterlogged=true": {
-      "model": "create_jetpack:block/jetpack",
+      "model": "create_jetpack:block/netherite_jetpack",
       "y": 180
     },
     "facing=west,waterlogged=true": {
-      "model": "create_jetpack:block/jetpack",
+      "model": "create_jetpack:block/netherite_jetpack",
       "y": 270
     },
     "facing=east,waterlogged=true": {
-      "model": "create_jetpack:block/jetpack",
+      "model": "create_jetpack:block/netherite_jetpack",
       "y": 90
     }
   }

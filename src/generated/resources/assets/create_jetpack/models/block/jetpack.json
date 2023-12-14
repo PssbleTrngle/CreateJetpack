@@ -1,5 +1,5 @@
 {
-  "parent": "create_jetpack:block/jetpack/item",
+  "parent": "create_jetpack:block/jetpack/block",
   "textures": {
     "0": "create_jetpack:block/jetpack"
   }

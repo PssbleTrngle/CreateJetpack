@@ -7,28 +7,36 @@ import com.possible_triangle.flightlib.api.IJetpack.Context
 import com.possible_triangle.flightlib.api.sources.CuriosSource
 import com.possible_triangle.flightlib.api.sources.EquipmentSource
 import com.possible_triangle.flightlib.forge.api.ForgeFlightLib.JETPACK_CAPABILITY
-import com.simibubi.create.Create
-import com.simibubi.create.content.equipment.armor.AllArmorMaterials
 import com.simibubi.create.content.equipment.armor.BacktankItem
 import com.simibubi.create.content.equipment.armor.BacktankUtil
+import com.simibubi.create.foundation.item.LayeredArmorItem
 import com.simibubi.create.foundation.particle.AirParticleData
 import com.tterrag.registrate.util.entry.ItemEntry
 import net.minecraft.core.Direction
 import net.minecraft.core.particles.ParticleOptions
+import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.item.ArmorMaterial
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.enchantment.Enchantment
 import net.minecraft.world.phys.Vec3
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.common.util.LazyOptional
+import java.util.*
 
-class BrassJetpack(properties: Properties, blockItem: ItemEntry<BacktankBlockItem>) :
+open class JetpackItem(
+    properties: Properties,
+    material: ArmorMaterial,
+    texture: ResourceLocation,
+    blockItem: ItemEntry<BacktankBlockItem>,
+) :
     BacktankItem(
-        AllArmorMaterials.COPPER,
-        properties.rarity(Rarity.RARE),
-        Create.asResource("copper_diving"),
+        material,
+        properties,
+        texture,
         blockItem
     ), IJetpack, ICapabilityProvider {
     private val capability = LazyOptional.of<IJetpack> { this }
@@ -72,7 +80,6 @@ class BrassJetpack(properties: Properties, blockItem: ItemEntry<BacktankBlockIte
     override fun getThrusters(context: Context) = thrusters
 
     override fun onUse(context: Context) {
-        if (!isThrusting(context)) return
         BacktankUtil.canAbsorbDamage(context.entity, usesPerTank(context))
     }
 
@@ -106,6 +113,29 @@ class BrassJetpack(properties: Properties, blockItem: ItemEntry<BacktankBlockIte
     }
 
     override fun createParticles(): ParticleOptions {
-        return AirParticleData(0F, 0.01F)
+        return if (Configs.CLIENT.spawnSnowParticles)
+            ParticleTypes.SNOWFLAKE
+        else
+            AirParticleData(0F, 0.01F)
+    }
+
+    class Layered(
+        properties: Properties,
+        material: ArmorMaterial,
+        texture: ResourceLocation,
+        blockItem: ItemEntry<BacktankBlockItem>
+    ) : JetpackItem(properties, material, texture, blockItem), LayeredArmorItem {
+
+        override fun getArmorTextureLocation(
+            entity: LivingEntity?,
+            slot: EquipmentSlot?,
+            stack: ItemStack?,
+            layer: Int,
+        ): String {
+            return String.format(
+                Locale.ROOT, "%s:textures/models/armor/%s_layer_%d.png",
+                textureLoc.namespace, textureLoc.path, layer
+            )
+        }
     }
 }
