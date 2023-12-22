@@ -1,0 +1,16 @@
+{
+  "item.create_jetpack.jetpack.tooltip.summary": "Allows the wielder to levitate using _pressurized air_",
+  "item.create_jetpack.netherite_jetpack.tooltip.summary": "Allows the wielder to levitate using _pressurized air_",
+  "item.create_jetpack.jetpack.tooltip.action3": "Toggles the engine",
+  "item.create_jetpack.jetpack.tooltip.action4": "Toggles hovering",
+  "item.create_jetpack.jetpack.tooltip.control1": "When Jump pressed",
+  "item.create_jetpack.jetpack.tooltip.control2": "When Shift pressed",
+  "item.create_jetpack.jetpack.tooltip.control3": "When G pressed",
+  "item.create_jetpack.jetpack.tooltip.control4": "When H pressed",
+  "item.create_jetpack.netherite_jetpack.tooltip.action3": "Toggles the engine",
+  "item.create_jetpack.netherite_jetpack.tooltip.action4": "Toggles hovering",
+  "item.create_jetpack.netherite_jetpack.tooltip.control1": "When Jump pressed",
+  "item.create_jetpack.netherite_jetpack.tooltip.control2": "When Shift pressed",
+  "item.create_jetpack.netherite_jetpack.tooltip.control3": "When G pressed",
+  "item.create_jetpack.netherite_jetpack.tooltip.control4": "When H pressed"
+}
