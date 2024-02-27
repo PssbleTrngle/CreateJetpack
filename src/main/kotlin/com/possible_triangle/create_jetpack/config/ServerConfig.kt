@@ -13,7 +13,7 @@ interface IServerConfig {
     val acceleration: Double
     val hoverSpeed: Double
     val swimModifier: Double
-    val elytraBoostEnabled: Boolean
+    val elytraBoost: Double
     fun isAllowed(ench: Enchantment): Boolean
 }
 
@@ -25,7 +25,7 @@ data class SyncedConfig(
     override val acceleration: Double,
     override val hoverSpeed: Double,
     override val swimModifier: Double,
-    override val elytraBoostEnabled: Boolean,
+    override val elytraBoost: Double,
 ) : IServerConfig {
     override fun isAllowed(ench: Enchantment) = true
 }
@@ -54,8 +54,8 @@ class ServerConfig(builder: ForgeConfigSpec.Builder) : IServerConfig {
     private val swimModifierValue = builder.defineInRange("speed.swim_modifier", 1.8, 0.0, 100.0)
     override val swimModifier get() = swimModifierValue.get()!!
 
-    private val elytraBoostEnabledValue = builder.define("features.elytra_boost", true)
-    override val elytraBoostEnabled get() = elytraBoostEnabledValue.get()!!
+    private val elytraBoostValue = builder.defineInRange("features.elytra_boost", 1.25, 1.0, 100.0)
+    override val elytraBoost get() = elytraBoostValue.get()!!
 
     private val enchantmentsList = builder.defineList("enchantments.list", emptyList<String>()) { true }
     private val enchantmentsIsBlacklist = builder.define("enchantments.is_blacklist", true)
