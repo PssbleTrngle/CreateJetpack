@@ -69,8 +69,8 @@ open class JetpackItem(
         return Configs.SERVER.swimModifier
     }
 
-    override fun boostsElytra(): Boolean {
-        return Configs.SERVER.elytraBoostEnabled
+    override fun elytraBoost(): Double {
+        return Configs.SERVER.elytraBoost
     }
 
     private val thrusters = listOf(-0.35, 0.35).map { offset ->
