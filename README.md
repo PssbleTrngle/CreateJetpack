@@ -7,6 +7,8 @@
 
 # Create Jetpack <!-- modrinth_exclude.start --> <img src="https://raw.githubusercontent.com/PssbleTrngle/CreateJetpack/1.19.x/src/main/resources/assets/create_jetpack/icon.png" align="right" height="128" />
 
+[Looking for the Fabric version?](https://github.com/PssbleTrngle/CreateJetpack-Fabric)
+
 [![Release](https://img.shields.io/github/v/release/PssbleTrngle/CreateJetpack?label=Version&sort=semver)][DOWNLOAD]
 [![Downloads](https://cf.way2muchnoise.eu/full_655608_downloads.svg)][CURSEFORGE]
 [![Version](https://cf.way2muchnoise.eu/versions/655608.svg)][DOWNLOAD]
