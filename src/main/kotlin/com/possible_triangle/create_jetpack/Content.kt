@@ -126,11 +126,15 @@ object Content {
                             LootItem.lootTableItem(getItem())
                                 .apply(
                                     CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                                        .copy("Air", "Air")
+                                        .copy("VanillaTag", "{}", CopyNbtFunction.MergeStrategy.MERGE)
                                 )
                                 .apply(
                                     CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                                        .copy("VanillaTag", "{}", CopyNbtFunction.MergeStrategy.MERGE)
+                                        .copy("VanillaTag.Air", "Air")
+                                )
+                                .apply(
+                                    CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
+                                        .copy("Air", "Air")
                                 )
                         )
                 )
