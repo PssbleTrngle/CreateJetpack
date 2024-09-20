@@ -13,9 +13,9 @@
               "source": "block_entity",
               "ops": [
                 {
-                  "source": "Air",
-                  "target": "Air",
-                  "op": "replace"
+                  "source": "VanillaTag",
+                  "target": "{}",
+                  "op": "merge"
                 }
               ]
             },
@@ -24,9 +24,9 @@
               "source": "block_entity",
               "ops": [
                 {
-                  "source": "VanillaTag",
-                  "target": "{}",
-                  "op": "merge"
+                  "source": "Air",
+                  "target": "Air",
+                  "op": "replace"
                 }
               ]
             }

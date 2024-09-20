@@ -8,9 +8,7 @@ import com.possible_triangle.create_jetpack.item.JetpackItem
 import com.simibubi.create.AllCreativeModeTabs
 import com.simibubi.create.AllTags.AllItemTags
 import com.simibubi.create.Create
-import com.simibubi.create.content.equipment.armor.AllArmorMaterials
-import com.simibubi.create.content.equipment.armor.BacktankBlockEntity
-import com.simibubi.create.content.equipment.armor.BacktankInstance
+import com.simibubi.create.content.equipment.armor.*
 import com.simibubi.create.content.equipment.armor.BacktankItem.BacktankBlockItem
 import com.simibubi.create.content.equipment.armor.BacktankRenderer
 import com.simibubi.create.content.kinetics.BlockStressDefaults
@@ -126,11 +124,11 @@ object Content {
                             LootItem.lootTableItem(getItem())
                                 .apply(
                                     CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                                        .copy("Air", "Air")
+                                        .copy("VanillaTag", "{}", CopyNbtFunction.MergeStrategy.MERGE)
                                 )
                                 .apply(
                                     CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                                        .copy("VanillaTag", "{}", CopyNbtFunction.MergeStrategy.MERGE)
+                                        .copy("Air", "Air")
                                 )
                         )
                 )
