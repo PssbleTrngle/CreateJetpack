@@ -1,4 +1,4 @@
-// 1.19.2	2024-09-13T10:11:00.3057364	Registrate Provider for create_jetpack [Recipes, Advancements, Loot tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
+// 1.19.2	2024-09-20T12:17:26.0068049	Registrate Provider for create_jetpack [Recipes, Advancements, Loot tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
 673a48952547e61209ce76274272e9c4e05c8189 assets/create_jetpack/blockstates/jetpack.json
 ba8e314e1e6dbb6c25dd5e837cef04f8d96412a1 assets/create_jetpack/blockstates/netherite_jetpack.json
 a2f5d170a0eb9d1686d1c97de51bdb52eee864af assets/create_jetpack/lang/en_ud.json
@@ -10,6 +10,6 @@ a9f4853187ae09ad01356339f4acf9b3e8189ebd assets/create_jetpack/models/block/neth
 f01edd57ce03744767e9ab7b7e68c80d9834a50c assets/create_jetpack/models/item/netherite_jetpack.json
 6c53b1a6ed28929b7a0a090edf6101e610f842fc assets/create_jetpack/models/item/netherite_jetpack_placeable.json
 45715b49eb3f91a62054f6c2a9d82115b8e188fb data/create/tags/items/pressurized_air_sources.json
-a534ba17a2fe9e5574834839df9a09d4f07ec5dc data/create_jetpack/loot_tables/blocks/jetpack.json
-0a4090248710ced389ae503040a1ce0daf4be680 data/create_jetpack/loot_tables/blocks/netherite_jetpack.json
+a9a28f836ecf561ccd7e58e453717fb4729db0ee data/create_jetpack/loot_tables/blocks/jetpack.json
+9ce956f43a8f503888a7848e5ea9c215b45f245a data/create_jetpack/loot_tables/blocks/netherite_jetpack.json
 45715b49eb3f91a62054f6c2a9d82115b8e188fb data/minecraft/tags/blocks/mineable/pickaxe.json
