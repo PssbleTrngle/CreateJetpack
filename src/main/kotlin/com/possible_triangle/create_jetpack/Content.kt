@@ -8,12 +8,8 @@ import com.possible_triangle.create_jetpack.item.JetpackItem
 import com.simibubi.create.AllCreativeModeTabs
 import com.simibubi.create.AllTags.AllItemTags
 import com.simibubi.create.Create
-import com.simibubi.create.content.equipment.armor.AllArmorMaterials
-import com.simibubi.create.content.equipment.armor.BacktankBlockEntity
-import com.simibubi.create.content.equipment.armor.BacktankInstance
+import com.simibubi.create.content.equipment.armor.*
 import com.simibubi.create.content.equipment.armor.BacktankItem.BacktankBlockItem
-import com.simibubi.create.content.equipment.armor.BacktankRenderer
-import com.simibubi.create.content.equipment.armor.BacktankUtil
 import com.simibubi.create.content.kinetics.BlockStressDefaults
 import com.simibubi.create.foundation.data.CreateRegistrate
 import com.simibubi.create.foundation.data.SharedProperties
@@ -126,11 +122,11 @@ object Content {
                             LootItem.lootTableItem(getItem())
                                 .apply(
                                     CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                                        .copy("Air", "Air")
+                                        .copy("VanillaTag", "{}", CopyNbtFunction.MergeStrategy.MERGE)
                                 )
                                 .apply(
                                     CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                                        .copy("VanillaTag", "{}", CopyNbtFunction.MergeStrategy.MERGE)
+                                        .copy("Air", "Air")
                                 )
                         )
                 )
@@ -147,7 +143,7 @@ object Content {
         transform {
             it.tab(AllCreativeModeTabs.BASE_CREATIVE_TAB.key!!) { mod ->
                 mod.accept(ItemStack(it.entry).apply {
-                    orCreateTag.putFloat("Air", BacktankUtil.maxAir(this).toFloat())
+                    orCreateTag.putInt("Air", BacktankUtil.maxAirWithoutEnchants())
                 })
             }
         }
