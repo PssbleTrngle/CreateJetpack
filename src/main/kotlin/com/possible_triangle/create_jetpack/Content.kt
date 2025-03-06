@@ -5,19 +5,20 @@ import com.possible_triangle.create_jetpack.block.JetpackBlock
 import com.possible_triangle.create_jetpack.client.ControlsDisplay
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.JetpackItem
+import com.simibubi.create.AllBlocks
 import com.simibubi.create.AllCreativeModeTabs
 import com.simibubi.create.AllTags.AllItemTags
 import com.simibubi.create.Create
+import com.simibubi.create.api.stress.BlockStressValues
 import com.simibubi.create.content.equipment.armor.*
 import com.simibubi.create.content.equipment.armor.BacktankItem.BacktankBlockItem
-import com.simibubi.create.content.kinetics.BlockStressDefaults
 import com.simibubi.create.foundation.data.CreateRegistrate
 import com.simibubi.create.foundation.data.SharedProperties
 import com.simibubi.create.foundation.data.TagGen
 import com.simibubi.create.foundation.item.ItemDescription
 import com.simibubi.create.foundation.item.KineticStats
-import com.simibubi.create.foundation.item.TooltipHelper
 import com.simibubi.create.foundation.item.TooltipModifier
+import com.simibubi.create.infrastructure.config.CStress
 import com.tterrag.registrate.builders.BlockBuilder
 import com.tterrag.registrate.builders.BlockEntityBuilder
 import com.tterrag.registrate.builders.ItemBuilder
@@ -25,6 +26,7 @@ import com.tterrag.registrate.util.entry.BlockEntry
 import com.tterrag.registrate.util.entry.ItemEntry
 import com.tterrag.registrate.util.nullness.NonNullFunction
 import com.tterrag.registrate.util.nullness.NonNullSupplier
+import net.createmod.catnip.lang.FontHelper
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.registries.Registries
@@ -49,13 +51,14 @@ import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
 import java.util.function.BiConsumer
 import java.util.function.BiFunction
+import java.util.function.DoubleSupplier
 import java.util.function.Supplier
 
 object Content {
 
     private val REGISTRATE = CreateRegistrate.create(MOD_ID)
         .setTooltipModifierFactory {
-            ItemDescription.Modifier(it, TooltipHelper.Palette.STANDARD_CREATE)
+            ItemDescription.Modifier(it, FontHelper.Palette.STANDARD_CREATE)
                 .andThen(TooltipModifier.mapNull(KineticStats.create(it)))
         }
 
@@ -67,13 +70,26 @@ object Content {
         .register()
 
     val JETPACK_ITEM: ItemEntry<JetpackItem> = REGISTRATE
-        .item<JetpackItem>("jetpack") { JetpackItem(it, AllArmorMaterials.COPPER, Create.asResource("copper_diving"), JETPACK_PLACEABLE) }
+        .item<JetpackItem>("jetpack") {
+            JetpackItem(
+                it,
+                AllArmorMaterials.COPPER,
+                Create.asResource("copper_diving"),
+                JETPACK_PLACEABLE
+            )
+        }
         .properties { it.rarity(Rarity.RARE) }
         .jetpackProperties()
         .register()
 
     val JETPACK_PLACEABLE: ItemEntry<BacktankBlockItem> = REGISTRATE
-        .item<BacktankBlockItem>("jetpack_placeable") { BacktankBlockItem(JETPACK_BLOCK.get(), { JETPACK_ITEM.get() }, it) }
+        .item<BacktankBlockItem>("jetpack_placeable") {
+            BacktankBlockItem(
+                JETPACK_BLOCK.get(),
+                { JETPACK_ITEM.get() },
+                it
+            )
+        }
         .jetpackPlaceableProperties()
         .register()
 
@@ -84,14 +100,27 @@ object Content {
         .register()
 
     val NETHERITE_JETPACK_ITEM: ItemEntry<JetpackItem> = REGISTRATE
-        .item<JetpackItem>("netherite_jetpack") { JetpackItem.Layered(it, ArmorMaterials.NETHERITE, Create.asResource("netherite_diving"), NETHERITE_JETPACK_PLACEABLE) }
+        .item<JetpackItem>("netherite_jetpack") {
+            JetpackItem.Layered(
+                it,
+                ArmorMaterials.NETHERITE,
+                Create.asResource("netherite_diving"),
+                NETHERITE_JETPACK_PLACEABLE
+            )
+        }
         .properties { it.rarity(Rarity.EPIC) }
         .properties { it.fireResistant() }
         .jetpackProperties()
         .register()
 
     val NETHERITE_JETPACK_PLACEABLE: ItemEntry<BacktankBlockItem> = REGISTRATE
-        .item<BacktankBlockItem>("netherite_jetpack_placeable") { BacktankBlockItem(NETHERITE_JETPACK_BLOCK.get(), { NETHERITE_JETPACK_ITEM.get() }, it) }
+        .item<BacktankBlockItem>("netherite_jetpack_placeable") {
+            BacktankBlockItem(
+                NETHERITE_JETPACK_BLOCK.get(),
+                { NETHERITE_JETPACK_ITEM.get() },
+                it
+            )
+        }
         .jetpackPlaceableProperties()
         .register()
 
@@ -108,8 +137,12 @@ object Content {
             p.horizontalBlock(c.entry, model)
         }
         transform(TagGen.pickaxeOnly())
+        onRegister {
+            BlockStressValues.IMPACTS.register(it) {
+                BlockStressValues.getImpact(AllBlocks.COPPER_BACKTANK.get())
+            }
+        }
         addLayer { Supplier { RenderType.cutoutMipped() } }
-        transform(BlockStressDefaults.setImpact(4.0))
         loot { lt, block ->
             val builder = LootTable.lootTable()
             val survivesExplosion = ExplosionCondition.survivesExplosion()
@@ -167,7 +200,6 @@ object Content {
 
     val JETPACK_BLOCK_ENTITY =
         REGISTRATE.blockEntity("jetpack", BlockEntityBuilder.BlockEntityFactory(::BacktankBlockEntity))
-            .instance { BiFunction { manager, tile -> BacktankInstance(manager, tile) } }
             .validBlocks(JETPACK_BLOCK, NETHERITE_JETPACK_BLOCK)
             .renderer {
                 NonNullFunction { context: BlockEntityRendererProvider.Context? ->

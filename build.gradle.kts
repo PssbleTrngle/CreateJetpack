@@ -2,6 +2,7 @@ val mod_id: String by extra
 val mc_version: String by extra
 val registrate_version: String by extra
 val create_version: String by extra
+val ponder_version: String by extra
 val flywheel_version: String by extra
 val flightlib_version: String by extra
 val mod_version: String by extra
@@ -9,6 +10,7 @@ val curios_version: String by extra
 val caelus_version: String by extra
 val elytra_slot_version: String by extra
 val jei_version: String by extra
+val mixin_extras_version: String by extra
 
 plugins {
     id("com.possible-triangle.gradle") version("0.1.4")
@@ -38,9 +40,15 @@ repositories {
     maven {
         url = uri("https://maven.tterrag.com/")
         content {
-            includeGroup("com.simibubi.create")
-            includeGroup("com.jozufozu.flywheel")
             includeGroup("com.tterrag.registrate")
+        }
+    }
+    maven {
+        url = uri("https://maven.createmod.net")
+        content {
+            includeGroup("com.simibubi.create")
+            includeGroup("net.createmod.ponder")
+            includeGroup("dev.engine-room.flywheel")
         }
     }
     maven {
@@ -65,7 +73,10 @@ repositories {
 dependencies {
     modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
     modImplementation("com.simibubi.create:create-${mc_version}:${create_version}:slim") { isTransitive = false }
-    modImplementation("com.jozufozu.flywheel:flywheel-forge-${mc_version}:${flywheel_version}")
+    modImplementation("net.createmod.ponder:Ponder-Forge-${mc_version}:${ponder_version}")
+    modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${mc_version}:${flywheel_version}")
+    modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${mc_version}:${flywheel_version}")
+    implementation("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")
 
     if (!env.isCI) {
         modRuntimeOnly("mezz.jei:jei-${mc_version}-forge:${jei_version}")
