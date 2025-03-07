@@ -10,15 +10,18 @@ import com.simibubi.create.AllCreativeModeTabs
 import com.simibubi.create.AllTags.AllItemTags
 import com.simibubi.create.Create
 import com.simibubi.create.api.stress.BlockStressValues
-import com.simibubi.create.content.equipment.armor.*
+import com.simibubi.create.content.equipment.armor.AllArmorMaterials
+import com.simibubi.create.content.equipment.armor.BacktankBlockEntity
 import com.simibubi.create.content.equipment.armor.BacktankItem.BacktankBlockItem
+import com.simibubi.create.content.equipment.armor.BacktankRenderer
+import com.simibubi.create.content.equipment.armor.BacktankUtil
+import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual
 import com.simibubi.create.foundation.data.CreateRegistrate
 import com.simibubi.create.foundation.data.SharedProperties
 import com.simibubi.create.foundation.data.TagGen
 import com.simibubi.create.foundation.item.ItemDescription
 import com.simibubi.create.foundation.item.KineticStats
 import com.simibubi.create.foundation.item.TooltipModifier
-import com.simibubi.create.infrastructure.config.CStress
 import com.tterrag.registrate.builders.BlockBuilder
 import com.tterrag.registrate.builders.BlockEntityBuilder
 import com.tterrag.registrate.builders.ItemBuilder
@@ -26,6 +29,7 @@ import com.tterrag.registrate.util.entry.BlockEntry
 import com.tterrag.registrate.util.entry.ItemEntry
 import com.tterrag.registrate.util.nullness.NonNullFunction
 import com.tterrag.registrate.util.nullness.NonNullSupplier
+import dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer
 import net.createmod.catnip.lang.FontHelper
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
@@ -50,8 +54,6 @@ import net.minecraftforge.fml.config.ModConfig
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
 import java.util.function.BiConsumer
-import java.util.function.BiFunction
-import java.util.function.DoubleSupplier
 import java.util.function.Supplier
 
 object Content {
@@ -200,12 +202,11 @@ object Content {
 
     val JETPACK_BLOCK_ENTITY =
         REGISTRATE.blockEntity("jetpack", BlockEntityBuilder.BlockEntityFactory(::BacktankBlockEntity))
-            .validBlocks(JETPACK_BLOCK, NETHERITE_JETPACK_BLOCK)
-            .renderer {
-                NonNullFunction { context: BlockEntityRendererProvider.Context? ->
-                    BacktankRenderer(context)
-                }
+            .visual {
+                SimpleBlockEntityVisualizer.Factory { ctx, te, f -> SingleAxisRotatingVisual.backtank(ctx, te, f) }
             }
+            .validBlocks(JETPACK_BLOCK, NETHERITE_JETPACK_BLOCK)
+            .renderer { NonNullFunction { BacktankRenderer(it) } }
             .register()
 
     private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
