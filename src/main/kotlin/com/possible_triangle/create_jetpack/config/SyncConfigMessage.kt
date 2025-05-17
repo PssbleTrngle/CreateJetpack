@@ -1,16 +1,26 @@
 package com.possible_triangle.create_jetpack.config
 
 import com.possible_triangle.create_jetpack.CreateJetpackMod
+import com.possible_triangle.flightlib.api.Constants
 import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.network.codec.StreamCodec
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload
+import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.network.NetworkDirection
 import net.minecraftforge.network.NetworkEvent.Context
+import net.neoforged.neoforge.network.handling.IPayloadContext
 import java.util.function.Supplier
 
-class SyncConfigMessage(private val config: IServerConfig) {
+class SyncConfigMessage(private val config: IServerConfig) : CustomPacketPayload {
 
     companion object {
+        val TYPE = CustomPacketPayload.TypeAndCodec(
+            CustomPacketPayload.Type(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "sync_config")),
+            StreamCodec.of(SyncConfigMessage::encode, SyncConfigMessage::decode),
+        )
 
-        fun decode(buf: FriendlyByteBuf): SyncConfigMessage {
+        private fun decode(buf: FriendlyByteBuf): SyncConfigMessage {
             val config = SyncedConfig(
                 usesPerTank = buf.readInt(),
                 usesPerTankHover = buf.readInt(),
@@ -23,31 +33,22 @@ class SyncConfigMessage(private val config: IServerConfig) {
             )
             return SyncConfigMessage(config)
         }
-    }
 
-    fun encode(buf: FriendlyByteBuf) {
-        buf.writeInt(config.usesPerTank)
-        buf.writeInt(config.usesPerTankHover)
-        buf.writeDouble(config.horizontalSpeed)
-        buf.writeDouble(config.verticalSpeed)
-        buf.writeDouble(config.acceleration)
-        buf.writeDouble(config.hoverSpeed)
-        buf.writeDouble(config.swimModifier)
-        buf.writeDouble(config.elytraBoost)
-    }
-
-    fun handle(context: Supplier<Context>) {
-        with(context.get()) {
-            enqueueWork {
-                if (direction == NetworkDirection.PLAY_TO_CLIENT) {
-                    CreateJetpackMod.LOGGER.debug("Hover speed: ${config.hoverSpeed}")
-                    Configs.SYNCED_SERVER = config
-                } else {
-                    CreateJetpackMod.LOGGER.debug("Received server config of $direction")
-                }
-            }
-            packetHandled = true
+        private fun encode(buf: FriendlyByteBuf, message: SyncConfigMessage) = with(message) {
+            buf.writeInt(config.usesPerTank)
+            buf.writeInt(config.usesPerTankHover)
+            buf.writeDouble(config.horizontalSpeed)
+            buf.writeDouble(config.verticalSpeed)
+            buf.writeDouble(config.acceleration)
+            buf.writeDouble(config.hoverSpeed)
+            buf.writeDouble(config.swimModifier)
+            buf.writeDouble(config.elytraBoost)
         }
+    }
+
+    fun handle() {
+        CreateJetpackMod.LOGGER.debug("Hover speed: ${config.hoverSpeed}")
+        Configs.SYNCED_SERVER = config
     }
 
 }

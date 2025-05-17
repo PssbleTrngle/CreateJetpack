@@ -10,15 +10,14 @@ val curios_version: String by extra
 val caelus_version: String by extra
 val elytra_slot_version: String by extra
 val jei_version: String by extra
-val mixin_extras_version: String by extra
 
 plugins {
-    id("com.possible-triangle.gradle") version("0.1.4")
+    id("com.possible-triangle.gradle") version("0.2.7")
 }
 
 withKotlin()
 
-forge {
+neoforge {
     dataGen()
     includesMod("com.possible-triangle:flightlib-forge:${flightlib_version}")
 }
@@ -28,8 +27,8 @@ base {
 }
 
 repositories {
-    curseMaven()
-    localMaven(project)
+    modrinthMaven()
+    mavenLocal()
 
     maven {
         url = uri("https://maven.blamejared.com/")
@@ -38,7 +37,7 @@ repositories {
         }
     }
     maven {
-        url = uri("https://maven.tterrag.com/")
+        url = uri("https://mvn.devos.one/snapshots")
         content {
             includeGroup("com.tterrag.registrate")
         }
@@ -54,7 +53,7 @@ repositories {
     maven {
         url = uri("https://maven.theillusivec4.top/")
         content {
-            includeGroup("top.theillusivec4.caelus")
+            includeGroup("com.illusivesoulworks.caelus")
             includeGroup("top.theillusivec4.curios")
         }
     }
@@ -68,23 +67,28 @@ repositories {
             includeGroup("com.possible-triangle")
         }
     }
+    maven {
+        url = uri("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/")
+        content {
+            includeGroup("fuzs.forgeconfigapiport")
+        }
+    }
 }
 
 dependencies {
     modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
     modImplementation("com.simibubi.create:create-${mc_version}:${create_version}:slim") { isTransitive = false }
-    modImplementation("net.createmod.ponder:Ponder-Forge-${mc_version}:${ponder_version}")
-    modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${mc_version}:${flywheel_version}")
-    modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${mc_version}:${flywheel_version}")
-    implementation("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")
+    modImplementation("net.createmod.ponder:Ponder-NeoForge-${mc_version}:${ponder_version}")
+    modCompileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${mc_version}:${flywheel_version}")
+    modRuntimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${mc_version}:${flywheel_version}")
 
     if (!env.isCI) {
-        modRuntimeOnly("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+        modRuntimeOnly("mezz.jei:jei-${mc_version}-neoforge:${jei_version}")
 
         // Only here to test jetpack+elytra combination behaviour
-        modRuntimeOnly("top.theillusivec4.curios:curios-forge:${curios_version}")
-        modRuntimeOnly("top.theillusivec4.caelus:caelus-forge:${caelus_version}")
-        modRuntimeOnly("curse.maven:elytra-slot-317716:${elytra_slot_version}")
+        modImplementation("top.theillusivec4.curios:curios-neoforge:${curios_version}+${mc_version}")
+        modRuntimeOnly("com.illusivesoulworks.caelus:caelus-neoforge:${caelus_version}+${mc_version}")
+        modRuntimeOnly("maven.modrinth:mSQF1NpT:${elytra_slot_version}")
     }
 
     modCompileOnly("com.possible-triangle:flightlib-api:${flightlib_version}")
@@ -97,6 +101,9 @@ tasks.withType<Jar> {
 
 enablePublishing {
     githubPackages()
+    repositories {
+        mavenLocal()
+    }
 }
 
 uploadToCurseforge {

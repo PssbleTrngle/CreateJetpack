@@ -9,10 +9,12 @@ import com.possible_triangle.flightlib.api.sources.EquipmentSource
 import com.possible_triangle.flightlib.forge.api.ForgeFlightLib.JETPACK_CAPABILITY
 import com.simibubi.create.content.equipment.armor.BacktankItem
 import com.simibubi.create.content.equipment.armor.BacktankUtil
+import com.simibubi.create.foundation.ICapabilityProvider
 import com.simibubi.create.foundation.item.LayeredArmorItem
 import com.simibubi.create.foundation.particle.AirParticleData
 import com.tterrag.registrate.util.entry.ItemEntry
 import net.minecraft.core.Direction
+import net.minecraft.core.Holder
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.resources.ResourceLocation
@@ -22,9 +24,6 @@ import net.minecraft.world.item.ArmorMaterial
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.enchantment.Enchantment
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.common.capabilities.Capability
-import net.minecraftforge.common.capabilities.ICapabilityProvider
-import net.minecraftforge.common.util.LazyOptional
 import java.util.*
 
 open class JetpackItem(
@@ -38,7 +37,7 @@ open class JetpackItem(
         properties,
         texture,
         blockItem
-    ), IJetpack, ICapabilityProvider {
+    ), IJetpack {
     private val capability = LazyOptional.of<IJetpack> { this }
 
     override fun hoverSpeed(context: Context): Double {
@@ -106,6 +105,10 @@ open class JetpackItem(
     override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
         if (cap == JETPACK_CAPABILITY) return capability.cast()
         return LazyOptional.empty()
+    }
+
+    override fun supportsEnchantment(stack: ItemStack, enchantment: Holder<Enchantment>): Boolean {
+        return super.supportsEnchantment(stack, enchantment) && Configs.SERVER.isAllowed(enchantment)
     }
 
     override fun canApplyAtEnchantingTable(stack: ItemStack, enchantment: Enchantment): Boolean {

@@ -5,8 +5,11 @@ import com.possible_triangle.create_jetpack.block.JetpackBlock
 import com.possible_triangle.create_jetpack.client.ControlsDisplay
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.JetpackItem
+import com.possible_triangle.flightlib.api.IJetpack
+import com.possible_triangle.flightlib.forge.api.ForgeFlightLib
 import com.simibubi.create.AllBlocks
 import com.simibubi.create.AllCreativeModeTabs
+import com.simibubi.create.AllDataComponents
 import com.simibubi.create.AllTags.AllItemTags
 import com.simibubi.create.Create
 import com.simibubi.create.api.stress.BlockStressValues
@@ -32,7 +35,6 @@ import com.tterrag.registrate.util.nullness.NonNullSupplier
 import dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer
 import net.createmod.catnip.lang.FontHelper
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ArmorMaterials
@@ -43,16 +45,15 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.storage.loot.LootPool
 import net.minecraft.world.level.storage.loot.LootTable
 import net.minecraft.world.level.storage.loot.entries.LootItem
-import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction
+import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
-import net.minecraftforge.common.capabilities.ICapabilityProvider
-import net.minecraftforge.event.AttachCapabilitiesEvent
-import net.minecraftforge.eventbus.api.IEventBus
-import net.minecraftforge.fml.config.ModConfig
-import thedarkcolour.kotlinforforge.forge.FORGE_BUS
-import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
+import net.neoforged.bus.api.IEventBus
+import net.neoforged.fml.ModContainer
+import net.neoforged.fml.config.ModConfig
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
+import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
 import java.util.function.BiConsumer
 import java.util.function.Supplier
 
@@ -75,7 +76,7 @@ object Content {
         .item<JetpackItem>("jetpack") {
             JetpackItem(
                 it,
-                AllArmorMaterials.COPPER,
+                AllArmorMaterials.COPPER.value(),
                 Create.asResource("copper_diving"),
                 JETPACK_PLACEABLE
             )
@@ -105,7 +106,7 @@ object Content {
         .item<JetpackItem>("netherite_jetpack") {
             JetpackItem.Layered(
                 it,
-                ArmorMaterials.NETHERITE,
+                ArmorMaterials.NETHERITE.value(),
                 Create.asResource("netherite_diving"),
                 NETHERITE_JETPACK_PLACEABLE
             )
@@ -156,12 +157,8 @@ object Content {
                         .add(
                             LootItem.lootTableItem(getItem())
                                 .apply(
-                                    CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                                        .copy("VanillaTag", "{}", CopyNbtFunction.MergeStrategy.MERGE)
-                                )
-                                .apply(
-                                    CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                                        .copy("Air", "Air")
+                                    CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                                        .include(AllDataComponents.BACKTANK_AIR)
                                 )
                         )
                 )
@@ -175,13 +172,11 @@ object Content {
                 .texture("0", "block/${c.name}")
         }
         tag(AllItemTags.PRESSURIZED_AIR_SOURCES.tag)
-        transform {
-            it.tab(AllCreativeModeTabs.BASE_CREATIVE_TAB.key!!) { mod ->
-                mod.accept(ItemStack(it.entry).apply {
-                    orCreateTag.putInt("Air", BacktankUtil.maxAirWithoutEnchants())
+            .tab(AllCreativeModeTabs.BASE_CREATIVE_TAB.key!!) { context, mod ->
+                mod.accept(ItemStack(context.get()).apply {
+                    set(AllDataComponents.BACKTANK_AIR, BacktankUtil.maxAirWithoutEnchants())
                 })
             }
-        }
 
         owner.addRawLang("item.${REGISTRATE.modid}.${name}.tooltip", "")
         owner.addRawLang("item.${REGISTRATE.modid}.${name}.tooltip.summary", "Allows levitation using pressurized air")
@@ -209,26 +204,22 @@ object Content {
             .renderer { NonNullFunction { BacktankRenderer(it) } }
             .register()
 
-    private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
-        val item = stack.item
-        if (item is JetpackItem) add.accept(ResourceLocation(MOD_ID, "jetpack"), item)
-    }
-
-    fun register(modBus: IEventBus) {
+    fun register(container: ModContainer, modBus: IEventBus) {
         REGISTRATE.registerEventListeners(modBus)
 
         REGISTRATE.addRawLang("key.categories.movement.jetpack", "Create Jetpack")
 
-        LOADING_CONTEXT.registerConfig(ModConfig.Type.COMMON, Configs.SERVER_SPEC)
-        LOADING_CONTEXT.registerConfig(ModConfig.Type.CLIENT, Configs.CLIENT_SPEC)
+        container.registerConfig(ModConfig.Type.COMMON, Configs.SERVER_SPEC)
+        container.registerConfig(ModConfig.Type.CLIENT, Configs.CLIENT_SPEC)
 
-        Configs.Network.register()
-
+        modBus.addListener(Configs.Network::register)
         modBus.addListener(ControlsDisplay::register)
 
         FORGE_BUS.addListener(Configs::syncConfig)
-        FORGE_BUS.addGenericListener(ItemStack::class.java) { event: AttachCapabilitiesEvent<ItemStack> ->
-            attachCapabilities(event.`object`, event::addCapability)
+        FORGE_BUS.addListener { event: RegisterCapabilitiesEvent ->
+            event.registerItem(ForgeFlightLib.ITEM_CAPABILITY, { stack, context ->
+                stack.item as IJetpack
+            }, JETPACK_ITEM)
         }
     }
 

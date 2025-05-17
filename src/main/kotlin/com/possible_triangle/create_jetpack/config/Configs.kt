@@ -1,17 +1,15 @@
 package com.possible_triangle.create_jetpack.config
 
 import com.possible_triangle.create_jetpack.CreateJetpackMod
-import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
-import net.minecraftforge.common.ForgeConfigSpec
-import net.minecraftforge.event.entity.player.PlayerEvent
-import net.minecraftforge.network.NetworkRegistry
-import net.minecraftforge.network.PacketDistributor
+import net.neoforged.neoforge.common.ModConfigSpec
+import net.neoforged.neoforge.event.entity.player.PlayerEvent
+import net.neoforged.neoforge.network.PacketDistributor
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 
 object Configs {
 
-    var SERVER_SPEC: ForgeConfigSpec
+    var SERVER_SPEC: ModConfigSpec
         private set
 
     private var LOCAL_SERVER: ServerConfig
@@ -20,18 +18,18 @@ object Configs {
     val SERVER: IServerConfig
         get() = SYNCED_SERVER ?: LOCAL_SERVER
 
-    var CLIENT_SPEC: ForgeConfigSpec
+    var CLIENT_SPEC: ModConfigSpec
         private set
     var CLIENT: ClientConfig
         private set
 
     init {
-        with(ForgeConfigSpec.Builder().configure { ServerConfig(it) }) {
+        with(ModConfigSpec.Builder().configure { ServerConfig(it) }) {
             LOCAL_SERVER = left
             SERVER_SPEC = right
         }
 
-        with(ForgeConfigSpec.Builder().configure { ClientConfig(it) }) {
+        with(ModConfigSpec.Builder().configure { ClientConfig(it) }) {
             CLIENT = left
             CLIENT_SPEC = right
         }
@@ -41,26 +39,17 @@ object Configs {
         val player = event.entity
         if (player !is ServerPlayer) return
         CreateJetpackMod.LOGGER.debug("Sending server config to ${player.scoreboardName}")
-        Network.CHANNEL.send(PacketDistributor.PLAYER.with { player }, SyncConfigMessage(LOCAL_SERVER))
+        PacketDistributor.sendToPlayer(player, SyncConfigMessage(LOCAL_SERVER))
     }
 
     object Network {
-        private const val version = "1.0"
-        internal val CHANNEL = NetworkRegistry.newSimpleChannel(
-            ResourceLocation(MOD_ID, "configs"),
-            { version },
-            version::equals,
-            version::equals
-        )
+        fun register(event: RegisterPayloadHandlersEvent) {
+            val registrar = event.registrar("2.0")
 
-        fun register() {
-            CHANNEL.registerMessage(
-                0,
-                SyncConfigMessage::class.java,
-                SyncConfigMessage::encode,
-                SyncConfigMessage::decode,
-                SyncConfigMessage::handle
-            )
+            registrar.playToClient(SyncConfigMessage.TYPE.type(), SyncConfigMessage.TYPE.codec()) { message, _ ->
+                message.handle()
+            }
+
         }
     }
 

@@ -1,20 +1,19 @@
 package com.possible_triangle.create_jetpack;
 
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod.EventBusSubscriber
 @Mod(CreateJetpackMod.MOD_ID)
 public class CreateJetpackMod {
 
     public static final String MOD_ID = "create_jetpack";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public CreateJetpackMod() {
-        var eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        Content.INSTANCE.register(eventBus);
+    public CreateJetpackMod(ModContainer container, IEventBus modBus) {
+        Content.INSTANCE.register(container, modBus);
     }
 
 }
