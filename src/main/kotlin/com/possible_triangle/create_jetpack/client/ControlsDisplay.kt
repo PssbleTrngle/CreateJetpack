@@ -16,9 +16,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.Vec2
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent
-import net.minecraftforge.client.gui.overlay.ForgeGui
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import kotlin.math.ceil
@@ -58,12 +55,12 @@ object ControlsDisplay : LayeredDraw.Layer {
 
         val startX = Configs.CLIENT.OVERLAY_DISTANCE_X.get().let {
             if (it >= 0) it
-            else width + it - 50
+            else graphics.guiWidth() + it - 50
         }.let { it / scale }.toInt()
 
         val startY = Configs.CLIENT.OVERLAY_DISTANCE_Y.get().let {
             if (it >= 0) it
-            else height + it - 24
+            else graphics.guiHeight() + it - 24
         }.let { it / scale }.toInt()
 
         fun renderSprite(index: Int, x: Int) {

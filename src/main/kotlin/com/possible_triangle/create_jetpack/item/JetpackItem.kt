@@ -6,14 +6,11 @@ import com.possible_triangle.flightlib.api.IJetpack
 import com.possible_triangle.flightlib.api.IJetpack.Context
 import com.possible_triangle.flightlib.api.sources.CuriosSource
 import com.possible_triangle.flightlib.api.sources.EquipmentSource
-import com.possible_triangle.flightlib.forge.api.ForgeFlightLib.JETPACK_CAPABILITY
 import com.simibubi.create.content.equipment.armor.BacktankItem
 import com.simibubi.create.content.equipment.armor.BacktankUtil
-import com.simibubi.create.foundation.ICapabilityProvider
 import com.simibubi.create.foundation.item.LayeredArmorItem
 import com.simibubi.create.foundation.particle.AirParticleData
 import com.tterrag.registrate.util.entry.ItemEntry
-import net.minecraft.core.Direction
 import net.minecraft.core.Holder
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleTypes
@@ -28,7 +25,7 @@ import java.util.*
 
 open class JetpackItem(
     properties: Properties,
-    material: ArmorMaterial,
+    material: Holder<ArmorMaterial>,
     texture: ResourceLocation,
     blockItem: ItemEntry<BacktankBlockItem>,
 ) :
@@ -38,7 +35,6 @@ open class JetpackItem(
         texture,
         blockItem
     ), IJetpack {
-    private val capability = LazyOptional.of<IJetpack> { this }
 
     override fun hoverSpeed(context: Context): Double {
         return Configs.SERVER.hoverSpeed
@@ -102,17 +98,8 @@ open class JetpackItem(
         return air >= cost
     }
 
-    override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
-        if (cap == JETPACK_CAPABILITY) return capability.cast()
-        return LazyOptional.empty()
-    }
-
     override fun supportsEnchantment(stack: ItemStack, enchantment: Holder<Enchantment>): Boolean {
         return super.supportsEnchantment(stack, enchantment) && Configs.SERVER.isAllowed(enchantment)
-    }
-
-    override fun canApplyAtEnchantingTable(stack: ItemStack, enchantment: Enchantment): Boolean {
-        return super.canApplyAtEnchantingTable(stack, enchantment) && Configs.SERVER.isAllowed(enchantment)
     }
 
     override fun createParticles(): ParticleOptions {
@@ -124,7 +111,7 @@ open class JetpackItem(
 
     class Layered(
         properties: Properties,
-        material: ArmorMaterial,
+        material: Holder<ArmorMaterial>,
         texture: ResourceLocation,
         blockItem: ItemEntry<BacktankBlockItem>
     ) : JetpackItem(properties, material, texture, blockItem), LayeredArmorItem {

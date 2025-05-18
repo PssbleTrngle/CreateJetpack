@@ -1,5 +1,5 @@
 {
-  "type": "create_jetpack:copy_nbt_mechanical_crafting",
+  "type": "create_jetpack:copy_components_mechanical_crafting",
   "pattern": [
     " PSP ",
     "PYXYP",

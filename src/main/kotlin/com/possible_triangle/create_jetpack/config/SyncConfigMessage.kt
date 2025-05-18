@@ -3,16 +3,13 @@ package com.possible_triangle.create_jetpack.config
 import com.possible_triangle.create_jetpack.CreateJetpackMod
 import com.possible_triangle.flightlib.api.Constants
 import net.minecraft.network.FriendlyByteBuf
-import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.network.NetworkDirection
-import net.minecraftforge.network.NetworkEvent.Context
-import net.neoforged.neoforge.network.handling.IPayloadContext
-import java.util.function.Supplier
 
 class SyncConfigMessage(private val config: IServerConfig) : CustomPacketPayload {
+
+    override fun type(): CustomPacketPayload.Type<SyncConfigMessage> = TYPE.type()
 
     companion object {
         val TYPE = CustomPacketPayload.TypeAndCodec(

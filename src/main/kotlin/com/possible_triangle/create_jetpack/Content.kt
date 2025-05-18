@@ -36,7 +36,6 @@ import dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer
 import net.createmod.catnip.lang.FontHelper
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.core.registries.Registries
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ArmorMaterials
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -47,14 +46,12 @@ import net.minecraft.world.level.storage.loot.LootTable
 import net.minecraft.world.level.storage.loot.entries.LootItem
 import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition
-import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.ModContainer
 import net.neoforged.fml.config.ModConfig
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
-import java.util.function.BiConsumer
 import java.util.function.Supplier
 
 object Content {
@@ -67,16 +64,16 @@ object Content {
 
     val COPY_NBT_MECHANICAL_CRAFTING_SERIALIZER = REGISTRATE
         .generic(
-            "copy_nbt_mechanical_crafting",
-            Registries.RECIPE_SERIALIZER,
-            NonNullSupplier { CopyNbtMechanicalCraftingRecipe.Serializer })
+            "copy_components_mechanical_crafting",
+            Registries.RECIPE_SERIALIZER
+        ) { CopyComponentsMechanicalCraftingRecipe.Serializer }
         .register()
 
     val JETPACK_ITEM: ItemEntry<JetpackItem> = REGISTRATE
-        .item<JetpackItem>("jetpack") {
+        .item("jetpack") {
             JetpackItem(
                 it,
-                AllArmorMaterials.COPPER.value(),
+                AllArmorMaterials.COPPER,
                 Create.asResource("copper_diving"),
                 JETPACK_PLACEABLE
             )
@@ -86,7 +83,7 @@ object Content {
         .register()
 
     val JETPACK_PLACEABLE: ItemEntry<BacktankBlockItem> = REGISTRATE
-        .item<BacktankBlockItem>("jetpack_placeable") {
+        .item("jetpack_placeable") {
             BacktankBlockItem(
                 JETPACK_BLOCK.get(),
                 { JETPACK_ITEM.get() },
@@ -97,7 +94,7 @@ object Content {
         .register()
 
     val JETPACK_BLOCK: BlockEntry<JetpackBlock> = REGISTRATE
-        .block<JetpackBlock>("jetpack") { JetpackBlock(it) }
+        .block("jetpack") { JetpackBlock(it) }
         .initialProperties { SharedProperties.copperMetal() }
         .jetpackTransforms { JETPACK_ITEM.get() }
         .register()
@@ -106,7 +103,7 @@ object Content {
         .item<JetpackItem>("netherite_jetpack") {
             JetpackItem.Layered(
                 it,
-                ArmorMaterials.NETHERITE.value(),
+                ArmorMaterials.NETHERITE,
                 Create.asResource("netherite_diving"),
                 NETHERITE_JETPACK_PLACEABLE
             )
@@ -117,7 +114,7 @@ object Content {
         .register()
 
     val NETHERITE_JETPACK_PLACEABLE: ItemEntry<BacktankBlockItem> = REGISTRATE
-        .item<BacktankBlockItem>("netherite_jetpack_placeable") {
+        .item("netherite_jetpack_placeable") {
             BacktankBlockItem(
                 NETHERITE_JETPACK_BLOCK.get(),
                 { NETHERITE_JETPACK_ITEM.get() },
@@ -128,7 +125,7 @@ object Content {
         .register()
 
     val NETHERITE_JETPACK_BLOCK: BlockEntry<JetpackBlock> = REGISTRATE
-        .block<JetpackBlock>("netherite_jetpack") { JetpackBlock(it) }
+        .block("netherite_jetpack") { JetpackBlock(it) }
         .initialProperties { SharedProperties.netheriteMetal() }
         .jetpackTransforms { NETHERITE_JETPACK_ITEM.get() }
         .register()
