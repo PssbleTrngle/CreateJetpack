@@ -1,6 +1,6 @@
 package com.possible_triangle.create_jetpack
 
-import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
+import com.possible_triangle.create_jetpack.CreateJetpackMod.REGISTRATE
 import com.possible_triangle.create_jetpack.block.JetpackBlock
 import com.possible_triangle.create_jetpack.client.ControlsDisplay
 import com.possible_triangle.create_jetpack.config.Configs
@@ -10,6 +10,7 @@ import com.possible_triangle.flightlib.forge.api.ForgeFlightLib
 import com.simibubi.create.AllBlocks
 import com.simibubi.create.AllCreativeModeTabs
 import com.simibubi.create.AllDataComponents
+import com.simibubi.create.AllPartialModels
 import com.simibubi.create.AllTags.AllItemTags
 import com.simibubi.create.Create
 import com.simibubi.create.api.stress.BlockStressValues
@@ -19,7 +20,6 @@ import com.simibubi.create.content.equipment.armor.BacktankItem.BacktankBlockIte
 import com.simibubi.create.content.equipment.armor.BacktankRenderer
 import com.simibubi.create.content.equipment.armor.BacktankUtil
 import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual
-import com.simibubi.create.foundation.data.CreateRegistrate
 import com.simibubi.create.foundation.data.SharedProperties
 import com.simibubi.create.foundation.data.TagGen
 import com.simibubi.create.foundation.item.ItemDescription
@@ -31,7 +31,7 @@ import com.tterrag.registrate.builders.ItemBuilder
 import com.tterrag.registrate.util.entry.BlockEntry
 import com.tterrag.registrate.util.entry.ItemEntry
 import com.tterrag.registrate.util.nullness.NonNullFunction
-import com.tterrag.registrate.util.nullness.NonNullSupplier
+import dev.engine_room.flywheel.lib.model.Models
 import dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer
 import net.createmod.catnip.lang.FontHelper
 import net.minecraft.client.renderer.RenderType
@@ -56,11 +56,12 @@ import java.util.function.Supplier
 
 object Content {
 
-    private val REGISTRATE = CreateRegistrate.create(MOD_ID)
-        .setTooltipModifierFactory {
+    init {
+        REGISTRATE.setTooltipModifierFactory {
             ItemDescription.Modifier(it, FontHelper.Palette.STANDARD_CREATE)
                 .andThen(TooltipModifier.mapNull(KineticStats.create(it)))
         }
+    }
 
     val COPY_NBT_MECHANICAL_CRAFTING_SERIALIZER = REGISTRATE
         .generic(
@@ -195,15 +196,21 @@ object Content {
     val JETPACK_BLOCK_ENTITY =
         REGISTRATE.blockEntity("jetpack", BlockEntityBuilder.BlockEntityFactory(::BacktankBlockEntity))
             .visual {
-                SimpleBlockEntityVisualizer.Factory { ctx, te, f -> SingleAxisRotatingVisual.backtank(ctx, te, f) }
+                SimpleBlockEntityVisualizer.Factory { ctx, be, f ->
+                    val model = Models.partial(
+                        if (be.blockState.`is`(NETHERITE_JETPACK_BLOCK))
+                            AllPartialModels.NETHERITE_BACKTANK_SHAFT
+                        else
+                            AllPartialModels.COPPER_BACKTANK_SHAFT
+                    )
+                    SingleAxisRotatingVisual(ctx, be, f, model)
+                }
             }
             .validBlocks(JETPACK_BLOCK, NETHERITE_JETPACK_BLOCK)
             .renderer { NonNullFunction { BacktankRenderer(it) } }
             .register()
 
     fun register(container: ModContainer, modBus: IEventBus) {
-        REGISTRATE.registerEventListeners(modBus)
-
         REGISTRATE.addRawLang("key.categories.movement.jetpack", "Create Jetpack")
 
         container.registerConfig(ModConfig.Type.COMMON, Configs.SERVER_SPEC)
@@ -213,10 +220,10 @@ object Content {
         modBus.addListener(ControlsDisplay::register)
 
         FORGE_BUS.addListener(Configs::syncConfig)
-        FORGE_BUS.addListener { event: RegisterCapabilitiesEvent ->
+        modBus.addListener { event: RegisterCapabilitiesEvent ->
             event.registerItem(ForgeFlightLib.ITEM_CAPABILITY, { stack, context ->
                 stack.item as IJetpack
-            }, JETPACK_ITEM)
+            }, JETPACK_ITEM, NETHERITE_JETPACK_ITEM)
         }
     }
 

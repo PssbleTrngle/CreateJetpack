@@ -51,7 +51,6 @@ class CopyComponentsMechanicalCraftingRecipe(
             MechanicalCraftingRecipe.Serializer.CODEC.xmap(Serializer::from, Serializer::to)
         private val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, MechanicalCraftingRecipe> =
             MechanicalCraftingRecipe.Serializer.STREAM_CODEC.map(Serializer::from, Serializer::to)
-        // private val STREAM_CODEC = ;
 
         private fun from(recipe: MechanicalCraftingRecipe): MechanicalCraftingRecipe {
             return CopyComponentsMechanicalCraftingRecipe(
@@ -75,7 +74,7 @@ class CopyComponentsMechanicalCraftingRecipe(
 
         override fun codec() = CODEC
 
-        override fun streamCodec() = STREAM_CODEC
+       // override fun streamCodec() = STREAM_CODEC
 
     }
 

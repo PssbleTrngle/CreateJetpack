@@ -1,5 +1,7 @@
 {
   "type": "create_jetpack:copy_components_mechanical_crafting",
+  "accept_mirrored": true,
+  "category": "misc",
   "pattern": [
     " PSP ",
     "PYXYP",
@@ -23,10 +25,10 @@
       "item": "create:precision_mechanism"
     },
     "P": {
-      "tag": "forge:plates/brass"
+      "tag": "c:plates/brass"
     }
   },
   "result": {
-    "item": "create_jetpack:netherite_jetpack"
+    "id": "create_jetpack:netherite_jetpack"
   }
 }

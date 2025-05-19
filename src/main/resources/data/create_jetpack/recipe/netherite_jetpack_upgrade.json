@@ -1,13 +1,13 @@
 {
   "type": "minecraft:smithing_transform",
   "addition": {
-    "tag": "forge:ingots/netherite"
+    "tag": "c:ingots/netherite"
   },
   "base": {
     "item": "create_jetpack:jetpack"
   },
   "result": {
-    "item": "create_jetpack:netherite_jetpack"
+    "id": "create_jetpack:netherite_jetpack"
   },
   "template": {
     "item": "minecraft:netherite_upgrade_smithing_template"

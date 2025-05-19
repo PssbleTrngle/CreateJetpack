@@ -12,7 +12,7 @@ val elytra_slot_version: String by extra
 val jei_version: String by extra
 
 plugins {
-    id("com.possible-triangle.gradle") version("0.2.7")
+    id("com.possible-triangle.gradle") version ("0.2.7")
 }
 
 withKotlin()
@@ -121,3 +121,4 @@ uploadToModrinth {
 }
 
 enableSonarQube()
+enableSpotless()

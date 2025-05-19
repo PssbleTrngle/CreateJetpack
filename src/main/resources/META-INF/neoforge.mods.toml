@@ -1,0 +1,40 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "https://github.com/${repository}/blob/1.19.x/LICENSE.txt"
+issueTrackerURL = "https://github.com/${repository}/issues"
+
+[[mods]]
+    modId = "${mod_id}"
+    version = "${mod_version}"
+    displayName = "${mod_name}"
+    authors = "${mod_author}"
+    description = '''Upgrade your backtank and utilize the pressurized air to fly'''
+    updateJSONURL="https://api.modrinth.com/updates/create-jetpack/forge_updates.json"
+
+[[dependencies.${mod_id}]]
+    modId = "neoforge"
+    type = "required"
+    versionRange = "[21,)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.${mod_id}]]
+    modId = "minecraft"
+    type = "required"
+    versionRange = "[1.21.1,)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="kotlinforforge"
+    mandatory=true
+    versionRange="[5.8,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId = "create"
+    mandatory = true
+    versionRange = "[6.0.0,)"
+    ordering = "NONE"
+    side = "BOTH"
