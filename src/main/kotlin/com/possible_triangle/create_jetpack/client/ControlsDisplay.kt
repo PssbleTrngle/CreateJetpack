@@ -39,7 +39,11 @@ object ControlsDisplay : LayeredDraw.Layer {
     )
 
     fun register(event: RegisterGuiLayersEvent) {
-        event.registerAbove(VanillaGuiLayers.HOTBAR, ResourceLocation.fromNamespaceAndPath(MOD_ID, "jetpack_controls"), this)
+        event.registerAbove(
+            VanillaGuiLayers.HOTBAR,
+            ResourceLocation.fromNamespaceAndPath(MOD_ID, "jetpack_controls"),
+            this
+        )
     }
 
     override fun render(graphics: GuiGraphics, tracker: DeltaTracker) {
@@ -114,7 +118,7 @@ object ControlsDisplay : LayeredDraw.Layer {
             val airSource = BacktankUtil.getAllWithAir(player).firstOrNull() ?: ItemStack.EMPTY
             val maxAir = BacktankUtil.maxAir(airSource)
             val air = BacktankUtil.getAir(airSource)
-            val barHeight = ceil(air / (maxAir * 14.0)).toInt()
+            val barHeight = ceil((air * 14.0) / maxAir).toInt()
             val shrinking = context.jetpack.isThrusting(context)
 
             renderBar(1)
