@@ -10,6 +10,7 @@ val curios_version: String by extra
 val caelus_version: String by extra
 val elytra_slot_version: String by extra
 val jei_version: String by extra
+val cold_sweat_version: String by extra
 
 plugins {
     id("com.possible-triangle.gradle") version ("0.2.8")
@@ -89,6 +90,7 @@ dependencies {
         modImplementation("top.theillusivec4.curios:curios-neoforge:${curios_version}+${mc_version}")
         modRuntimeOnly("com.illusivesoulworks.caelus:caelus-neoforge:${caelus_version}+${mc_version}")
         modRuntimeOnly("maven.modrinth:mSQF1NpT:${elytra_slot_version}")
+        modRuntimeOnly("maven.modrinth:uXhSmPjd:${cold_sweat_version}")
     }
 
     modCompileOnly("com.possible-triangle:flightlib-api:${flightlib_version}")
