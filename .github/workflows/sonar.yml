@@ -2,10 +2,20 @@ name: Analyze
 on:
   push:
     branches: ["[0-9]+.[0-9]+.x"]
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - '**/*.java'
+
+env:
+  CI: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    name: Analyze
+  analyze:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -30,14 +40,9 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.MAVEN_TOKEN }}
-          CI: true
 
       - name: Build
         run: ./gradlew build sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          GITHUB_TOKEN: ${{ secrets.MAVEN_TOKEN }}
-          CI: true
