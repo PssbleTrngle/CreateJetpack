@@ -11,6 +11,7 @@ val caelus_version: String by extra
 val elytra_slot_version: String by extra
 val jei_version: String by extra
 val mixin_extras_version: String by extra
+val cold_sweat_version: String by extra
 
 plugins {
     id("com.possible-triangle.gradle") version("0.1.4")
@@ -81,10 +82,10 @@ dependencies {
     if (!env.isCI) {
         modRuntimeOnly("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
-        // Only here to test jetpack+elytra combination behaviour
         modRuntimeOnly("top.theillusivec4.curios:curios-forge:${curios_version}")
         modRuntimeOnly("top.theillusivec4.caelus:caelus-forge:${caelus_version}")
         modRuntimeOnly("curse.maven:elytra-slot-317716:${elytra_slot_version}")
+        modRuntimeOnly("maven.modrinth:uXhSmPjd:${cold_sweat_version}")
     }
 
     modCompileOnly("com.possible-triangle:flightlib-api:${flightlib_version}")
