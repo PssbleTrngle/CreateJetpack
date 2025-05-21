@@ -217,7 +217,6 @@ object Content {
         container.registerConfig(ModConfig.Type.CLIENT, Configs.CLIENT_SPEC)
 
         modBus.addListener(Configs.Network::register)
-        modBus.addListener(ControlsDisplay::register)
 
         FORGE_BUS.addListener(Configs::syncConfig)
         modBus.addListener { event: RegisterCapabilitiesEvent ->
@@ -225,6 +224,10 @@ object Content {
                 stack.item as IJetpack
             }, JETPACK_ITEM, NETHERITE_JETPACK_ITEM)
         }
+    }
+
+    fun clientInit(modBus: IEventBus) {
+        modBus.addListener(ControlsDisplay::register)
     }
 
 }
