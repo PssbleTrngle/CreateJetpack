@@ -44,8 +44,3 @@ jobs:
           CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
           CHANGELOG: ${{ github.event.release.body }}
           CI: true
-
-      - name: Upload jar to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          file: build/libs/create_jetpack-forge-${{ github.event.release.tag_name }}.jar
