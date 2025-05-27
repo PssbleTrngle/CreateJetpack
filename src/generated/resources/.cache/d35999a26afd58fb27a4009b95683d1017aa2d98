@@ -1,4 +1,4 @@
-// 1.21.1	2025-05-19T14:29:54.1172607	Registrate Provider for create_jetpack [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2025-05-27T12:49:45.7756378	Registrate Provider for create_jetpack [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 673a48952547e61209ce76274272e9c4e05c8189 assets/create_jetpack/blockstates/jetpack.json
 ba8e314e1e6dbb6c25dd5e837cef04f8d96412a1 assets/create_jetpack/blockstates/netherite_jetpack.json
 a2f5d170a0eb9d1686d1c97de51bdb52eee864af assets/create_jetpack/lang/en_ud.json
@@ -13,3 +13,4 @@ f01edd57ce03744767e9ab7b7e68c80d9834a50c assets/create_jetpack/models/item/nethe
 097853fd57c98bdbb87f7b0bf057be50654c5838 data/create_jetpack/loot_table/blocks/jetpack.json
 7a9b582b8572955981573dade1404afb825d9b93 data/create_jetpack/loot_table/blocks/netherite_jetpack.json
 45715b49eb3f91a62054f6c2a9d82115b8e188fb data/minecraft/tags/block/mineable/pickaxe.json
+45715b49eb3f91a62054f6c2a9d82115b8e188fb data/minecraft/tags/item/chest_armor.json

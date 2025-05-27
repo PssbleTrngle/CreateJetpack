@@ -5,6 +5,7 @@ import com.possible_triangle.create_jetpack.block.JetpackBlock
 import com.possible_triangle.create_jetpack.client.ControlsDisplay
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.JetpackItem
+import com.possible_triangle.flightlib.api.Constants
 import com.possible_triangle.flightlib.api.IJetpack
 import com.possible_triangle.flightlib.forge.api.ForgeFlightLib
 import com.simibubi.create.AllBlocks
@@ -36,7 +37,10 @@ import dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer
 import net.createmod.catnip.lang.FontHelper
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceKey
+import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.ArmorMaterials
+import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
@@ -57,10 +61,12 @@ import java.util.function.Supplier
 object Content {
 
     init {
-        REGISTRATE.setTooltipModifierFactory {
-            ItemDescription.Modifier(it, FontHelper.Palette.STANDARD_CREATE)
-                .andThen(TooltipModifier.mapNull(KineticStats.create(it)))
-        }
+        REGISTRATE
+            .defaultCreativeTab(null as ResourceKey<CreativeModeTab>?)
+            .setTooltipModifierFactory {
+                ItemDescription.Modifier(it, FontHelper.Palette.STANDARD_CREATE)
+                    .andThen(TooltipModifier.mapNull(KineticStats.create(it)))
+            }
     }
 
     val COPY_NBT_MECHANICAL_CRAFTING_SERIALIZER = REGISTRATE
@@ -169,6 +175,7 @@ object Content {
             p.withExistingParent("item/${c.name}", p.modLoc("block/jetpack/item"))
                 .texture("0", "block/${c.name}")
         }
+        tag(ItemTags.CHEST_ARMOR)
         tag(AllItemTags.PRESSURIZED_AIR_SOURCES.tag)
             .tab(AllCreativeModeTabs.BASE_CREATIVE_TAB.key!!) { context, mod ->
                 mod.accept(ItemStack(context.get()).apply {
