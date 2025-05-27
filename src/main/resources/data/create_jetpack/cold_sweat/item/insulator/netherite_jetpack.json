@@ -29,8 +29,8 @@
         "items": [
           "create_jetpack:netherite_jetpack"
         ],
-        "components": {
-          "create:banktank_air": "1-9999"
+        "nbt": {
+          "Air": "1-9999"
         }
       },
       "legs": {
@@ -45,14 +45,14 @@
       {
         "name": "cs:netherite_diving_set_bonus",
         "amount": 1.0,
-        "operation": "add_value"
+        "operation": "addition"
       }
     ],
     "cold_sweat:cold_dampening": [
       {
         "name": "cs:netherite_diving_set_bonus",
         "amount": 0.5,
-        "operation": "add_value"
+        "operation": "addition"
       }
     ]
   },
