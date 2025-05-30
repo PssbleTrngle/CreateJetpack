@@ -75,12 +75,13 @@ open class JetpackItem(
     override fun getThrusters(context: Context) = thrusters
 
     override fun onUse(context: Context) {
-        BacktankUtil.canAbsorbDamage(context.entity, usesPerTank(context))
+        if (context.world.gameTime % 20 != 0L) return
+        BacktankUtil.canAbsorbDamage(context.entity, secondsPerTank(context))
     }
 
-    private fun usesPerTank(context: Context): Int {
-        return if (isHovering(context)) Configs.SERVER.usesPerTankHover
-        else Configs.SERVER.usesPerTank
+    private fun secondsPerTank(context: Context): Int {
+        return if (isHovering(context)) Configs.SERVER.secondsPerTankHover
+        else Configs.SERVER.secondsPerTank
     }
 
     override fun isValid(context: Context): Boolean {
@@ -94,7 +95,7 @@ open class JetpackItem(
     override fun isUsable(context: Context): Boolean {
         val tank = BacktankUtil.getAllWithAir(context.entity).firstOrNull() ?: return false
         val air = BacktankUtil.getAir(tank)
-        val cost = BacktankUtil.maxAirWithoutEnchants().toFloat() / usesPerTank(context)
+        val cost = BacktankUtil.maxAirWithoutEnchants().toFloat() / secondsPerTank(context)
         return air >= cost
     }
 

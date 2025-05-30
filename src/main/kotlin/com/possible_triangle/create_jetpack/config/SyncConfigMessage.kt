@@ -19,8 +19,8 @@ class SyncConfigMessage(private val config: IServerConfig) : CustomPacketPayload
 
         private fun decode(buf: FriendlyByteBuf): SyncConfigMessage {
             val config = SyncedConfig(
-                usesPerTank = buf.readInt(),
-                usesPerTankHover = buf.readInt(),
+                secondsPerTank = buf.readInt(),
+                secondsPerTankHover = buf.readInt(),
                 horizontalSpeed = buf.readDouble(),
                 verticalSpeed = buf.readDouble(),
                 acceleration = buf.readDouble(),
@@ -32,8 +32,8 @@ class SyncConfigMessage(private val config: IServerConfig) : CustomPacketPayload
         }
 
         private fun encode(buf: FriendlyByteBuf, message: SyncConfigMessage) = with(message) {
-            buf.writeInt(config.usesPerTank)
-            buf.writeInt(config.usesPerTankHover)
+            buf.writeInt(config.secondsPerTank)
+            buf.writeInt(config.secondsPerTankHover)
             buf.writeDouble(config.horizontalSpeed)
             buf.writeDouble(config.verticalSpeed)
             buf.writeDouble(config.acceleration)

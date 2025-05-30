@@ -6,8 +6,8 @@ import net.minecraft.world.item.enchantment.Enchantment
 import net.neoforged.neoforge.common.ModConfigSpec
 
 interface IServerConfig {
-    val usesPerTank: Int
-    val usesPerTankHover: Int
+    val secondsPerTank: Int
+    val secondsPerTankHover: Int
     val horizontalSpeed: Double
     val verticalSpeed: Double
     val acceleration: Double
@@ -18,8 +18,8 @@ interface IServerConfig {
 }
 
 data class SyncedConfig(
-    override val usesPerTank: Int,
-    override val usesPerTankHover: Int,
+    override val secondsPerTank: Int,
+    override val secondsPerTankHover: Int,
     override val horizontalSpeed: Double,
     override val verticalSpeed: Double,
     override val acceleration: Double,
@@ -32,12 +32,12 @@ data class SyncedConfig(
 
 class ServerConfig(builder: ModConfigSpec.Builder) : IServerConfig {
 
-    private val usesPerTankValue = builder.defineInRange("air.uses_per_tank", 2048, 1, Integer.MAX_VALUE)
-    override val usesPerTank get() = usesPerTankValue.get()
+    private val secondsPerTankValue = builder.defineInRange("air.seconds_per_tank", 450, 1, Integer.MAX_VALUE)
+    override val secondsPerTank get() = secondsPerTankValue.get()
 
-    private val usesPerTankHoverValue =
-        builder.defineInRange("air.uses_per_tank_hover", 2048 * 10, 1, Integer.MAX_VALUE)
-    override val usesPerTankHover get() = usesPerTankHoverValue.get()
+    private val secondsPerTankHoverValue =
+        builder.defineInRange("air.seconds_per_tank_hover", 900, 1, Integer.MAX_VALUE)
+    override val secondsPerTankHover get() = secondsPerTankHoverValue.get()
 
     private val horizontalSpeedValue = builder.defineInRange("speed.horizontal", 0.02, 0.01, 100.0)
     override val horizontalSpeed get() = horizontalSpeedValue.get()
