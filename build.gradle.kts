@@ -13,7 +13,7 @@ val jei_version: String by extra
 val cold_sweat_version: String by extra
 
 plugins {
-    id("com.possible-triangle.gradle") version ("0.2.9")
+    id("com.possible-triangle.gradle") version ("0.2.13")
 }
 
 withKotlin()
