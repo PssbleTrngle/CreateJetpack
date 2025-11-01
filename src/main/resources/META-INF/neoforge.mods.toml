@@ -9,7 +9,7 @@ issueTrackerURL = "https://github.com/${repository}/issues"
     displayName = "${mod_name}"
     authors = "${mod_author}"
     description = '''Upgrade your backtank and utilize the pressurized air to fly'''
-    updateJSONURL="https://api.modrinth.com/updates/create-jetpack/forge_updates.json"
+    updateJSONURL="https://api.modrinth.com/updates/create-jetpack/forge_updates.json?neoforge=only"
 
 [[dependencies.${mod_id}]]
     modId = "neoforge"
