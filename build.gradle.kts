@@ -1,11 +1,9 @@
-val mod_id: String by extra
 val mc_version: String by extra
 val registrate_version: String by extra
 val create_version: String by extra
 val ponder_version: String by extra
 val flywheel_version: String by extra
 val flightlib_version: String by extra
-val mod_version: String by extra
 val curios_version: String by extra
 val caelus_version: String by extra
 val elytra_slot_version: String by extra
@@ -13,24 +11,24 @@ val jei_version: String by extra
 val cold_sweat_version: String by extra
 
 plugins {
-    id("com.possible-triangle.gradle") version ("0.2.13")
+    id("com.possible-triangle.neoforge")
 }
 
 withKotlin()
 
+mod {
+    mods.include("com.possible-triangle:flightlib-neoforge:${flightlib_version}")
+}
+
 neoforge {
     dataGen()
-    includesMod("com.possible-triangle:flightlib-forge:${flightlib_version}")
 }
 
 base {
-    archivesName.set("$mod_id-forge-$mod_version")
+    archivesName = "${mod.id.get()}-forge-${mod.version.get()}"
 }
 
 repositories {
-    modrinthMaven()
-    mavenLocal()
-
     maven {
         url = uri("https://maven.blamejared.com/")
         content {
@@ -58,12 +56,7 @@ repositories {
             includeGroup("top.theillusivec4.curios")
         }
     }
-    maven {
-        url = uri("https://maven.pkg.github.com/PssbleTrngle/FlightLib")
-        credentials {
-            username = env["GITHUB_ACTOR"]
-            password = env["GITHUB_TOKEN"]
-        }
+    nexus {
         content {
             includeGroup("com.possible-triangle")
         }
@@ -94,32 +87,28 @@ dependencies {
     }
 
     modCompileOnly("com.possible-triangle:flightlib-api:${flightlib_version}")
-    modCompileOnly("com.possible-triangle:flightlib-forge-api:${flightlib_version}")
+    modCompileOnly("com.possible-triangle:flightlib-neoforge-api:${flightlib_version}")
 }
 
 tasks.withType<Jar> {
     exclude("screenshots")
 }
 
-enablePublishing {
-    githubPackages()
-    repositories {
-        mavenLocal()
-    }
-}
 
-uploadToCurseforge {
-    dependencies {
-        required("create")
-    }
-}
-
-uploadToModrinth {
-    dependencies {
-        required("LNytGWDc")
+upload {
+    maven {
+        nexus()
     }
 
-    syncBodyFromReadme()
+    forEach {
+        dependencies {
+            required("create")
+        }
+    }
+
+    modrinth {
+        syncBodyFromReadme()
+    }
 }
 
 enableSonarQube()
