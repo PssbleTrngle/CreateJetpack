@@ -5,9 +5,8 @@ import com.possible_triangle.create_jetpack.block.JetpackBlock
 import com.possible_triangle.create_jetpack.client.ControlsDisplay
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.JetpackItem
-import com.possible_triangle.flightlib.api.Constants
 import com.possible_triangle.flightlib.api.IJetpack
-import com.possible_triangle.flightlib.forge.api.ForgeFlightLib
+import com.possible_triangle.flightlib.neoforge.api.NeoForgeFlightLib
 import com.simibubi.create.AllBlocks
 import com.simibubi.create.AllCreativeModeTabs
 import com.simibubi.create.AllDataComponents
@@ -227,7 +226,7 @@ object Content {
 
         FORGE_BUS.addListener(Configs::syncConfig)
         modBus.addListener { event: RegisterCapabilitiesEvent ->
-            event.registerItem(ForgeFlightLib.ITEM_CAPABILITY, { stack, context ->
+            event.registerItem(NeoForgeFlightLib.ITEM_CAPABILITY, { stack, _ ->
                 stack.item as IJetpack
             }, JETPACK_ITEM, NETHERITE_JETPACK_ITEM)
         }
