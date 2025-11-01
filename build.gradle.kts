@@ -1,37 +1,34 @@
-val mod_id: String by extra
 val mc_version: String by extra
 val registrate_version: String by extra
 val create_version: String by extra
 val ponder_version: String by extra
 val flywheel_version: String by extra
 val flightlib_version: String by extra
-val mod_version: String by extra
 val curios_version: String by extra
 val caelus_version: String by extra
 val elytra_slot_version: String by extra
 val jei_version: String by extra
-val mixin_extras_version: String by extra
 val cold_sweat_version: String by extra
 
 plugins {
-    id("com.possible-triangle.gradle") version("0.1.4")
+    id("com.possible-triangle.forge")
 }
 
 withKotlin()
 
+mod {
+    mods.include("com.possible-triangle:flightlib-forge:${flightlib_version}")
+}
+
 forge {
     dataGen()
-    includesMod("com.possible-triangle:flightlib-forge:${flightlib_version}")
 }
 
 base {
-    archivesName.set("$mod_id-forge-$mod_version")
+    archivesName = "${mod.id.get()}-forge-${mod.version.get()}"
 }
 
 repositories {
-    curseMaven()
-    localMaven(project)
-
     maven {
         url = uri("https://maven.blamejared.com/")
         content {
@@ -55,16 +52,10 @@ repositories {
     maven {
         url = uri("https://maven.theillusivec4.top/")
         content {
-            includeGroup("top.theillusivec4.caelus")
-            includeGroup("top.theillusivec4.curios")
+            includeGroupAndSubgroups("top.theillusivec4")
         }
     }
-    maven {
-        url = uri("https://maven.pkg.github.com/PssbleTrngle/FlightLib")
-        credentials {
-            username = env["GITHUB_ACTOR"]
-            password = env["GITHUB_TOKEN"]
-        }
+    nexus {
         content {
             includeGroup("com.possible-triangle")
         }
@@ -77,14 +68,14 @@ dependencies {
     modImplementation("net.createmod.ponder:Ponder-Forge-${mc_version}:${ponder_version}")
     modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${mc_version}:${flywheel_version}")
     modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${mc_version}:${flywheel_version}")
-    implementation("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")
 
     if (!env.isCI) {
         modRuntimeOnly("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
-        modRuntimeOnly("top.theillusivec4.curios:curios-forge:${curios_version}")
-        modRuntimeOnly("top.theillusivec4.caelus:caelus-forge:${caelus_version}")
-        modRuntimeOnly("curse.maven:elytra-slot-317716:${elytra_slot_version}")
+        // Only here to test jetpack+elytra combination behaviour
+        modRuntimeOnly("top.theillusivec4.curios:curios-forge:${curios_version}+${mc_version}")
+        modRuntimeOnly("top.theillusivec4.caelus:caelus-forge:${caelus_version}+${mc_version}")
+        modRuntimeOnly("maven.modrinth:mSQF1NpT:${elytra_slot_version}")
         modRuntimeOnly("maven.modrinth:uXhSmPjd:${cold_sweat_version}")
     }
 
@@ -96,22 +87,22 @@ tasks.withType<Jar> {
     exclude("screenshots")
 }
 
-enablePublishing {
-    githubPackages()
-}
 
-uploadToCurseforge {
-    dependencies {
-        required("create")
-    }
-}
-
-uploadToModrinth {
-    dependencies {
-        required("LNytGWDc")
+upload {
+    maven {
+        nexus()
     }
 
-    syncBodyFromReadme()
+    forEach {
+        dependencies {
+            required("create")
+        }
+    }
+
+    modrinth {
+        syncBodyFromReadme()
+    }
 }
 
 enableSonarQube()
+enableSpotless()
