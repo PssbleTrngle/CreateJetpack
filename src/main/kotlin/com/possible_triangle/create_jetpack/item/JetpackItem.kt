@@ -21,6 +21,7 @@ import net.minecraft.world.item.ArmorMaterial
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.enchantment.Enchantment
 import net.minecraft.world.phys.Vec3
+import net.neoforged.fml.loading.FMLEnvironment
 import java.util.*
 
 open class JetpackItem(
@@ -103,12 +104,12 @@ open class JetpackItem(
         return super.supportsEnchantment(stack, enchantment) && Configs.SERVER.isAllowed(enchantment)
     }
 
-    override fun createParticles(): ParticleOptions {
-        return if (Configs.CLIENT.spawnSnowParticles)
+    override fun createParticles(): ParticleOptions =
+        if (FMLEnvironment.dist.isClient && Configs.CLIENT.spawnSnowParticles) {
             ParticleTypes.SNOWFLAKE
-        else
+        } else {
             AirParticleData(0F, 0.01F)
-    }
+        }
 
     class Layered(
         properties: Properties,
