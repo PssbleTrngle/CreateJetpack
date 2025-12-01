@@ -23,6 +23,6 @@ class ClientConfig(builder: ModConfigSpec.Builder) {
     private val SEASONAL_EFFECTS = builder.define("effects.seasonal", true)
 
     val spawnSnowParticles
-        get() = isChristmas && SEASONAL_EFFECTS.get()
+        get() = isChristmas && runCatching { SEASONAL_EFFECTS.get() }.getOrDefault(true)
 
 }
