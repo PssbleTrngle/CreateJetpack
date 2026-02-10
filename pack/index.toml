@@ -1,0 +1,11 @@
+hash-format = "sha256"
+
+[[files]]
+file = "mods/cold-sweat.pw.toml"
+hash = "1cb5f4b67018e7bc88f7e311eb17136f771bc53ea281758b99e89415fdea9d94"
+metafile = true
+
+[[files]]
+file = "mods/elytra-slot.pw.toml"
+hash = "9e2b351f3cabb1252259f5383e6f2fec3e3d90534dbecddef4ed183eba42f35a"
+metafile = true
