@@ -15,6 +15,4 @@ flightlib-api = { group = "com.possible-triangle", name = "flightlib-api", versi
 curios = { group = "top.theillusivec4.curios", name = "curios-neoforge",  version = "9.5.1+1.21.1" }
 caelus = { group = "com.illusivesoulworks.caelus", name = "caelus-neoforge",  version = "7.0.1+1.21.1" }
 
-jei-common-api = { group = "mezz.jei", name = "jei-1.21.1-common-api", version.ref = "jei" }
-jei-neoforge-api = { group = "mezz.jei", name = "jei-1.21.1-neoforge-api", version.ref = "jei" }
-jei-neoforge = { group = "mezz.jei", name = "jei-1.21.1-neoforge", version.ref = "jei" }
+jei = { group = "mezz.jei", name = "jei-1.21.1-neoforge", version.ref = "jei" }

@@ -72,7 +72,7 @@ dependencies {
     modCompileOnly(libs.flywheel)
 
     if (!env.isCI) {
-        modRuntimeOnly(libs.jei.neoforge)
+        modRuntimeOnly(libs.jei)
 
         // Only here to test jetpack+elytra combination behaviour
         modImplementation(libs.curios)
