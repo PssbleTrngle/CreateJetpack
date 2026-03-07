@@ -1,6 +1,6 @@
 {
   "required_mods": [
-    "create"
+    "create_jetpack"
   ],
   "type": "armor",
   "item": {
