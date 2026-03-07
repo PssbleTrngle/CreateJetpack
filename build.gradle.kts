@@ -62,7 +62,7 @@ dependencies {
     }
 
     modImplementation(libs.ponder)
-    modCompileOnly(libs.flywheel)
+    modImplementation(libs.flywheel)
 
     if (!env.isCI) {
         modRuntimeOnly(libs.jei)
