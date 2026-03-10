@@ -23,7 +23,7 @@
       "item": "create:precision_mechanism"
     },
     "P": {
-      "tag": "forge:plates/brass"
+      "tag": "c:plates/brass"
     }
   },
   "result": {
