@@ -4,8 +4,3 @@ hash-format = "sha256"
 file = "mods/elytra-slot.pw.toml"
 hash = "b58e81bdab1b3db9bdbf331e45f7438abdf62b63e495dccc003b3ebdf02a3abf"
 metafile = true
-
-[[files]]
-file = "mods/trinkets.pw.toml"
-hash = "ffdb79f5bc29f990e5889f5d159a043c7046b8cd8d79f17f54b44d7ccc2b242a"
-metafile = true

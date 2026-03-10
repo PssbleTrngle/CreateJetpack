@@ -12,8 +12,8 @@ fabric {
     dataGen()
 }
 
+val rawVersion = mod.version.get().replace("-fabric", "")
 base {
-    val rawVersion = mod.version.get().replace("-fabric", "")
     archivesName = "${mod.id.get()}-fabric-$rawVersion"
 }
 
@@ -64,6 +64,20 @@ repositories {
         }
     }
 
+    maven {
+        url = uri("https://maven.terraformersmc.com/")
+        content {
+            includeGroup("dev.emi")
+        }
+    }
+
+    maven {
+        url = uri("https://maven.ladysnake.org/releases")
+        content {
+            includeGroup("dev.onyxstudios.cardinal-components-api")
+        }
+    }
+
     nexus {
         content {
             includeGroup("com.possible-triangle")
@@ -86,7 +100,7 @@ dependencies {
 
         // Only here to test jetpack+elytra combination behaviour
         modRuntimeOnly(pack.modrinth.elytra.slot)
-        modRuntimeOnly(pack.modrinth.trinkets)
+        modRuntimeOnly(libs.trinkets)
     }
 
     modCompileOnly(libs.flightlib.api)
@@ -102,6 +116,7 @@ upload {
     }
 
     forEach {
+        versionName = "Fabric $rawVersion"
         dependencies {
             required("create-fabric")
         }

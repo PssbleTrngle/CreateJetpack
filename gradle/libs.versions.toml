@@ -10,4 +10,6 @@ flywheel = { group = "dev.engine-room.flywheel", name = "flywheel-fabric-1.20.1"
 flightlib-fabric = { group = "com.possible-triangle", name = "flightlib-fabric", version.ref = "flightlib" }
 flightlib-api = { group = "com.possible-triangle", name = "flightlib-api", version.ref = "flightlib" }
 
+trinkets = { group = "dev.emi", name = "trinkets", version = "3.7.0" }
+
 jei = { group = "mezz.jei", name = "jei-1.20.1-fabric", version = "15.20.0.129" }
