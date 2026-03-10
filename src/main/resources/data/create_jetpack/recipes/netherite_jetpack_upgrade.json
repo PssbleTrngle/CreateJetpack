@@ -1,7 +1,7 @@
 {
   "type": "minecraft:smithing_transform",
   "addition": {
-    "tag": "c:ingots/netherite"
+    "tag": "c:netherite_ingots"
   },
   "base": {
     "item": "create_jetpack:jetpack"
