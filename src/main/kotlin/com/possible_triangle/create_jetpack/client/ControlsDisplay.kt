@@ -8,20 +8,17 @@ import com.possible_triangle.flightlib.api.FlightKey
 import com.possible_triangle.flightlib.api.IFlightApi
 import com.possible_triangle.flightlib.api.IJetpack
 import com.simibubi.create.content.equipment.armor.BacktankUtil
+import io.github.fabricators_of_create.porting_lib.event.client.OverlayRenderCallback
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.Vec2
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent
-import net.minecraftforge.client.gui.overlay.ForgeGui
-import net.minecraftforge.client.gui.overlay.IGuiOverlay
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay
 import kotlin.math.ceil
 
 
-object ControlsDisplay : IGuiOverlay {
+object ControlsDisplay {
 
     private val controls = ResourceLocation(MOD_ID, "textures/gui/controls.png")
     private val airIndicator = ResourceLocation(MOD_ID, "textures/gui/air_indicator.png")
@@ -38,11 +35,21 @@ object ControlsDisplay : IGuiOverlay {
         FlightKey.TOGGLE_HOVER to { it.jetpack.hoverType(it) },
     )
 
-    fun register(event: RegisterGuiOverlaysEvent) {
-        event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "jetpack_controls", this)
+    fun register() {
+        OverlayRenderCallback.EVENT.register(OverlayRenderCallback { graphics, partialTicks, window, type ->
+            if (type == OverlayRenderCallback.Types.AIR) {
+                render(
+                    graphics,
+                    partialTicks,
+                    window.guiScaledWidth,
+                    window.guiScaledHeight
+                )
+            }
+            false
+        })
     }
 
-    override fun render(gui: ForgeGui, graphics: GuiGraphics, partialTick: Float, width: Int, height: Int) {
+    fun render(graphics: GuiGraphics, partialTicks: Float, width: Int, height: Int) {
         val mc = Minecraft.getInstance()
         if (!Configs.CLIENT.SHOW_OVERLAY.get()) return
         if (mc.options.hideGui) return
@@ -84,7 +91,7 @@ object ControlsDisplay : IGuiOverlay {
                 val textMargin = (startX + 8 + spriteWidth * index) * (1 / textScale)
                 val text = Component.translatable("overlay.flightlib.control.${key.name.lowercase()}")
                 val color = if (active) 0xFFFFFF else 0xBBBBBB
-                graphics.drawCenteredString(gui.font, text, textMargin.toInt(), startY * 2 + 36, color)
+                graphics.drawCenteredString(mc.font, text, textMargin.toInt(), startY * 2 + 36, color)
                 graphics.pose().popPose()
 
             }.count()

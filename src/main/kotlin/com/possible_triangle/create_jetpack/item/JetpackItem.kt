@@ -6,13 +6,11 @@ import com.possible_triangle.flightlib.api.IJetpack
 import com.possible_triangle.flightlib.api.IJetpack.Context
 import com.possible_triangle.flightlib.api.sources.CuriosSource
 import com.possible_triangle.flightlib.api.sources.EquipmentSource
-import com.possible_triangle.flightlib.forge.api.ForgeFlightLib.JETPACK_CAPABILITY
 import com.simibubi.create.content.equipment.armor.BacktankItem
 import com.simibubi.create.content.equipment.armor.BacktankUtil
 import com.simibubi.create.foundation.item.LayeredArmorItem
 import com.simibubi.create.foundation.particle.AirParticleData
 import com.tterrag.registrate.util.entry.ItemEntry
-import net.minecraft.core.Direction
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.resources.ResourceLocation
@@ -20,11 +18,7 @@ import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ArmorMaterial
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.enchantment.Enchantment
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.common.capabilities.Capability
-import net.minecraftforge.common.capabilities.ICapabilityProvider
-import net.minecraftforge.common.util.LazyOptional
 import java.util.*
 
 open class JetpackItem(
@@ -38,9 +32,7 @@ open class JetpackItem(
         properties,
         texture,
         blockItem
-    ), IJetpack, ICapabilityProvider {
-    private val capability = LazyOptional.of<IJetpack> { this }
-
+    ), IJetpack {
     override fun hoverSpeed(context: Context): Double {
         return Configs.SERVER.hoverSpeed
     }
@@ -102,15 +94,6 @@ open class JetpackItem(
         val air = BacktankUtil.getAir(tank)
         val cost = BacktankUtil.maxAirWithoutEnchants().toFloat() / secondsPerTank(context)
         return air >= cost
-    }
-
-    override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
-        if (cap == JETPACK_CAPABILITY) return capability.cast()
-        return LazyOptional.empty()
-    }
-
-    override fun canApplyAtEnchantingTable(stack: ItemStack, enchantment: Enchantment): Boolean {
-        return super.canApplyAtEnchantingTable(stack, enchantment) && Configs.SERVER.isAllowed(enchantment)
     }
 
     override fun createParticles(): ParticleOptions {

@@ -1,20 +1,30 @@
 package com.possible_triangle.create_jetpack;
 
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod.EventBusSubscriber
-@Mod(CreateJetpackMod.MOD_ID)
-public class CreateJetpackMod {
+public class CreateJetpackMod implements ModInitializer, ClientModInitializer, DataGeneratorEntrypoint {
 
     public static final String MOD_ID = "create_jetpack";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public CreateJetpackMod() {
-        var eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        Content.INSTANCE.register(eventBus);
+    @Override
+    public void onInitialize() {
+        Content.INSTANCE.register();
+    }
+
+    @Override
+    public void onInitializeClient() {
+        Content.INSTANCE.clientInit();
+    }
+
+    @Override
+    public void onInitializeDataGenerator(FabricDataGenerator generator) {
+        Content.INSTANCE.setupDatagen(generator);
     }
 
 }

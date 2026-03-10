@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "sources": "https://github.com/${repository}",
+    "issues": "https://github.com/${repository}/issues"
+  },
+  "license": "CC0-1.0",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.possible_triangle.create_jetpack.CreateJetpackMod"
+    ],
+    "client": [
+      "com.possible_triangle.create_jetpack.CreateJetpackMod"
+    ],
+    "fabric-datagen": [
+      "com.possible_triangle.create_jetpack.CreateJetpackMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14",
+    "fabric-api": "*",
+    "minecraft": "1.20.1",
+    "java": ">=17",
+    "flightlib": "*",
+    "fabric-language-kotlin": "^1.9.0",
+    "create": ">=6.0.7.0"
+  }
+}

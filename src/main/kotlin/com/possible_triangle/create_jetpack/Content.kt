@@ -30,11 +30,13 @@ import com.tterrag.registrate.util.entry.ItemEntry
 import com.tterrag.registrate.util.nullness.NonNullFunction
 import com.tterrag.registrate.util.nullness.NonNullSupplier
 import dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer
+import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry
+import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper
 import net.createmod.catnip.lang.FontHelper
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.registries.Registries
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ArmorMaterials
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -47,13 +49,7 @@ import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
-import net.minecraftforge.common.capabilities.ICapabilityProvider
-import net.minecraftforge.event.AttachCapabilitiesEvent
-import net.minecraftforge.eventbus.api.IEventBus
 import net.minecraftforge.fml.config.ModConfig
-import thedarkcolour.kotlinforforge.forge.FORGE_BUS
-import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
-import java.util.function.BiConsumer
 import java.util.function.Supplier
 
 object Content {
@@ -209,27 +205,26 @@ object Content {
             .renderer { NonNullFunction { BacktankRenderer(it) } }
             .register()
 
-    private fun attachCapabilities(stack: ItemStack, add: BiConsumer<ResourceLocation, ICapabilityProvider>) {
-        val item = stack.item
-        if (item is JetpackItem) add.accept(ResourceLocation(MOD_ID, "jetpack"), item)
-    }
-
-    fun register(modBus: IEventBus) {
-        REGISTRATE.registerEventListeners(modBus)
+    fun register() {
+        REGISTRATE.register()
 
         REGISTRATE.addRawLang("key.categories.movement.jetpack", "Create Jetpack")
 
-        LOADING_CONTEXT.registerConfig(ModConfig.Type.COMMON, Configs.SERVER_SPEC)
-        LOADING_CONTEXT.registerConfig(ModConfig.Type.CLIENT, Configs.CLIENT_SPEC)
+        ForgeConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.COMMON, Configs.SERVER_SPEC)
+        ForgeConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.CLIENT, Configs.CLIENT_SPEC)
 
-        Configs.Network.register()
+        ServerPlayConnectionEvents.JOIN.register { it, _, _ -> Configs.syncConfig(it.player) }
+    }
 
-        modBus.addListener(ControlsDisplay::register)
+    fun clientInit() {
+        ControlsDisplay.register()
 
-        FORGE_BUS.addListener(Configs::syncConfig)
-        FORGE_BUS.addGenericListener(ItemStack::class.java) { event: AttachCapabilitiesEvent<ItemStack> ->
-            attachCapabilities(event.`object`, event::addCapability)
-        }
+        Configs.Network.registerReceiver()
+    }
+
+    fun setupDatagen(generator: FabricDataGenerator) {
+        val helper = ExistingFileHelper.withResourcesFromArg()
+        REGISTRATE.setupDatagen(generator.createPack(), helper)
     }
 
 }

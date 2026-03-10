@@ -2,12 +2,12 @@ package com.possible_triangle.create_jetpack.config
 
 import com.possible_triangle.create_jetpack.CreateJetpackMod
 import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import net.minecraftforge.common.ForgeConfigSpec
-import net.minecraftforge.event.entity.player.PlayerEvent
-import net.minecraftforge.network.NetworkRegistry
-import net.minecraftforge.network.PacketDistributor
 
 object Configs {
 
@@ -37,30 +37,29 @@ object Configs {
         }
     }
 
-    fun syncConfig(event: PlayerEvent.PlayerLoggedInEvent) {
-        val player = event.entity
-        if (player !is ServerPlayer) return
+    fun syncConfig(player: ServerPlayer) {
         CreateJetpackMod.LOGGER.debug("Sending server config to ${player.scoreboardName}")
-        Network.CHANNEL.send(PacketDistributor.PLAYER.with { player }, SyncConfigMessage(LOCAL_SERVER))
+        val message = SyncConfigMessage(LOCAL_SERVER)
+        Network.send(message, player)
     }
 
     object Network {
-        private const val version = "1.0"
-        internal val CHANNEL = NetworkRegistry.newSimpleChannel(
-            ResourceLocation(MOD_ID, "configs"),
-            { version },
-            version::equals,
-            version::equals
-        )
 
-        fun register() {
-            CHANNEL.registerMessage(
-                0,
-                SyncConfigMessage::class.java,
-                SyncConfigMessage::encode,
-                SyncConfigMessage::decode,
-                SyncConfigMessage::handle
-            )
+        private val PACKET_ID = ResourceLocation(MOD_ID, "config_sync")
+
+        fun send(message: SyncConfigMessage, player: ServerPlayer) {
+            val buffer = PacketByteBufs.create()
+            message.encode(buffer)
+            ServerPlayNetworking.send(player, PACKET_ID, buffer)
+        }
+
+        fun registerReceiver() {
+            ClientPlayNetworking.registerGlobalReceiver(PACKET_ID) { client, _, buffer, _ ->
+                val event = SyncConfigMessage.decode(buffer)
+                client.execute {
+                    event.handle()
+                }
+            }
         }
     }
 
