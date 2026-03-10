@@ -9,8 +9,6 @@
 
 # Create Jetpack <!-- modrinth_exclude.start --> <img src="https://raw.githubusercontent.com/PssbleTrngle/CreateJetpack/1.21.x/src/main/resources/assets/create_jetpack/icon.png" align="right" height="128" />
 
-[Looking for the Fabric version?](https://github.com/PssbleTrngle/CreateJetpack-Fabric)
-
 [![Release](https://img.shields.io/github/v/release/PssbleTrngle/CreateJetpack?label=Version&sort=semver)][DOWNLOAD]
 [![Downloads](https://cf.way2muchnoise.eu/full_655608_downloads.svg)][CURSEFORGE]
 [![Version](https://cf.way2muchnoise.eu/versions/655608.svg)][DOWNLOAD]
@@ -49,7 +47,7 @@ the jetpack will instead give you firework-like boost while the player is pressi
 
 ![Elytra Support](https://raw.githubusercontent.com/PssbleTrngle/CreateJetpack/1.21.x/screenshots/elytra.png)
 
-Curios Support is possible by adding it via a datapack. Save to following to `data/curios/tags/items/back.json`:
+Trinkets Support is possible by adding it via a datapack. Save to following to `data/trinkets/tags/items/chest/back.json`:
 
 ```json
 {
@@ -60,4 +58,15 @@ Curios Support is possible by adding it via a datapack. Save to following to `da
 }
 ```
 
-An example datapack enabling this support can be downloaded [here](https://github.com/PssbleTrngle/CreateJetpack/raw/1.20.x/curios_support_datapack.zip).
+If the back slot is not already enabled by another mod, save the following to `data/trinkets/entities/flightlib.json`:
+
+```json
+{
+  "entities": [
+    "player"
+  ],
+  "slots": [
+    "chest/back"
+  ]
+}
+```
