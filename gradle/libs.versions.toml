@@ -1,5 +1,5 @@
 [versions]
-flightlib = "2.2.2"
+flightlib = "2.2.3"
 
 [libraries]
 create = { group = "com.simibubi.create", name = "create-fabric-1.20.1", version = "6.0.7.0+mc1.20.1-build.1716" }
