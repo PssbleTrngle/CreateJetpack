@@ -22,6 +22,7 @@ import com.simibubi.create.foundation.data.TagGen
 import com.simibubi.create.foundation.item.ItemDescription
 import com.simibubi.create.foundation.item.KineticStats
 import com.simibubi.create.foundation.item.TooltipModifier
+import com.simibubi.create.infrastructure.fabric.SimpleBlockEntityVisualFactory
 import com.tterrag.registrate.builders.BlockBuilder
 import com.tterrag.registrate.builders.BlockEntityBuilder
 import com.tterrag.registrate.builders.ItemBuilder
@@ -29,7 +30,6 @@ import com.tterrag.registrate.util.entry.BlockEntry
 import com.tterrag.registrate.util.entry.ItemEntry
 import com.tterrag.registrate.util.nullness.NonNullFunction
 import com.tterrag.registrate.util.nullness.NonNullSupplier
-import dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer
 import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper
 import net.createmod.catnip.lang.FontHelper
@@ -199,7 +199,7 @@ object Content {
     val JETPACK_BLOCK_ENTITY =
         REGISTRATE.blockEntity("jetpack", BlockEntityBuilder.BlockEntityFactory(::BacktankBlockEntity))
             .visual {
-                SimpleBlockEntityVisualizer.Factory { ctx, te, f -> SingleAxisRotatingVisual.backtank(ctx, te, f) }
+                SimpleBlockEntityVisualFactory { ctx, te, f -> SingleAxisRotatingVisual.backtank(ctx, te, f) }
             }
             .validBlocks(JETPACK_BLOCK, NETHERITE_JETPACK_BLOCK)
             .renderer { NonNullFunction { BacktankRenderer(it) } }

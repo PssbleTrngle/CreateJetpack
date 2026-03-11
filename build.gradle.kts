@@ -87,13 +87,7 @@ repositories {
 
 dependencies {
     modImplementation(libs.registrate)
-
-    modImplementation(libs.create) {
-        // exclude("com.jozufozu.flywheel")
-    }
-
-    modImplementation(libs.ponder)
-    modImplementation(libs.flywheel)
+    modImplementation(libs.create)
 
     if (!env.isCI) {
         modRuntimeOnly(libs.jei)
