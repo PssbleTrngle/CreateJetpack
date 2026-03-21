@@ -1,7 +1,8 @@
 # <meta>
 #    <source>@pssbletrngle/github-meta-generator</source>
-#    <version>0.0.0-dev</version>
-#    <timestamp>2026-03-11T13:08:48.371Z</timestamp>
+#    <version>1.0.19</version>
+#    <timestamp>2026-03-21T08:17:12.427Z</timestamp>
+#    <hash>20bbe559d06546ab</hash>
 # </meta>
 
 name: Bug Report
@@ -46,8 +47,6 @@ body:
       options:
         - "1.21"
         - "1.20"
-        - "1.19"
-        - "1.18"
     validations:
       required: true
 
