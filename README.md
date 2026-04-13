@@ -7,13 +7,14 @@
 [CURSEFORGE]: https://www.curseforge.com/minecraft/mc-mods/create-jetpack
 [MODRINTH]: https://modrinth.com/mod/create-jetpack
 
-# Create Jetpack <!-- modrinth_exclude.start --> <img src="https://raw.githubusercontent.com/PssbleTrngle/CreateJetpack/1.21.x/src/main/resources/assets/create_jetpack/icon.png" align="right" height="128" />
+# Create Jetpack <!-- modrinth_exclude.start --> <img src="src/main/resources/assets/create_jetpack/icon.png" align="right" height="128" />
 
 [![Release](https://img.shields.io/github/v/release/PssbleTrngle/CreateJetpack?label=Version&sort=semver)][DOWNLOAD]
 [![Downloads](https://cf.way2muchnoise.eu/full_655608_downloads.svg)][CURSEFORGE]
 [![Version](https://cf.way2muchnoise.eu/versions/655608.svg)][DOWNLOAD]
 [![Issues](https://img.shields.io/github/issues/PssbleTrngle/CreateJetpack?label=Issues)][ISSUES]
 [![Modrinth](https://img.shields.io/modrinth/dt/UbFnAd4l?color=green&logo=modrinth&logoColor=green)][MODRINTH]
+
 <!-- modrinth_exclude.end -->
 
 [![](https://img.shields.io/badge/FORGE%20%20REQUIRES-1e2a41?labelColor=gray&style=for-the-badge)][KOTLIN_FORGE]
@@ -24,37 +25,35 @@
 [![](https://img.shields.io/badge/FABRIC%20LANGUAGE%20KOTLIN-blue?logo=kotlin&labelColor=gray&style=for-the-badge)][KOTLIN_FABRIC]
 [![](https://img.shields.io/badge/CREATE%20FABRIC-ae7c38?logo=curseforge&labelColor=gray&style=for-the-badge)][CREATE_FABRIC]
 
-Using brass you are able to upgrade your copper backtank to a jetpack, 
+Using brass you are able to upgrade your copper backtank to a jetpack,
 using the pressurized air inside to propel yourself through the air.
 
 Inspired by [Simply Jetpacks](https://www.curseforge.com/minecraft/mc-mods/simply-jetpacks-2),
 this jetpack also has a hover mode.
 
-Like the copper backtank, the jetpack does also go in the chest slot, 
+Like the copper backtank, the jetpack does also go in the chest slot,
 feeds air to items like the extendo-grip and can be enchanted with _Capacity_.
 Just like the backtank it is charged by placing it down and supplying it with rotational force.
 
-![Usage](https://raw.githubusercontent.com/PssbleTrngle/CreateJetpack/1.21.x/screenshots/usage.png)
+![Usage](screenshots/usage.png)
 
 When underwater while sprint-swimming, the jetpack boosts your swimming speed.
 Additionally, the hover-mode prevents you from floating downwards.
 
-![Underwater Usage](https://raw.githubusercontent.com/PssbleTrngle/CreateJetpack/1.21.x/screenshots/underwater.png)
+![Underwater Usage](screenshots/underwater.png)
 
-If a mod similar to [Elytra Slot](https://github.com/illusivesoulworks/elytraslot), 
-which enables equipping an elytra in addition to a chestplate, 
+If a mod similar to [Elytra Slot](https://github.com/illusivesoulworks/elytraslot),
+which enables equipping an elytra in addition to a chestplate,
 the jetpack will instead give you firework-like boost while the player is pressing the `UP`-key.
 
-![Elytra Support](https://raw.githubusercontent.com/PssbleTrngle/CreateJetpack/1.21.x/screenshots/elytra.png)
+![Elytra Support](screenshots/elytra.png)
 
 Trinkets Support is possible by adding it via a datapack. Save to following to `data/trinkets/tags/items/chest/back.json`:
 
 ```json
 {
   "replace": false,
-  "values": [
-    "create_jetpack:jetpack"
-  ]
+  "values": ["create_jetpack:jetpack"]
 }
 ```
 
@@ -62,11 +61,7 @@ If the back slot is not already enabled by another mod, save the following to `d
 
 ```json
 {
-  "entities": [
-    "player"
-  ],
-  "slots": [
-    "chest/back"
-  ]
+  "entities": ["player"],
+  "slots": ["chest/back"]
 }
 ```
