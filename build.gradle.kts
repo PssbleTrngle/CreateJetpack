@@ -4,10 +4,6 @@ plugins {
 
 withKotlin()
 
-mod {
-    mods.include(libs.flightlib.neoforge)
-}
-
 neoforge {
     dataGen()
 }
@@ -58,6 +54,8 @@ repositories {
 }
 
 dependencies {
+    modInclude(libs.flightlib.neoforge)
+
     modImplementation(libs.registrate)
 
     modImplementation(
