@@ -4,10 +4,6 @@ plugins {
 
 withKotlin()
 
-mod {
-    mods.include(libs.flightlib.fabric)
-}
-
 fabric {
     dataGen()
 }
@@ -86,6 +82,8 @@ repositories {
 }
 
 dependencies {
+    modInclude(libs.flightlib.fabric)
+
     modImplementation(libs.registrate)
     modImplementation(libs.create)
 
