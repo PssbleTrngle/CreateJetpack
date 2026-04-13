@@ -4,10 +4,6 @@ plugins {
 
 withKotlin()
 
-mod {
-    mods.include(libs.flightlib.forge)
-}
-
 forge {
     dataGen()
 }
@@ -51,6 +47,8 @@ repositories {
 }
 
 dependencies {
+    modInclude(libs.flightlib.forge)
+
     modImplementation(libs.registrate)
 
     modImplementation(
