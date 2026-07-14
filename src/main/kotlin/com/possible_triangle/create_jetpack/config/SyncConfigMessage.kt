@@ -27,6 +27,7 @@ class SyncConfigMessage(private val config: IServerConfig) : CustomPacketPayload
                 hoverSpeed = buf.readDouble(),
                 swimModifier = buf.readDouble(),
                 elytraBoost = buf.readDouble(),
+                disableSprint = buf.readBoolean(),
             )
             return SyncConfigMessage(config)
         }
@@ -40,6 +41,7 @@ class SyncConfigMessage(private val config: IServerConfig) : CustomPacketPayload
             buf.writeDouble(config.hoverSpeed)
             buf.writeDouble(config.swimModifier)
             buf.writeDouble(config.elytraBoost)
+            buf.writeBoolean(config.disableSprint)
         }
     }
 

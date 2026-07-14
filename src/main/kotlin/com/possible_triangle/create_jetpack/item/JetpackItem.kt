@@ -75,6 +75,10 @@ open class JetpackItem(
     override fun getThrusters(context: Context) = thrusters
 
     override fun onUse(context: Context) {
+        if (Configs.SERVER.disableSprint && context.entity.isSprinting) {
+            context.entity.isSprinting = false
+        }
+
         if (context.world.gameTime % 20 != 0L) return
         BacktankUtil.canAbsorbDamage(context.entity, secondsPerTank(context))
     }
