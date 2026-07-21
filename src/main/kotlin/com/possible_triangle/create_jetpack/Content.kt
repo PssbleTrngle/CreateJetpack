@@ -77,6 +77,7 @@ object Content {
             )
         }
         .properties { it.rarity(Rarity.RARE) }
+        .properties { it.durability(-1) }
         .jetpackProperties()
         .register()
 
@@ -108,6 +109,7 @@ object Content {
         }
         .properties { it.rarity(Rarity.EPIC) }
         .properties { it.fireResistant() }
+        .properties { it.durability(-1) }
         .jetpackProperties()
         .register()
 
