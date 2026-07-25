@@ -14,6 +14,7 @@ interface IServerConfig {
     val hoverSpeed: Double
     val swimModifier: Double
     val elytraBoost: Double
+    val disableSprint: Boolean
     fun isAllowed(enchantment: Holder<Enchantment>): Boolean
 }
 
@@ -26,6 +27,7 @@ data class SyncedConfig(
     override val hoverSpeed: Double,
     override val swimModifier: Double,
     override val elytraBoost: Double,
+    override val disableSprint: Boolean,
 ) : IServerConfig {
     override fun isAllowed(enchantment: Holder<Enchantment>) = true
 }
@@ -39,7 +41,7 @@ class ServerConfig(builder: ModConfigSpec.Builder) : IServerConfig {
         builder.defineInRange("air.seconds_per_tank_hover", 900, 1, Integer.MAX_VALUE)
     override val secondsPerTankHover get() = secondsPerTankHoverValue.get()
 
-    private val horizontalSpeedValue = builder.defineInRange("speed.horizontal", 0.02, 0.01, 100.0)
+    private val horizontalSpeedValue = builder.defineInRange("speed.horizontal", 0.02, 0.0001, 100.0)
     override val horizontalSpeed get() = horizontalSpeedValue.get()
 
     private val verticalSpeedValue = builder.defineInRange("speed.vertical", 0.4, 0.01, 100.0)
@@ -56,6 +58,9 @@ class ServerConfig(builder: ModConfigSpec.Builder) : IServerConfig {
 
     private val elytraBoostValue = builder.defineInRange("features.elytra_boost", 1.25, 1.0, 100.0)
     override val elytraBoost get() = elytraBoostValue.get()
+
+    private val disableSprintValue = builder.define("features.disable_sprint", true)
+    override val disableSprint get() = disableSprintValue.get()
 
     private val enchantmentsList = builder.defineList("enchantments.list", emptyList<String>()) { true }
     private val enchantmentsIsBlacklist = builder.define("enchantments.is_blacklist", true)
