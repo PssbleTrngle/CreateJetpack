@@ -31,6 +31,11 @@ class SyncConfigMessage(
                     swimModifier = buf.readDouble(),
                     elytraBoost = buf.readDouble(),
                     heightAboveGroundLimit = if (buf.readBoolean()) buf.readVarInt() else null,
+                    enchantments =
+                        EnchantmentConfig(
+                            buf.readList(FriendlyByteBuf::readUtf),
+                            buf.readBoolean(),
+                        ),
                 )
             return SyncConfigMessage(config)
         }
@@ -49,6 +54,10 @@ class SyncConfigMessage(
             buf.writeDouble(config.elytraBoost)
             buf.writeBoolean(config.heightAboveGroundLimit != null)
             config.heightAboveGroundLimit?.let(buf::writeVarInt)
+            config.enchantments.let {
+                buf.writeCollection(it.ids, FriendlyByteBuf::writeUtf)
+                buf.writeBoolean(it.isBlacklist)
+            }
         }
     }
 

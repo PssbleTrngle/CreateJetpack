@@ -91,7 +91,7 @@ open class JetpackItem(
     override fun supportsEnchantment(
         stack: ItemStack,
         enchantment: Holder<Enchantment>,
-    ): Boolean = super.supportsEnchantment(stack, enchantment) && Configs.SERVER.isAllowed(enchantment)
+    ): Boolean = super.supportsEnchantment(stack, enchantment) && Configs.SERVER.enchantments.isAllowed(enchantment)
 
     override fun createParticles(): ParticleOptions =
         if (Configs.CLIENT.spawnSnowParticles) {

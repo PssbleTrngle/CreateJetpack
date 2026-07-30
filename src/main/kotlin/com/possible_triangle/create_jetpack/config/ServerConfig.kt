@@ -4,6 +4,7 @@ import net.minecraft.core.Holder
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.enchantment.Enchantment
 import net.neoforged.neoforge.common.ModConfigSpec
+import kotlin.collections.mapNotNull
 
 interface IServerConfig {
     val secondsPerTank: Int
@@ -15,8 +16,7 @@ interface IServerConfig {
     val swimModifier: Double
     val elytraBoost: Double
     val heightAboveGroundLimit: Int?
-
-    fun isAllowed(enchantment: Holder<Enchantment>): Boolean
+    val enchantments: EnchantmentConfig
 }
 
 data class SyncedConfig(
@@ -29,9 +29,8 @@ data class SyncedConfig(
     override val swimModifier: Double,
     override val elytraBoost: Double,
     override val heightAboveGroundLimit: Int?,
-) : IServerConfig {
-    override fun isAllowed(enchantment: Holder<Enchantment>) = true
-}
+    override val enchantments: EnchantmentConfig,
+) : IServerConfig
 
 class ServerConfig(
     builder: ModConfigSpec.Builder,
@@ -69,9 +68,21 @@ class ServerConfig(
     override val heightAboveGroundLimit: Int?
         get() = heightAboveGroundLimitValue.get().takeUnless { it < 0 }
 
-    override fun isAllowed(enchantment: Holder<Enchantment>): Boolean {
-        val key = enchantment.key ?: return false
-        val contained = enchantmentsList.get().mapNotNull(ResourceLocation::tryParse).any { key == it }
-        return contained != enchantmentsIsBlacklist.get()
+    override val enchantments: EnchantmentConfig
+        get() =
+            EnchantmentConfig(
+                ids = enchantmentsList.get(),
+                isBlacklist = enchantmentsIsBlacklist.get(),
+            )
+}
+
+data class EnchantmentConfig(
+    val ids: List<String>,
+    val isBlacklist: Boolean,
+) {
+    fun isAllowed(enchantment: Holder<Enchantment>): Boolean {
+        val key = enchantment.key?.location() ?: return false
+        val contained = ids.mapNotNull(ResourceLocation::tryParse).contains(key)
+        return contained != isBlacklist
     }
 }
