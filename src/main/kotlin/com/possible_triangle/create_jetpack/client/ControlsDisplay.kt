@@ -36,6 +36,7 @@ object ControlsDisplay : LayeredDraw.Layer {
             FlightKey.TOGGLE_HOVER to { it.jetpack.hoverType(it) },
         )
 
+    @JvmStatic
     fun register(event: RegisterGuiLayersEvent) {
         event.registerAbove(
             VanillaGuiLayers.HOTBAR,

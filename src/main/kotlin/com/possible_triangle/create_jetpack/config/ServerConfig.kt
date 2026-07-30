@@ -60,7 +60,8 @@ class ServerConfig(
     private val elytraBoostValue = builder.defineInRange("features.elytra_boost", 1.25, 1.0, 100.0)
     override val elytraBoost get() = elytraBoostValue.get()
 
-    private val enchantmentsList = builder.defineList("enchantments.list", emptyList<String>()) { true }
+    private val enchantmentsList =
+        builder.defineListAllowEmpty("enchantments.list", emptyList<String>(), { "" }) { true }
     private val enchantmentsIsBlacklist = builder.define("enchantments.is_blacklist", true)
 
     private val heightAboveGroundLimitValue = builder.define("heightAboveGroundLimit", -1)

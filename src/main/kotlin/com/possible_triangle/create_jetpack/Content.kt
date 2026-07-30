@@ -2,17 +2,12 @@ package com.possible_triangle.create_jetpack
 
 import com.possible_triangle.create_jetpack.CreateJetpackMod.REGISTRATE
 import com.possible_triangle.create_jetpack.block.JetpackBlock
-import com.possible_triangle.create_jetpack.client.ControlsDisplay
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.JetpackItem
 import com.possible_triangle.flightlib.api.IJetpack
 import com.possible_triangle.flightlib.neoforge.api.NeoForgeFlightLib
-import com.simibubi.create.AllBlocks
-import com.simibubi.create.AllCreativeModeTabs
-import com.simibubi.create.AllDataComponents
-import com.simibubi.create.AllPartialModels
+import com.simibubi.create.*
 import com.simibubi.create.AllTags.AllItemTags
-import com.simibubi.create.Create
 import com.simibubi.create.api.stress.BlockStressValues
 import com.simibubi.create.content.equipment.armor.AllArmorMaterials
 import com.simibubi.create.content.equipment.armor.BacktankBlockEntity
@@ -37,12 +32,9 @@ import net.createmod.catnip.lang.FontHelper
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.tags.ItemTags
-import net.minecraft.world.item.ArmorMaterials
-import net.minecraft.world.item.CreativeModeTab
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Rarity
+import net.minecraft.world.item.*
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.storage.loot.LootPool
 import net.minecraft.world.level.storage.loot.LootTable
@@ -53,7 +45,9 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.ModContainer
 import net.neoforged.fml.config.ModConfig
+import net.neoforged.fml.event.config.ModConfigEvent
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
+import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
 import java.util.function.Supplier
 
@@ -198,7 +192,10 @@ object Content {
                 }
 
             owner.addRawLang("item.${REGISTRATE.modid}.$name.tooltip", "")
-            owner.addRawLang("item.${REGISTRATE.modid}.$name.tooltip.summary", "Allows levitation using pressurized air")
+            owner.addRawLang(
+                "item.${REGISTRATE.modid}.$name.tooltip.summary",
+                "Allows levitation using pressurized air",
+            )
             owner.addRawLang("item.${REGISTRATE.modid}.$name.tooltip.control1", "Press [JUMP]")
             owner.addRawLang("item.${REGISTRATE.modid}.$name.tooltip.action1", "Fly upwards")
             owner.addRawLang("item.${REGISTRATE.modid}.$name.tooltip.control2", "Press [SHIFT]")
@@ -244,15 +241,21 @@ object Content {
 
         modBus.addListener(Configs.Network::register)
 
-        FORGE_BUS.addListener(Configs::syncConfig)
+        FORGE_BUS.addListener { event: PlayerEvent.PlayerLoggedInEvent ->
+            val player = event.entity
+            if (player is ServerPlayer) Configs.syncConfig(player)
+        }
+
+        modBus.addListener { event: ModConfigEvent.Reloading ->
+            if (event.config.type == ModConfig.Type.COMMON) {
+                Configs.syncConfig()
+            }
+        }
+
         modBus.addListener { event: RegisterCapabilitiesEvent ->
             event.registerItem(NeoForgeFlightLib.ITEM_CAPABILITY, { stack, _ ->
                 stack.item as IJetpack
             }, JETPACK_ITEM, NETHERITE_JETPACK_ITEM)
         }
-    }
-
-    fun clientInit(modBus: IEventBus) {
-        modBus.addListener(ControlsDisplay::register)
     }
 }

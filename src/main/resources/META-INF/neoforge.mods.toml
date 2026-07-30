@@ -1,6 +1,6 @@
 modLoader = "javafml"
 loaderVersion = "[1,)"
-license = "https://github.com/${repository}/blob/1.19.x/LICENSE.txt"
+license = "https://github.com/${repository}/blob/main/neoforge/1.21.x/LICENSE.md"
 issueTrackerURL = "https://github.com/${repository}/issues"
 
 [[mods]]
@@ -8,8 +8,9 @@ issueTrackerURL = "https://github.com/${repository}/issues"
     version = "${mod_version}"
     displayName = "${mod_name}"
     authors = "${mod_author}"
-    description = '''Upgrade your backtank and utilize the pressurized air to fly'''
+    description = "${mod_description}"
     updateJSONURL="https://api.modrinth.com/updates/create-jetpack/forge_updates.json?neoforge=only"
+    logoFile = "assets/${mod_id}/icon.png"
 
 [[dependencies.${mod_id}]]
     modId = "neoforge"

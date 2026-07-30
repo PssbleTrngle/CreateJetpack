@@ -3,7 +3,6 @@ package com.possible_triangle.create_jetpack.config
 import com.possible_triangle.create_jetpack.CreateJetpackMod
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.neoforge.common.ModConfigSpec
-import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 
@@ -41,9 +40,12 @@ object Configs {
         }
     }
 
-    fun syncConfig(event: PlayerEvent.PlayerLoggedInEvent) {
-        val player = event.entity
-        if (player !is ServerPlayer) return
+    fun syncConfig() {
+        CreateJetpackMod.LOGGER.debug("Sending server config all players")
+        PacketDistributor.sendToAllPlayers(SyncConfigMessage(LOCAL_SERVER))
+    }
+
+    fun syncConfig(player: ServerPlayer) {
         CreateJetpackMod.LOGGER.debug("Sending server config to ${player.scoreboardName}")
         PacketDistributor.sendToPlayer(player, SyncConfigMessage(LOCAL_SERVER))
     }
