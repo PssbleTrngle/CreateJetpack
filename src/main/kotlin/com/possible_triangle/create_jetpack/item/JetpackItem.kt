@@ -64,11 +64,11 @@ open class JetpackItem(
         action: FlightAction,
     ) {
         if (context.level.gameTime % 20 != 0L) return
-        BacktankUtil.canAbsorbDamage(context.entity, secondsPerTank(context))
+        BacktankUtil.canAbsorbDamage(context.entity, secondsPerTank(action))
     }
 
-    private fun secondsPerTank(context: Context): Int =
-        if (isHovering(context)) {
+    private fun secondsPerTank(action: FlightAction): Int =
+        if (action == FlightAction.HOVER || action == FlightAction.DOWN) {
             Configs.SERVER.secondsPerTankHover
         } else {
             Configs.SERVER.secondsPerTank
@@ -84,7 +84,7 @@ open class JetpackItem(
     override fun isUsable(context: Context): Boolean {
         val tank = BacktankUtil.getAllWithAir(context.entity).firstOrNull() ?: return false
         val air = BacktankUtil.getAir(tank)
-        val cost = BacktankUtil.maxAirWithoutEnchants().toFloat() / secondsPerTank(context)
+        val cost = BacktankUtil.maxAirWithoutEnchants().toFloat() / secondsPerTank(FlightAction.UP)
         return air >= cost
     }
 
