@@ -14,6 +14,7 @@ interface IServerConfig {
     val hoverSpeed: Double
     val swimModifier: Double
     val elytraBoost: Double
+    val heightAboveGroundLimit: Int?
 
     fun isAllowed(enchantment: Holder<Enchantment>): Boolean
 }
@@ -27,6 +28,7 @@ data class SyncedConfig(
     override val hoverSpeed: Double,
     override val swimModifier: Double,
     override val elytraBoost: Double,
+    override val heightAboveGroundLimit: Int?,
 ) : IServerConfig {
     override fun isAllowed(enchantment: Holder<Enchantment>) = true
 }
@@ -61,6 +63,11 @@ class ServerConfig(
 
     private val enchantmentsList = builder.defineList("enchantments.list", emptyList<String>()) { true }
     private val enchantmentsIsBlacklist = builder.define("enchantments.is_blacklist", true)
+
+    private val heightAboveGroundLimitValue = builder.define("heightAboveGroundLimit", -1)
+
+    override val heightAboveGroundLimit: Int?
+        get() = heightAboveGroundLimitValue.get().takeUnless { it < 0 }
 
     override fun isAllowed(enchantment: Holder<Enchantment>): Boolean {
         val key = enchantment.key ?: return false

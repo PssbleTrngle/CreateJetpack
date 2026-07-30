@@ -1,6 +1,6 @@
 [versions]
 jei = "19.42.0.385"
-flightlib = "4.0.34"
+flightlib = "4.0.36"
 
 [libraries]
 create = { group = "com.simibubi.create", name = "create-1.21.1", version = "6.0.10-251" }

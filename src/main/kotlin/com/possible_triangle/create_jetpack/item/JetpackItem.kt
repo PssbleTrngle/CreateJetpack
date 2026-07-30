@@ -2,6 +2,7 @@ package com.possible_triangle.create_jetpack.item
 
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.flightlib.api.ControlType
+import com.possible_triangle.flightlib.api.FlightAction
 import com.possible_triangle.flightlib.api.IJetpack
 import com.possible_triangle.flightlib.api.IJetpack.Context
 import com.possible_triangle.flightlib.api.sources.CuriosSource
@@ -58,8 +59,11 @@ open class JetpackItem(
 
     override fun getThrusters(context: Context) = thrusters
 
-    override fun onUse(context: Context) {
-        if (context.world.gameTime % 20 != 0L) return
+    override fun onUse(
+        context: Context,
+        action: FlightAction,
+    ) {
+        if (context.level.gameTime % 20 != 0L) return
         BacktankUtil.canAbsorbDamage(context.entity, secondsPerTank(context))
     }
 
@@ -95,6 +99,8 @@ open class JetpackItem(
         } else {
             AirParticleData(0F, 0.01F)
         }
+
+    override fun heightAboveGroundLimit(context: Context): Int? = Configs.SERVER.heightAboveGroundLimit
 
     class Layered(
         properties: Properties,

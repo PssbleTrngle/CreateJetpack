@@ -147,7 +147,7 @@ object ControlsDisplay : LayeredDraw.Layer {
             val maxAir = BacktankUtil.maxAir(airSource)
             val air = BacktankUtil.getAir(airSource)
             val barHeight = ceil((air * 14.0) / maxAir).toInt()
-            val shrinking = context.jetpack.isThrusting(context)
+            val shrinking = IFlightApi.INSTANCE.currentAction(context) != null
 
             renderBar(1)
             if (shrinking && barHeight > 0 && blink) {

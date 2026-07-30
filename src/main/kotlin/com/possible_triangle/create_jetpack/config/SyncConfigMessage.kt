@@ -30,6 +30,7 @@ class SyncConfigMessage(
                     hoverSpeed = buf.readDouble(),
                     swimModifier = buf.readDouble(),
                     elytraBoost = buf.readDouble(),
+                    heightAboveGroundLimit = if (buf.readBoolean()) buf.readVarInt() else null,
                 )
             return SyncConfigMessage(config)
         }
@@ -46,6 +47,8 @@ class SyncConfigMessage(
             buf.writeDouble(config.hoverSpeed)
             buf.writeDouble(config.swimModifier)
             buf.writeDouble(config.elytraBoost)
+            buf.writeBoolean(config.heightAboveGroundLimit != null)
+            config.heightAboveGroundLimit?.let(buf::writeVarInt)
         }
     }
 
