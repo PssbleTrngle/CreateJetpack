@@ -28,49 +28,33 @@ open class JetpackItem(
     material: Holder<ArmorMaterial>,
     texture: ResourceLocation,
     blockItem: ItemEntry<BacktankBlockItem>,
-) :
-    BacktankItem(
+) : BacktankItem(
         material,
         properties,
         texture,
-        blockItem
-    ), IJetpack {
+        blockItem,
+    ),
+    IJetpack {
+    override fun hoverSpeed(context: Context): Double = Configs.SERVER.hoverSpeed
 
-    override fun hoverSpeed(context: Context): Double {
-        return Configs.SERVER.hoverSpeed
-    }
+    override fun verticalSpeed(context: Context): Double = Configs.SERVER.verticalSpeed
 
-    override fun verticalSpeed(context: Context): Double {
-        return Configs.SERVER.verticalSpeed
-    }
+    override fun activeType(context: Context): ControlType = ControlType.TOGGLE
 
-    override fun activeType(context: Context): ControlType {
-        return ControlType.TOGGLE
-    }
+    override fun hoverType(context: Context): ControlType = ControlType.TOGGLE
 
-    override fun hoverType(context: Context): ControlType {
-        return ControlType.TOGGLE
-    }
+    override fun horizontalSpeed(context: Context): Double = Configs.SERVER.horizontalSpeed
 
-    override fun horizontalSpeed(context: Context): Double {
-        return Configs.SERVER.horizontalSpeed
-    }
+    override fun acceleration(context: Context): Double = Configs.SERVER.acceleration
 
-    override fun acceleration(context: Context): Double {
-        return Configs.SERVER.acceleration
-    }
+    override fun swimModifier(context: Context): Double = Configs.SERVER.swimModifier
 
-    override fun swimModifier(context: Context): Double {
-        return Configs.SERVER.swimModifier
-    }
+    override fun elytraBoost(): Double = Configs.SERVER.elytraBoost
 
-    override fun elytraBoost(): Double {
-        return Configs.SERVER.elytraBoost
-    }
-
-    private val thrusters = listOf(-0.35, 0.35).map { offset ->
-        Vec3(offset, 0.7, -0.5)
-    }
+    private val thrusters =
+        listOf(-0.35, 0.35).map { offset ->
+            Vec3(offset, 0.7, -0.5)
+        }
 
     override fun getThrusters(context: Context) = thrusters
 
@@ -79,18 +63,19 @@ open class JetpackItem(
         BacktankUtil.canAbsorbDamage(context.entity, secondsPerTank(context))
     }
 
-    private fun secondsPerTank(context: Context): Int {
-        return if (isHovering(context)) Configs.SERVER.secondsPerTankHover
-        else Configs.SERVER.secondsPerTank
-    }
+    private fun secondsPerTank(context: Context): Int =
+        if (isHovering(context)) {
+            Configs.SERVER.secondsPerTankHover
+        } else {
+            Configs.SERVER.secondsPerTank
+        }
 
-    override fun isValid(context: Context): Boolean {
-        return when (val source = context.source) {
+    override fun isValid(context: Context): Boolean =
+        when (val source = context.source) {
             is EquipmentSource -> source.slot == EquipmentSlot.CHEST
             is CuriosSource -> true
             else -> false
         }
-    }
 
     override fun isUsable(context: Context): Boolean {
         val tank = BacktankUtil.getAllWithAir(context.entity).firstOrNull() ?: return false
@@ -99,34 +84,37 @@ open class JetpackItem(
         return air >= cost
     }
 
-    override fun supportsEnchantment(stack: ItemStack, enchantment: Holder<Enchantment>): Boolean {
-        return super.supportsEnchantment(stack, enchantment) && Configs.SERVER.isAllowed(enchantment)
-    }
+    override fun supportsEnchantment(
+        stack: ItemStack,
+        enchantment: Holder<Enchantment>,
+    ): Boolean = super.supportsEnchantment(stack, enchantment) && Configs.SERVER.isAllowed(enchantment)
 
-    override fun createParticles(): ParticleOptions {
-        return if (Configs.CLIENT.spawnSnowParticles)
+    override fun createParticles(): ParticleOptions =
+        if (Configs.CLIENT.spawnSnowParticles) {
             ParticleTypes.SNOWFLAKE
-        else
+        } else {
             AirParticleData(0F, 0.01F)
-    }
+        }
 
     class Layered(
         properties: Properties,
         material: Holder<ArmorMaterial>,
         texture: ResourceLocation,
-        blockItem: ItemEntry<BacktankBlockItem>
-    ) : JetpackItem(properties, material, texture, blockItem), LayeredArmorItem {
-
+        blockItem: ItemEntry<BacktankBlockItem>,
+    ) : JetpackItem(properties, material, texture, blockItem),
+        LayeredArmorItem {
         override fun getArmorTextureLocation(
             entity: LivingEntity?,
             slot: EquipmentSlot?,
             stack: ItemStack?,
             layer: Int,
-        ): String {
-            return String.format(
-                Locale.ROOT, "%s:textures/models/armor/%s_layer_%d.png",
-                textureLoc.namespace, textureLoc.path, layer
+        ): String =
+            String.format(
+                Locale.ROOT,
+                "%s:textures/models/armor/%s_layer_%d.png",
+                textureLoc.namespace,
+                textureLoc.path,
+                layer,
             )
-        }
     }
 }

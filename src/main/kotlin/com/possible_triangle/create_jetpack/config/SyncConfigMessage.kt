@@ -7,31 +7,37 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
 
-class SyncConfigMessage(private val config: IServerConfig) : CustomPacketPayload {
-
+class SyncConfigMessage(
+    private val config: IServerConfig,
+) : CustomPacketPayload {
     override fun type(): CustomPacketPayload.Type<SyncConfigMessage> = TYPE.type()
 
     companion object {
-        val TYPE = CustomPacketPayload.TypeAndCodec(
-            CustomPacketPayload.Type(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "sync_config")),
-            StreamCodec.of(SyncConfigMessage::encode, SyncConfigMessage::decode),
-        )
+        val TYPE =
+            CustomPacketPayload.TypeAndCodec(
+                CustomPacketPayload.Type(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "sync_config")),
+                StreamCodec.of(SyncConfigMessage::encode, SyncConfigMessage::decode),
+            )
 
         private fun decode(buf: FriendlyByteBuf): SyncConfigMessage {
-            val config = SyncedConfig(
-                secondsPerTank = buf.readInt(),
-                secondsPerTankHover = buf.readInt(),
-                horizontalSpeed = buf.readDouble(),
-                verticalSpeed = buf.readDouble(),
-                acceleration = buf.readDouble(),
-                hoverSpeed = buf.readDouble(),
-                swimModifier = buf.readDouble(),
-                elytraBoost = buf.readDouble(),
-            )
+            val config =
+                SyncedConfig(
+                    secondsPerTank = buf.readInt(),
+                    secondsPerTankHover = buf.readInt(),
+                    horizontalSpeed = buf.readDouble(),
+                    verticalSpeed = buf.readDouble(),
+                    acceleration = buf.readDouble(),
+                    hoverSpeed = buf.readDouble(),
+                    swimModifier = buf.readDouble(),
+                    elytraBoost = buf.readDouble(),
+                )
             return SyncConfigMessage(config)
         }
 
-        private fun encode(buf: FriendlyByteBuf, message: SyncConfigMessage) = with(message) {
+        private fun encode(
+            buf: FriendlyByteBuf,
+            message: SyncConfigMessage,
+        ) = with(message) {
             buf.writeInt(config.secondsPerTank)
             buf.writeInt(config.secondsPerTankHover)
             buf.writeDouble(config.horizontalSpeed)
@@ -47,5 +53,4 @@ class SyncConfigMessage(private val config: IServerConfig) : CustomPacketPayload
         CreateJetpackMod.LOGGER.debug("Hover speed: ${config.hoverSpeed}")
         Configs.SYNCED_SERVER = config
     }
-
 }

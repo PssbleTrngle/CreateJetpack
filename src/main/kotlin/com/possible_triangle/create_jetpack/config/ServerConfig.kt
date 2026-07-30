@@ -14,6 +14,7 @@ interface IServerConfig {
     val hoverSpeed: Double
     val swimModifier: Double
     val elytraBoost: Double
+
     fun isAllowed(enchantment: Holder<Enchantment>): Boolean
 }
 
@@ -30,8 +31,9 @@ data class SyncedConfig(
     override fun isAllowed(enchantment: Holder<Enchantment>) = true
 }
 
-class ServerConfig(builder: ModConfigSpec.Builder) : IServerConfig {
-
+class ServerConfig(
+    builder: ModConfigSpec.Builder,
+) : IServerConfig {
     private val secondsPerTankValue = builder.defineInRange("air.seconds_per_tank", 450, 1, Integer.MAX_VALUE)
     override val secondsPerTank get() = secondsPerTankValue.get()
 
@@ -59,6 +61,7 @@ class ServerConfig(builder: ModConfigSpec.Builder) : IServerConfig {
 
     private val enchantmentsList = builder.defineList("enchantments.list", emptyList<String>()) { true }
     private val enchantmentsIsBlacklist = builder.define("enchantments.is_blacklist", true)
+
     override fun isAllowed(enchantment: Holder<Enchantment>): Boolean {
         val key = enchantment.key ?: return false
         val contained = enchantmentsList.get().mapNotNull(ResourceLocation::tryParse).any { key == it }

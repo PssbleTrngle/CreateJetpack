@@ -18,13 +18,9 @@ class CopyComponentsMechanicalCraftingRecipe(
     category: CraftingBookCategory,
     pattern: ShapedRecipePattern,
     recipeOutput: ItemStack,
-    acceptMirrored: Boolean
-) :
-    MechanicalCraftingRecipe(group, category, pattern, recipeOutput, acceptMirrored) {
-
-    override fun getSerializer(): RecipeSerializer<*> {
-        return Content.COPY_NBT_MECHANICAL_CRAFTING_SERIALIZER.get()
-    }
+    acceptMirrored: Boolean,
+) : MechanicalCraftingRecipe(group, category, pattern, recipeOutput, acceptMirrored) {
+    override fun getSerializer(): RecipeSerializer<*> = Content.COPY_NBT_MECHANICAL_CRAFTING_SERIALIZER.get()
 
     private fun findUpgradable(container: CraftingInput): ItemStack? {
         val width = min(container.width(), width)
@@ -38,7 +34,10 @@ class CopyComponentsMechanicalCraftingRecipe(
         return null
     }
 
-    override fun assemble(container: CraftingInput, registries: HolderLookup.Provider): ItemStack {
+    override fun assemble(
+        container: CraftingInput,
+        registries: HolderLookup.Provider,
+    ): ItemStack {
         val upgradeTarget = findUpgradable(container)
         val upgraded = super.assemble(container, registries)
         upgradeTarget?.let { upgraded.applyComponents(it.components) }
@@ -46,36 +45,31 @@ class CopyComponentsMechanicalCraftingRecipe(
     }
 
     object Serializer : MechanicalCraftingRecipe.Serializer() {
-
         private val CODEC: MapCodec<MechanicalCraftingRecipe> =
             MechanicalCraftingRecipe.Serializer.CODEC.xmap(Serializer::from, Serializer::to)
         private val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, MechanicalCraftingRecipe> =
             MechanicalCraftingRecipe.Serializer.STREAM_CODEC.map(Serializer::from, Serializer::to)
 
-        private fun from(recipe: MechanicalCraftingRecipe): MechanicalCraftingRecipe {
-            return CopyComponentsMechanicalCraftingRecipe(
+        private fun from(recipe: MechanicalCraftingRecipe): MechanicalCraftingRecipe =
+            CopyComponentsMechanicalCraftingRecipe(
                 recipe.group,
                 recipe.category(),
                 recipe.pattern,
                 recipe.getResultItem(null),
-                recipe.acceptsMirrored()
+                recipe.acceptsMirrored(),
             )
-        }
 
-        private fun to(recipe: MechanicalCraftingRecipe): MechanicalCraftingRecipe {
-            return MechanicalCraftingRecipe(
+        private fun to(recipe: MechanicalCraftingRecipe): MechanicalCraftingRecipe =
+            MechanicalCraftingRecipe(
                 recipe.group,
                 recipe.category(),
                 recipe.pattern,
                 recipe.getResultItem(null),
-                recipe.acceptsMirrored()
+                recipe.acceptsMirrored(),
             )
-        }
 
         override fun codec() = CODEC
 
-       // override fun streamCodec() = STREAM_CODEC
-
+        // override fun streamCodec() = STREAM_CODEC
     }
-
 }

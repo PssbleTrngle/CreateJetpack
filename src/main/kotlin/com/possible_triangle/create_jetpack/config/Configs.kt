@@ -8,18 +8,24 @@ import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 
 object Configs {
-
+    @Suppress("ktlint:standard:property-naming")
     var SERVER_SPEC: ModConfigSpec
         private set
 
+    @Suppress("ktlint:standard:property-naming")
     private var LOCAL_SERVER: ServerConfig
+
+    @Suppress("ktlint:standard:property-naming")
     internal var SYNCED_SERVER: IServerConfig? = null
 
     val SERVER: IServerConfig
         get() = SYNCED_SERVER ?: LOCAL_SERVER
 
+    @Suppress("ktlint:standard:property-naming")
     var CLIENT_SPEC: ModConfigSpec
         private set
+
+    @Suppress("ktlint:standard:property-naming")
     var CLIENT: ClientConfig
         private set
 
@@ -49,8 +55,6 @@ object Configs {
             registrar.playToClient(SyncConfigMessage.TYPE.type(), SyncConfigMessage.TYPE.codec()) { message, _ ->
                 message.handle()
             }
-
         }
     }
-
 }

@@ -20,54 +20,75 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import kotlin.math.ceil
 
-
 object ControlsDisplay : LayeredDraw.Layer {
-
     private val controls = ResourceLocation.fromNamespaceAndPath(MOD_ID, "textures/gui/controls.png")
     private val airIndicator = ResourceLocation.fromNamespaceAndPath(MOD_ID, "textures/gui/air_indicator.png")
 
-    private fun spritePos(index: Int): Vec2 {
-        return Vec2(
+    private fun spritePos(index: Int): Vec2 =
+        Vec2(
             index % 2 * 16F,
             index / 2 * 16F,
         )
-    }
 
-    private val ICONS = mapOf<FlightKey, (IJetpack.Context) -> ControlType>(
-        FlightKey.TOGGLE_ACTIVE to { it.jetpack.activeType(it) },
-        FlightKey.TOGGLE_HOVER to { it.jetpack.hoverType(it) },
-    )
+    private val ICONS =
+        mapOf<FlightKey, (IJetpack.Context) -> ControlType>(
+            FlightKey.TOGGLE_ACTIVE to { it.jetpack.activeType(it) },
+            FlightKey.TOGGLE_HOVER to { it.jetpack.hoverType(it) },
+        )
 
     fun register(event: RegisterGuiLayersEvent) {
         event.registerAbove(
             VanillaGuiLayers.HOTBAR,
             ResourceLocation.fromNamespaceAndPath(MOD_ID, "jetpack_controls"),
-            this
+            this,
         )
     }
 
-    override fun render(graphics: GuiGraphics, tracker: DeltaTracker) {
+    override fun render(
+        graphics: GuiGraphics,
+        tracker: DeltaTracker,
+    ) {
         val mc = Minecraft.getInstance()
-        if (!Configs.CLIENT.SHOW_OVERLAY.get()) return
+        if (!Configs.CLIENT.showOverlay.get()) return
         if (mc.options.hideGui) return
         val player = mc.player ?: return
         val context = IFlightApi.INSTANCE.findJetpack(player) ?: return
 
         val margin = 6
-        val scale = Configs.CLIENT.OVERLAY_DISTANCE_SCALE.get().toFloat()
+        val scale =
+            Configs.CLIENT.overlayScale
+                .get()
+                .toFloat()
         val spriteWidth = 16 + margin
 
-        val startX = Configs.CLIENT.OVERLAY_DISTANCE_X.get().let {
-            if (it >= 0) it
-            else graphics.guiWidth() + it - 50
-        }.let { it / scale }.toInt()
+        val startX =
+            Configs.CLIENT.overlayX
+                .get()
+                .let {
+                    if (it >= 0) {
+                        it
+                    } else {
+                        graphics.guiWidth() + it - 50
+                    }
+                }.let { it / scale }
+                .toInt()
 
-        val startY = Configs.CLIENT.OVERLAY_DISTANCE_Y.get().let {
-            if (it >= 0) it
-            else graphics.guiHeight() + it - 24
-        }.let { it / scale }.toInt()
+        val startY =
+            Configs.CLIENT.overlayY
+                .get()
+                .let {
+                    if (it >= 0) {
+                        it
+                    } else {
+                        graphics.guiHeight() + it - 24
+                    }
+                }.let { it / scale }
+                .toInt()
 
-        fun renderSprite(index: Int, x: Int) {
+        fun renderSprite(
+            index: Int,
+            x: Int,
+        ) {
             val sprite = spritePos(index)
             graphics.pose().scale(scale, scale, scale)
             graphics.blit(controls, startX + x, startY, 0, sprite.x, sprite.y, 16, 16, 32, 32)
@@ -75,23 +96,25 @@ object ControlsDisplay : LayeredDraw.Layer {
 
         val engineActive = FlightKey.TOGGLE_ACTIVE.isPressed(player)
 
-        val renderedIcons = ICONS.filterKeys { it == FlightKey.TOGGLE_ACTIVE || engineActive }
-            .filterValues { getType -> getType(context) == ControlType.TOGGLE }
-            .keys.mapIndexed { index, key ->
-                graphics.pose().pushPose()
+        val renderedIcons =
+            ICONS
+                .filterKeys { it == FlightKey.TOGGLE_ACTIVE || engineActive }
+                .filterValues { getType -> getType(context) == ControlType.TOGGLE }
+                .keys
+                .mapIndexed { index, key ->
+                    graphics.pose().pushPose()
 
-                val active = key.isPressed(player)
-                renderSprite(index + if (active) 0 else 2, spriteWidth * index)
+                    val active = key.isPressed(player)
+                    renderSprite(index + if (active) 0 else 2, spriteWidth * index)
 
-                val textScale = 0.5F
-                graphics.pose().scale(textScale, textScale, textScale)
-                val textMargin = (startX + 8 + spriteWidth * index) * (1 / textScale)
-                val text = Component.translatable("overlay.flightlib.control.${key.name.lowercase()}")
-                val color = if (active) 0xFFFFFF else 0xBBBBBB
-                graphics.drawCenteredString(mc.font, text, textMargin.toInt(), startY * 2 + 36, color)
-                graphics.pose().popPose()
-
-            }.count()
+                    val textScale = 0.5F
+                    graphics.pose().scale(textScale, textScale, textScale)
+                    val textMargin = (startX + 8 + spriteWidth * index) * (1 / textScale)
+                    val text = Component.translatable("overlay.flightlib.control.${key.name.lowercase()}")
+                    val color = if (active) 0xFFFFFF else 0xBBBBBB
+                    graphics.drawCenteredString(mc.font, text, textMargin.toInt(), startY * 2 + 36, color)
+                    graphics.pose().popPose()
+                }.count()
 
         if (engineActive) {
             graphics.pose().pushPose()
@@ -100,7 +123,12 @@ object ControlsDisplay : LayeredDraw.Layer {
             RenderSystem.enableBlend()
 
             val barWidth = 5
-            fun renderBar(index: Int, barHeight: Int = 16, spriteOffset: Int = 0) {
+
+            fun renderBar(
+                index: Int,
+                barHeight: Int = 16,
+                spriteOffset: Int = 0,
+            ) {
                 graphics.blit(
                     airIndicator,
                     startX + spriteWidth * renderedIcons,
@@ -110,7 +138,7 @@ object ControlsDisplay : LayeredDraw.Layer {
                     barWidth,
                     barHeight,
                     16,
-                    16
+                    16,
                 )
             }
 
@@ -122,8 +150,11 @@ object ControlsDisplay : LayeredDraw.Layer {
             val shrinking = context.jetpack.isThrusting(context)
 
             renderBar(1)
-            if (shrinking && barHeight > 0 && blink) renderBar(0, barHeight - 1, 1)
-            else renderBar(0, barHeight, 1)
+            if (shrinking && barHeight > 0 && blink) {
+                renderBar(0, barHeight - 1, 1)
+            } else {
+                renderBar(0, barHeight, 1)
+            }
 
             RenderSystem.disableBlend()
             graphics.pose().popPose()
