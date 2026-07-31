@@ -1,4 +1,4 @@
-package com.possible_triangle.create_jetpack.item
+package com.possible_triangle.create_jetpack.world.item
 
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.flightlib.api.ControlType

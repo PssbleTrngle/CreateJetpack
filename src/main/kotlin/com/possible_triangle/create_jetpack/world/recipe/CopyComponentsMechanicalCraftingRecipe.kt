@@ -1,6 +1,7 @@
-package com.possible_triangle.create_jetpack
+package com.possible_triangle.create_jetpack.world.recipe
 
 import com.mojang.serialization.MapCodec
+import com.possible_triangle.create_jetpack.index.CJRecipeTypes
 import com.simibubi.create.content.equipment.armor.BacktankItem
 import com.simibubi.create.content.kinetics.crafter.MechanicalCraftingRecipe
 import net.minecraft.core.HolderLookup
@@ -20,7 +21,7 @@ class CopyComponentsMechanicalCraftingRecipe(
     recipeOutput: ItemStack,
     acceptMirrored: Boolean,
 ) : MechanicalCraftingRecipe(group, category, pattern, recipeOutput, acceptMirrored) {
-    override fun getSerializer(): RecipeSerializer<*> = Content.COPY_NBT_MECHANICAL_CRAFTING_SERIALIZER.get()
+    override fun getSerializer(): RecipeSerializer<*> = CJRecipeTypes.COPY_NBT_MECHANICAL_CRAFTING_SERIALIZER.get()
 
     private fun findUpgradable(container: CraftingInput): ItemStack? {
         val width = min(container.width(), width)

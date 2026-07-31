@@ -1,6 +1,6 @@
 package com.possible_triangle.create_jetpack.config
 
-import com.possible_triangle.create_jetpack.Constants
+import com.possible_triangle.create_jetpack.CJConstants
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
@@ -14,7 +14,7 @@ class SyncConfigMessage(
     companion object {
         val TYPE =
             CustomPacketPayload.TypeAndCodec(
-                CustomPacketPayload.Type(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "sync_config")),
+                CustomPacketPayload.Type(ResourceLocation.fromNamespaceAndPath(CJConstants.MOD_ID, "sync_config")),
                 StreamCodec.of(SyncConfigMessage::encode, SyncConfigMessage::decode),
             )
 
@@ -61,7 +61,7 @@ class SyncConfigMessage(
     }
 
     fun handle() {
-        Constants.LOGGER.debug("Hover speed: ${config.hoverSpeed}")
+        CJConstants.LOGGER.debug("Hover speed: ${config.hoverSpeed}")
         Configs.SYNCED_SERVER = config
     }
 }

@@ -1,10 +1,16 @@
 package com.possible_triangle.create_jetpack.config
 
-import com.possible_triangle.create_jetpack.Constants
+import com.possible_triangle.create_jetpack.CJConstants
 import net.minecraft.server.level.ServerPlayer
+import net.neoforged.bus.api.IEventBus
+import net.neoforged.fml.ModContainer
+import net.neoforged.fml.config.ModConfig
+import net.neoforged.fml.event.config.ModConfigEvent
 import net.neoforged.neoforge.common.ModConfigSpec
+import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
+import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
 
 object Configs {
     @Suppress("ktlint:standard:property-naming")
@@ -40,18 +46,40 @@ object Configs {
         }
     }
 
-    fun syncConfig() {
-        Constants.LOGGER.debug("Sending server config all players")
+    private fun syncConfig() {
+        CJConstants.LOGGER.debug("Sending server config all players")
         PacketDistributor.sendToAllPlayers(SyncConfigMessage(LOCAL_SERVER))
     }
 
-    fun syncConfig(player: ServerPlayer) {
-        Constants.LOGGER.debug("Sending server config to ${player.scoreboardName}")
+    private fun syncConfig(player: ServerPlayer) {
+        CJConstants.LOGGER.debug("Sending server config to ${player.scoreboardName}")
         PacketDistributor.sendToPlayer(player, SyncConfigMessage(LOCAL_SERVER))
     }
 
+    @JvmStatic
+    fun register(
+        container: ModContainer,
+        modBus: IEventBus,
+    ) {
+        container.registerConfig(ModConfig.Type.COMMON, SERVER_SPEC)
+        container.registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC)
+
+        modBus.addListener(Configs.Network::register)
+
+        FORGE_BUS.addListener { event: PlayerEvent.PlayerLoggedInEvent ->
+            val player = event.entity
+            if (player is ServerPlayer) syncConfig(player)
+        }
+
+        modBus.addListener { event: ModConfigEvent.Reloading ->
+            if (event.config.type == ModConfig.Type.COMMON) {
+                syncConfig()
+            }
+        }
+    }
+
     object Network {
-        fun register(event: RegisterPayloadHandlersEvent) {
+        internal fun register(event: RegisterPayloadHandlersEvent) {
             val registrar = event.registrar("2.0")
 
             registrar.playToClient(SyncConfigMessage.TYPE.type(), SyncConfigMessage.TYPE.codec()) { message, _ ->
