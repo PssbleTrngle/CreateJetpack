@@ -1,6 +1,6 @@
 package com.possible_triangle.create_jetpack
 
-import com.possible_triangle.create_jetpack.CreateJetpackMod.REGISTRATE
+import com.possible_triangle.create_jetpack.Constants.REGISTRATE
 import com.possible_triangle.create_jetpack.block.JetpackBlock
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.create_jetpack.item.JetpackItem

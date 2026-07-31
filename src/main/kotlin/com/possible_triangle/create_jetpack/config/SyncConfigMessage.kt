@@ -1,7 +1,6 @@
 package com.possible_triangle.create_jetpack.config
 
-import com.possible_triangle.create_jetpack.CreateJetpackMod
-import com.possible_triangle.flightlib.api.Constants
+import com.possible_triangle.create_jetpack.Constants
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
@@ -62,7 +61,7 @@ class SyncConfigMessage(
     }
 
     fun handle() {
-        CreateJetpackMod.LOGGER.debug("Hover speed: ${config.hoverSpeed}")
+        Constants.LOGGER.debug("Hover speed: ${config.hoverSpeed}")
         Configs.SYNCED_SERVER = config
     }
 }

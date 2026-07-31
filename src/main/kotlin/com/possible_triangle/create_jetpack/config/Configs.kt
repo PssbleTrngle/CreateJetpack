@@ -1,6 +1,6 @@
 package com.possible_triangle.create_jetpack.config
 
-import com.possible_triangle.create_jetpack.CreateJetpackMod
+import com.possible_triangle.create_jetpack.Constants
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.neoforge.common.ModConfigSpec
 import net.neoforged.neoforge.network.PacketDistributor
@@ -41,12 +41,12 @@ object Configs {
     }
 
     fun syncConfig() {
-        CreateJetpackMod.LOGGER.debug("Sending server config all players")
+        Constants.LOGGER.debug("Sending server config all players")
         PacketDistributor.sendToAllPlayers(SyncConfigMessage(LOCAL_SERVER))
     }
 
     fun syncConfig(player: ServerPlayer) {
-        CreateJetpackMod.LOGGER.debug("Sending server config to ${player.scoreboardName}")
+        Constants.LOGGER.debug("Sending server config to ${player.scoreboardName}")
         PacketDistributor.sendToPlayer(player, SyncConfigMessage(LOCAL_SERVER))
     }
 

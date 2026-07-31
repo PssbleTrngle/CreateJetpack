@@ -1,7 +1,7 @@
 package com.possible_triangle.create_jetpack.client
 
 import com.mojang.blaze3d.systems.RenderSystem
-import com.possible_triangle.create_jetpack.CreateJetpackMod.MOD_ID
+import com.possible_triangle.create_jetpack.Constants.MOD_ID
 import com.possible_triangle.create_jetpack.config.Configs
 import com.possible_triangle.flightlib.api.ControlType
 import com.possible_triangle.flightlib.api.FlightKey
